@@ -1,5 +1,5 @@
 var cachedModules=[];
-cachedModules[6100]={exports:{}};
+cachedModules[7720]={exports:{}};
 (function(module,exports) {var socket;
 
 socket = io();
@@ -14,8 +14,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[6100],cachedModules[6100].exports);
-cachedModules[6411]={exports:{}};
+}).call(this,cachedModules[7720],cachedModules[7720].exports);
+cachedModules[5404]={exports:{}};
 (function(module,exports) {var configuration, headers, onError, req;
 
 headers = "";
@@ -135,8 +135,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[6411],cachedModules[6411].exports);
-cachedModules[8774]={exports:{}};
+}).call(this,cachedModules[5404],cachedModules[5404].exports);
+cachedModules[3556]={exports:{}};
 (function(module,exports) {/*
  * JavaScript MD5 1.0.1
  * https://github.com/blueimp/JavaScript-MD5
@@ -411,15 +411,15 @@ cachedModules[8774]={exports:{}};
         $.md5 = md5;
     }
 }(this));
-}).call(this,cachedModules[8774],cachedModules[8774].exports);
-cachedModules[6277]={exports:{}};
+}).call(this,cachedModules[3556],cachedModules[3556].exports);
+cachedModules[6726]={exports:{}};
 (function(module,exports) {var callback, dialogLogin, formLogin, loginUser, stk_config, stk_socket;
 
-cachedModules[8774].exports;
+cachedModules[3556].exports;
 
-stk_config = cachedModules[6411].exports;
+stk_config = cachedModules[5404].exports;
 
-stk_socket = cachedModules[6100].exports;
+stk_socket = cachedModules[7720].exports;
 
 callback = function(ret) {
   if (ret.state) {
@@ -472,8 +472,20 @@ module.exports = function() {
     prepare: prepare
   };
 };
-}).call(this,cachedModules[6277],cachedModules[6277].exports);
-cachedModules[7606]={exports:{}};
+}).call(this,cachedModules[6726],cachedModules[6726].exports);
+cachedModules[1321]={exports:{}};
+(function(module,exports) {module.exports = function() {
+  return {
+    delay: function(ms, fn) {
+      return setTimeout(fn, ms);
+    },
+    timer: function(ms, fn) {
+      return setInterval(fn, ms);
+    }
+  };
+};
+}).call(this,cachedModules[1321],cachedModules[1321].exports);
+cachedModules[9675]={exports:{}};
 (function(module,exports) {module.exports = function() {
   return {
     requireFullscreen: function(callback) {
@@ -558,19 +570,20 @@ cachedModules[7606]={exports:{}};
     }
   };
 };
-}).call(this,cachedModules[7606],cachedModules[7606].exports);var stk;
+}).call(this,cachedModules[9675],cachedModules[9675].exports);var stk;
 
 stk = {};
 
 $(function() {
-  var a, actualObject, addObject, decider, drawObject, emailhash, envelop, eventhandler, fetchFFF, ff, ffcontainer, fff, getStageDimensions, injectObject, injectObjects, is_dragging, justPrintOut, key, load, objects, setFramesOnOff, setKey, socket, socketEmit, stage, stk_config, stk_fullscreen, stk_login, stk_socket, up, updateJoystick;
+  var a, actualObject, addObject, decider, drawObject, emailhash, envelop, eventhandler, fetchFFF, ff, ffcontainer, fff, getStageDimensions, injectObject, injectObjects, is_dragging, justPrintOut, key, keys, keysPressed, keysReleased, load, objects, sendKeys, setFramesOnOff, setKey, socket, socketEmit, stage, stk_common, stk_config, stk_fullscreen, stk_login, stk_socket, up, updateJoystick;
   up = 0;
   decider = 0;
   is_dragging = false;
-  stk_socket = cachedModules[6100].exports;
+  stk_socket = cachedModules[7720].exports;
   socket = stk_socket().getSocket();
-  stk_config = cachedModules[6411].exports;
-  stk_login = cachedModules[6277].exports;
+  stk_config = cachedModules[5404].exports;
+  stk_login = cachedModules[6726].exports;
+  stk_common = cachedModules[1321].exports;
   ff = stk_config().parseGetparameter("formfactor");
   fff = 1;
   fetchFFF = function() {
@@ -580,9 +593,35 @@ $(function() {
       return fff = screen.height / screen.width;
     }
   };
-  stk_fullscreen = cachedModules[7606].exports;
+  stk_fullscreen = cachedModules[9675].exports;
   stk_fullscreen().requireFullscreen(fetchFFF);
   key = void 0;
+  keys = [];
+  keysPressed = function(e) {
+    keys[e.keyCode] = true;
+    return sendKeys();
+  };
+  keysReleased = function(e) {
+    keys[e.keyCode] = false;
+    sendKeys();
+    return delete keys[e.keyCode];
+  };
+  sendKeys = function() {
+    var k, sendkeys, v, _i, _len;
+    console.log(keys);
+    sendkeys = [];
+    for (v = _i = 0, _len = keys.length; _i < _len; v = ++_i) {
+      k = keys[v];
+      if (k === true) {
+        sendkeys.push(v);
+      }
+    }
+    console.log(sendkeys);
+    return socketEmit('keyevent', {
+      type: "draggable_keylistener",
+      keys: sendkeys
+    });
+  };
   if (stk_config().parseGetparameter("embeded") === "true") {
     $("#fullscreen").remove();
   }
@@ -766,12 +805,25 @@ $(function() {
       return drawObject(msg.type, msg.id);
     }
   });
+  justPrintOut = function(msg) {
+    return console.log("justPrintOut: " + JSON.stringify(msg));
+  };
 
   /* {separatestart:['embeded']} */
 
   
 
   /* {separateend:['embeded']} */
+
+  /* {separatestart:['view']} */
+  eventhandler = {
+    draggable_joystick: justPrintOut,
+    draggable_touchpad: justPrintOut,
+    draggable_positionsensor: justPrintOut,
+    draggable_keylistener: justPrintOut
+  };
+
+  /* {separateend:['view']} */
   socket.on("touchmove", function(msg) {
 
     /* {separatestart:['embeded']} */
@@ -785,6 +837,19 @@ $(function() {
 
     /* {separateend:['view']} */
   });
+
+  /* {separatestart:['view']} */
+  socket.on("keyevent", function(msg) {
+    return justPrintOut(msg);
+  });
+
+  /* {separateend:['view']} */
+
+  /* {separatestart:['embeded']} */
+
+  
+
+  /* {separateend:['embeded']} */
   socket.on("reset", function(msg) {
     console.log("reload(true)");
     return location.reload(true);
@@ -893,6 +958,9 @@ $(function() {
             "background-image": "url(" + newObject.url + ")",
             "background-size": "cover"
           });
+          break;
+        case "draggable_keylistener":
+          cnr.html("Keylistener");
       }
       stage = getStageDimensions(ffcontainer);
       console.log("Drop created to:" + $(this) + "  " + (newObject.x * 100) + "%");
@@ -927,6 +995,10 @@ $(function() {
           }, false);
 
           /* {separatestart:['embeded']} */
+          break;
+        case "draggable_keylistener":
+          window.addEventListener('keydown', keysPressed, false);
+          window.addEventListener('keyup', keysReleased, false);
           break;
         case "draggable_positionsensor":
           if (stk_config().parseGetparameter("embeded") === "false") {

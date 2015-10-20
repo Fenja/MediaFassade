@@ -38,10 +38,23 @@ body {
   position: absolute;
   bottom: 250px;
 }
-.draggable {  
-    
+.element {
+  height: 5vh;
+  width: 5vh;
+}
+#zero {
+  left: 0px;
+  position: absolute;
+  bottom: 1000px; 
+}
+#one {
+  left: 100px;
+  position: absolute;
+  bottom: 1000px; 
+}  
+.draggable {
   visibility: hidden;
-   
+  
   position: absolute;
   left: 80px;
   top: 80px;

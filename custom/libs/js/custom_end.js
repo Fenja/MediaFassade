@@ -6,88 +6,317 @@ The compiled custom_body.js will be included at the end of the html body section
 Define your functions here.
  */
 
-
-/* Define your handler */
-
 (function() {
-  var direction, draggable_background_handler, draggable_image_handler, draggable_joystick_handler, handle;
+  var bottom, checkCollision, clear, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, fallCount, fallRound, falls, fps, gravity, heaven, jump, jumpHeight, object0, object1, objectList, player1, player2, players, queue, readyAndGo, running, update, updateObjects, updatePlayer, updatePlayers;
 
-  draggable_background_handler = function(msg) {
-    return console.log('Do something with msg: ' + JSON.stringify(msg));
+  customLogger = function(s) {
+    return console.log(s);
   };
 
-  draggable_image_handler = function(msg) {
+  customLoggerT = function() {
+
+    /*customLogger "Timer" */
+    update();
+    return clear();
+  };
+
+  customLoggerD = function() {
+
+    /*customLogger "Delay" */
+    return stk.framework.timer(100, customLoggerT);
+  };
+
+  stk.framework.delay(500, customLoggerD);
+
+
+  /* Define your handler */
+
+  draggable_keylistener_handler = function(msg) {
+    directionKey(msg);
     return console.log('Do something with msg: ' + JSON.stringify(msg));
   };
 
   draggable_joystick_handler = function(msg) {
-    handle(direction(msg), msg.id);
+    directionJoystick(msg);
     return console.log('Do something with msg: ' + JSON.stringify(msg));
   };
 
 
   /* Register your handler */
 
-  stk.framework.register_handler('draggable_background', draggable_background_handler);
-
-  stk.framework.register_handler('draggable_image', draggable_image_handler);
-
   stk.framework.register_handler('draggable_joystick', draggable_joystick_handler);
+
+  stk.framework.register_handler('draggable_keylistener', draggable_keylistener_handler);
+
+
+  /*
+  Doing "onLoad"-Stuff
+  If you want a function be called after the last script (it is this script - custom_end.coffee/custom_end.js) is loaded, add your code here.
+  If it should be executed after the "loading..." animation ends, add a delay call of 1200 ms
+   */
+
+  console.log("ready");
+
+  readyAndGo = function() {
+    return console.log("go");
+  };
+
+  stk.framework.delay(1200, readyAndGo);
+
+
+  /* own code */
+
+  fps = 50;
+
+  running = true;
+
+  bottom = 250;
+
+  jumpHeight = 300;
+
+  player1 = {
+    up: false,
+    left: false,
+    right: false,
+    jumps: false,
+    falls: false,
+    height: bottom,
+    side: 50,
+    dom: document.getElementById('player0')
+  };
+
+  player2 = {
+    up: false,
+    left: false,
+    right: false,
+    jumps: false,
+    falls: false,
+    height: bottom,
+    side: 250,
+    dom: document.getElementById('player1')
+  };
+
+  players = [player1, player2];
+
+  gravity = 5;
+
+  heaven = 1000;
+
+  object0 = {
+    value: 0,
+    name: 'zero',
+    height: 1000,
+    velo: 5,
+    dom: document.getElementById('zero')
+  };
+
+  object1 = {
+    value: 1,
+    name: 'one',
+    height: 1000,
+    velo: 5,
+    dom: document.getElementById('one')
+  };
+
+
+  /*object2 = 
+    value: 2
+    name: 'two'
+    height: heaven
+    velo: gravity
+    dom: document.getElementById(name)
+    
+  objectBomb =
+    value: 0
+    name: 'bomb'
+    height: heaven
+    velo: gravity
+    dom: document.getElementById(name)
+  
+  objectPower = 
+    value: 0
+    name: "power"
+    height: heaven
+    velo: gravity
+    dom: document.getElementById(name)
+   */
+
+  objectList = [object0];
+
+  queue = [object1];
+
+  fallCount = 0;
+
+  fallRound = 30;
 
 
   /* Debug handler to test without remote control */
 
   window.onkeydown = function(e) {
     var ascii, code;
+    console.log('key down');
     code = e.keyCode ? e.keyCode : e.which;
     ascii = e.charCode ? e.charCode : e.which;
     if (code === 37) {
-      return handle("left", 0);
-    } else if (code === 38) {
-      return handle("up", 0);
-    } else if (code === 39) {
-      return handle("right", 0);
-    } else if (ascii === 65) {
-      return handle("left", 1);
-    } else if (ascii === 87) {
-      return handle("up", 1);
-    } else if (ascii === 68) {
-      return handle("right", 1);
+      player1.left = true;
     }
+    if (code === 38) {
+      player1.up = true;
+    }
+    if (code === 39) {
+      player1.right = true;
+    }
+    if (ascii === 65) {
+      player2.left = true;
+    }
+    if (ascii === 87) {
+      player2.up = true;
+    }
+    if (ascii === 68) {
+      player2.right = true;
+    }
+    return true;
   };
 
 
   /* Own methods */
 
-  direction = function(msg) {
-    var dir, type, x, y;
+  directionJoystick = function(msg) {
+    var type, x, y;
     x = msg.x;
     y = msg.y;
     type = msg.type;
-    dir = "none";
     if (y < 0.4 && y < x - 0.1) {
-      dir = "up";
-    } else if (y > 0.6 && y > x + 0.1) {
-      dir = "down";
+      player1.up = true;
     } else if (x < 0.4 && x < y - 0.1) {
-      dir = "left";
+      player1.left = true;
     } else if (x > 0.6 && x > y + 0.1) {
-      dir = "right";
+      player1.right = true;
     }
-    return dir;
+    return true;
   };
 
-  handle = function(dir, id) {
-    var player, position;
-    player = document.getElementById('player' + id);
-    position = parseInt(getComputedStyle(player).left);
-    if (dir === "left" && position > 0) {
-      position -= 10;
-    } else if (dir === "right" && position < window.innerWidth) {
-      position += 10;
+  directionKey = function(msg) {
+    var code, i, keys, len;
+    keys = msg.keys;
+    for (i = 0, len = keys.length; i < len; i++) {
+      code = keys[i];
+      if (code === 37) {
+        player1.left = true;
+      }
+      if (code === 38) {
+        player1.up = true;
+      }
+      if (code === 39) {
+        player1.right = true;
+      }
+
+      /*if (ascii == 65)
+        player2Keys.left = true
+      if (ascii == 87)
+        player2Keys.up = true
+      if (ascii == 68)
+        player2Keys.right = true
+       */
     }
-    player.style.left = position + "px";
-    return document.getElementById('output').innerHTML = dir + " " + position;
+    return true;
+  };
+
+  update = function() {
+    updatePlayers();
+    updateObjects();
+    return checkCollision();
+  };
+
+  updatePlayers = function() {
+    var i, len, player;
+    for (i = 0, len = players.length; i < len; i++) {
+      player = players[i];
+      updatePlayer(player);
+    }
+    return true;
+  };
+
+  updatePlayer = function(player) {
+    if (player.left && player.side > 0) {
+      player.side -= 10;
+    } else if (player.right && player.side < window.innerWidth) {
+      player.side += 10;
+    }
+    if (player.jumps || player.falls) {
+      jump(player);
+    } else if (player.up) {
+      jump(player);
+    }
+    player.dom.style.left = player.side + "px";
+    return true;
+  };
+
+  jump = function(player) {
+    if (player.height <= bottom) {
+      player.jumps = true;
+    } else if (player.height >= jumpHeight + bottom) {
+      player.jumps = false;
+      player.falls = true;
+    }
+    if (player.jumps) {
+      player.height += 10;
+    } else if (player.falls) {
+      player.height -= 10;
+      if (player.height <= bottom) {
+        player.falls = false;
+      }
+    }
+    player.dom.style.bottom = player.height + "px";
+    return true;
+  };
+
+  updateObjects = function() {
+    var i, len, object;
+    for (i = 0, len = objectList.length; i < len; i++) {
+      object = objectList[i];
+      falls(object);
+    }
+    fallCount += 1;
+    if (fallCount >= fallRound && queue.length > 0 && Math.floor(Math.random() * 3) >= 2) {
+      objectList[objectList.length] = queue[0];
+      queue.splice(0);
+    }
+    return true;
+  };
+
+  falls = function(object) {
+    object.height -= object.velo;
+    if (object.height <= bottom) {
+      object.height = heaven;
+      objectList.remove(object);
+      queue[queue.length] = object;
+    }
+    object.dom.style.bottom = object.height + "px";
+    return true;
+  };
+
+  checkCollision = function() {
+    var i, len, object;
+    for (i = 0, len = objectList.length; i < len; i++) {
+      object = objectList[i];
+      checkCollision(object);
+    }
+    return true;
+  };
+
+  checkCollision = function(object) {
+    return true;
+  };
+
+  clear = function() {
+    player1.up = false;
+    player1.left = false;
+    player1.right = false;
+    player2.up = false;
+    player2.left = false;
+    player2.right = false;
+    return true;
   };
 
 }).call(this);
