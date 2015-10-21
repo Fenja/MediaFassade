@@ -51,8 +51,12 @@ stk.framework.delay 1200, readyAndGo
 
 ### own code ###
 
+viewportHeight = window.innerHeight
+viewportWidth = window.innerWidth
+
 fps = 50
 running = true
+tollerance = 5
 
 bottom = 250 #px
 jumpHeight = 300
@@ -66,6 +70,7 @@ player1 = {
   height: bottom
   side: 50 #px
   dom: document.getElementById('player0')
+  score: 0
 }
 
 player2 = {
@@ -77,18 +82,22 @@ player2 = {
   height: bottom
   side: 250
   dom: document.getElementById('player1')
+  score: 0
 }
 
 players = [player1, player2]
+playerWidth = parseInt(getComputedStyle(player1.dom).width)
+playerHeight = parseInt(getComputedStyle(player1.dom).height)
 
 gravity = 5
-heaven = 1000
+heaven = viewportHeight
 
 object0 = 
   value: 0
   name: 'zero'
   height: 1000
   velo: 5
+  side: 10
   dom: document.getElementById('zero')
 
 object1 = 
@@ -96,6 +105,7 @@ object1 =
   name: 'one'
   height: 1000
   velo: 5
+  side: 40
   dom: document.getElementById('one')
 
 ###object2 = 
@@ -119,6 +129,7 @@ objectPower =
   velo: gravity
   dom: document.getElementById(name)###
 
+objectWidth = parseInt(getComputedStyle(object1.dom).width)
 
 objectList = [object0]
 queue = [object1]
@@ -179,7 +190,7 @@ directionKey=(msg)->
 update=()->
   updatePlayers()
   updateObjects()
-  checkCollision()
+  checkCollisions()
 
 updatePlayers=()->
   for player in players
@@ -189,7 +200,7 @@ updatePlayers=()->
 updatePlayer=(player)->
   if ( player.left && player.side > 0 ) 
     player.side -= 10
-  else if ( player.right && player.side < window.innerWidth ) #this does not work, but should
+  else if ( player.right && player.side + playerWidth < viewportWidth )
     player.side += 10
   if (player.jumps || player.falls)
     jump(player)
@@ -218,27 +229,49 @@ jump=(player)->
 updateObjects=()->
   for object in objectList
     falls(object)
-  fallCount += 1
-  if ( fallCount >= fallRound && queue.length > 0 && Math.floor(Math.random() * 3) >= 2 )
-    objectList[objectList.length] = queue[0]  
-    queue.splice(0)
+  if (queue.length > 0)
+    fallCount += 1
+    if ( fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2 )
+      objectList[objectList.length] = queue[0]  
+      queue.splice(0)
+      fallCount = 0
   true
       
 falls=(object)->
   object.height -= object.velo
-  if (object.height <= bottom)
-    object.height = heaven
-    objectList.remove(object)
-    queue[queue.length] = object
+#  if (object.height <= bottom)
+  if (object.height <= 0)
+    objectDown(object)
   object.dom.style.bottom = object.height + "px"
   true
   
-checkCollision=()->
+checkCollisions=()->
   for object in objectList
     checkCollision(object)
   true
   
 checkCollision=(object)->
+  for player in players
+    if ((player.height + playerHeight) >= (object.height + tollerance) &&
+    player.side + tollerance <= object.side && 
+    (player.side + playerWidth) >= (object.side + objectWidth + tollerance))
+      collect(player, object)
+      objectDown(object)
+  true
+  
+objectDown=(object)->
+  object.height = heaven
+  objectList.remove(object)
+  queue[queue.length] = object
+  calcSide(object)
+  true
+  
+calcSide=(object)->
+  object.dom.style.left = object.side + "px"
+  true
+  
+collect=(player, object)->
+  player.score += object.value
   true
 
 clear=()->

@@ -7,7 +7,7 @@ Define your functions here.
  */
 
 (function() {
-  var bottom, checkCollision, clear, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, fallCount, fallRound, falls, fps, gravity, heaven, jump, jumpHeight, object0, object1, objectList, player1, player2, players, queue, readyAndGo, running, update, updateObjects, updatePlayer, updatePlayers;
+  var bottom, calcSide, checkCollision, checkCollisions, clear, collect, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, fallCount, fallRound, falls, fps, gravity, heaven, jump, jumpHeight, object0, object1, objectDown, objectList, objectWidth, player1, player2, playerHeight, playerWidth, players, queue, readyAndGo, running, tollerance, update, updateObjects, updatePlayer, updatePlayers, viewportHeight, viewportWidth;
 
   customLogger = function(s) {
     return console.log(s);
@@ -66,9 +66,15 @@ Define your functions here.
 
   /* own code */
 
+  viewportHeight = window.innerHeight;
+
+  viewportWidth = window.innerWidth;
+
   fps = 50;
 
   running = true;
+
+  tollerance = 5;
 
   bottom = 250;
 
@@ -82,7 +88,8 @@ Define your functions here.
     falls: false,
     height: bottom,
     side: 50,
-    dom: document.getElementById('player0')
+    dom: document.getElementById('player0'),
+    score: 0
   };
 
   player2 = {
@@ -93,20 +100,26 @@ Define your functions here.
     falls: false,
     height: bottom,
     side: 250,
-    dom: document.getElementById('player1')
+    dom: document.getElementById('player1'),
+    score: 0
   };
 
   players = [player1, player2];
 
+  playerWidth = parseInt(getComputedStyle(player1.dom).width);
+
+  playerHeight = parseInt(getComputedStyle(player1.dom).height);
+
   gravity = 5;
 
-  heaven = 1000;
+  heaven = viewportHeight;
 
   object0 = {
     value: 0,
     name: 'zero',
     height: 1000,
     velo: 5,
+    side: 10,
     dom: document.getElementById('zero')
   };
 
@@ -115,6 +128,7 @@ Define your functions here.
     name: 'one',
     height: 1000,
     velo: 5,
+    side: 40,
     dom: document.getElementById('one')
   };
 
@@ -140,6 +154,8 @@ Define your functions here.
     velo: gravity
     dom: document.getElementById(name)
    */
+
+  objectWidth = parseInt(getComputedStyle(object1.dom).width);
 
   objectList = [object0];
 
@@ -225,7 +241,7 @@ Define your functions here.
   update = function() {
     updatePlayers();
     updateObjects();
-    return checkCollision();
+    return checkCollisions();
   };
 
   updatePlayers = function() {
@@ -240,7 +256,7 @@ Define your functions here.
   updatePlayer = function(player) {
     if (player.left && player.side > 0) {
       player.side -= 10;
-    } else if (player.right && player.side < window.innerWidth) {
+    } else if (player.right && player.side + playerWidth < viewportWidth) {
       player.side += 10;
     }
     if (player.jumps || player.falls) {
@@ -287,16 +303,14 @@ Define your functions here.
 
   falls = function(object) {
     object.height -= object.velo;
-    if (object.height <= bottom) {
-      object.height = heaven;
-      objectList.remove(object);
-      queue[queue.length] = object;
+    if (object.height <= 0) {
+      objectDown(object);
     }
     object.dom.style.bottom = object.height + "px";
     return true;
   };
 
-  checkCollision = function() {
+  checkCollisions = function() {
     var i, len, object;
     for (i = 0, len = objectList.length; i < len; i++) {
       object = objectList[i];
@@ -306,6 +320,32 @@ Define your functions here.
   };
 
   checkCollision = function(object) {
+    var i, len, player;
+    for (i = 0, len = players.length; i < len; i++) {
+      player = players[i];
+      if ((player.height + playerHeight) >= (object.height + tollerance) && player.side + tollerance <= object.side && (player.side + playerWidth) >= (object.side + objectWidth + tollerance)) {
+        collect(player, object);
+        objectDown(object);
+      }
+    }
+    return true;
+  };
+
+  objectDown = function(object) {
+    object.height = heaven;
+    objectList.remove(object);
+    queue[queue.length] = object;
+    calcSide(object);
+    return true;
+  };
+
+  calcSide = function(object) {
+    object.dom.style.left = object.side + "px";
+    return true;
+  };
+
+  collect = function(player, object) {
+    player.score += object.value;
     return true;
   };
 

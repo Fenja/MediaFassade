@@ -19,14 +19,13 @@ body {
 #screen{
   width: auto;
   height: 100vh;
-  background-image: url("../images/mf_bg.svg");
+  background-image: url("../images/mf_bg.png");
   background-repeat: no-repeat;
   background-position: bottom;
   position: relative;
 }
 .player {
-  height: 15vh;
-  width:15vh;
+  height: 100px;
 }
 #player0 {
   left: 0px;
@@ -39,8 +38,7 @@ body {
   bottom: 250px;
 }
 .element {
-  height: 5vh;
-  width: 5vh;
+  height: 100px;
 }
 #zero {
   left: 0px;
