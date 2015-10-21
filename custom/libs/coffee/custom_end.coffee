@@ -137,53 +137,34 @@ queue = [object1]
 fallCount = 0
 fallRound = 30
 
-### Debug handler to test without remote control ###
-window.onkeydown=(e)->
-  console.log 'key down'
-  code = if e.keyCode then  e.keyCode else e.which
-  ascii = if e.charCode then e.charCode else e.which
-  if (code == 37)
-    player1.left = true
-  if (code == 38)
-    player1.up = true
-  if (code == 39)
-    player1.right = true
-  if (ascii == 65)
-    player2.left = true
-  if (ascii == 87)
-    player2.up = true
-  if (ascii == 68)
-    player2.right = true
-  true
 
 ### Own methods ###
-directionJoystick=(msg)->
+getPlayer=(emailhash)->
+  player1
+  
+directionJoystick=(msg, player)->
+  player = getPlayer(msg.envelop.emailhash)
   x = msg.x
   y = msg.y
   type = msg.type
   if (y < 0.4 && y < x-0.1)
-    player1.up = true
+    player.up = true
   else if (x < 0.4 && x < y-0.1)
-    player1.left = true
+    player.left = true
   else if (x > 0.6 && x > y+0.1)
-    player1.right = true
+    player.right = true
   true
   
-directionKey=(msg)->
+directionKey=(msg, player)->
+  player = getPlayer(msg.envelop.emailhash)
   keys = msg.keys
   for code in keys
     if (code == 37)
-      player1.left = true
+      player.left = true
     if (code == 38)
-      player1.up = true
+      player.up = true
     if (code == 39)
-      player1.right = true
-    ###if (ascii == 65)
-      player2Keys.left = true
-    if (ascii == 87)
-      player2Keys.up = true
-    if (ascii == 68)
-      player2Keys.right = true###
+      player.right = true
   true
   
 
@@ -275,10 +256,8 @@ collect=(player, object)->
   true
 
 clear=()->
-  player1.up = false
-  player1.left = false
-  player1.right = false
-  player2.up = false
-  player2.left = false
-  player2.right = false
+  for player in players
+    player.up = false
+    player.left = false
+    player.right = false
   true

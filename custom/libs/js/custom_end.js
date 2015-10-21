@@ -7,7 +7,7 @@ Define your functions here.
  */
 
 (function() {
-  var bottom, calcSide, checkCollision, checkCollisions, clear, collect, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, fallCount, fallRound, falls, fps, gravity, heaven, jump, jumpHeight, object0, object1, objectDown, objectList, objectWidth, player1, player2, playerHeight, playerWidth, players, queue, readyAndGo, running, tollerance, update, updateObjects, updatePlayer, updatePlayers, viewportHeight, viewportWidth;
+  var bottom, calcSide, checkCollision, checkCollisions, clear, collect, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, fallCount, fallRound, falls, fps, getPlayer, gravity, heaven, jump, jumpHeight, object0, object1, objectDown, objectList, objectWidth, player1, player2, playerHeight, playerWidth, players, queue, readyAndGo, running, tollerance, update, updateObjects, updatePlayer, updatePlayers, viewportHeight, viewportWidth;
 
   customLogger = function(s) {
     return console.log(s);
@@ -166,74 +166,43 @@ Define your functions here.
   fallRound = 30;
 
 
-  /* Debug handler to test without remote control */
-
-  window.onkeydown = function(e) {
-    var ascii, code;
-    console.log('key down');
-    code = e.keyCode ? e.keyCode : e.which;
-    ascii = e.charCode ? e.charCode : e.which;
-    if (code === 37) {
-      player1.left = true;
-    }
-    if (code === 38) {
-      player1.up = true;
-    }
-    if (code === 39) {
-      player1.right = true;
-    }
-    if (ascii === 65) {
-      player2.left = true;
-    }
-    if (ascii === 87) {
-      player2.up = true;
-    }
-    if (ascii === 68) {
-      player2.right = true;
-    }
-    return true;
-  };
-
-
   /* Own methods */
 
-  directionJoystick = function(msg) {
+  getPlayer = function(emailhash) {
+    return player1;
+  };
+
+  directionJoystick = function(msg, player) {
     var type, x, y;
+    player = getPlayer(msg.envelop.emailhash);
     x = msg.x;
     y = msg.y;
     type = msg.type;
     if (y < 0.4 && y < x - 0.1) {
-      player1.up = true;
+      player.up = true;
     } else if (x < 0.4 && x < y - 0.1) {
-      player1.left = true;
+      player.left = true;
     } else if (x > 0.6 && x > y + 0.1) {
-      player1.right = true;
+      player.right = true;
     }
     return true;
   };
 
-  directionKey = function(msg) {
+  directionKey = function(msg, player) {
     var code, i, keys, len;
+    player = getPlayer(msg.envelop.emailhash);
     keys = msg.keys;
     for (i = 0, len = keys.length; i < len; i++) {
       code = keys[i];
       if (code === 37) {
-        player1.left = true;
+        player.left = true;
       }
       if (code === 38) {
-        player1.up = true;
+        player.up = true;
       }
       if (code === 39) {
-        player1.right = true;
+        player.right = true;
       }
-
-      /*if (ascii == 65)
-        player2Keys.left = true
-      if (ascii == 87)
-        player2Keys.up = true
-      if (ascii == 68)
-        player2Keys.right = true
-       */
     }
     return true;
   };
@@ -293,10 +262,13 @@ Define your functions here.
       object = objectList[i];
       falls(object);
     }
-    fallCount += 1;
-    if (fallCount >= fallRound && queue.length > 0 && Math.floor(Math.random() * 3) >= 2) {
-      objectList[objectList.length] = queue[0];
-      queue.splice(0);
+    if (queue.length > 0) {
+      fallCount += 1;
+      if (fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2) {
+        objectList[objectList.length] = queue[0];
+        queue.splice(0);
+        fallCount = 0;
+      }
     }
     return true;
   };
@@ -350,12 +322,13 @@ Define your functions here.
   };
 
   clear = function() {
-    player1.up = false;
-    player1.left = false;
-    player1.right = false;
-    player2.up = false;
-    player2.left = false;
-    player2.right = false;
+    var i, len, player;
+    for (i = 0, len = players.length; i < len; i++) {
+      player = players[i];
+      player.up = false;
+      player.left = false;
+      player.right = false;
+    }
     return true;
   };
 
