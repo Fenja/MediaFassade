@@ -54,6 +54,9 @@ stk.framework.delay 1200, readyAndGo
 viewportHeight = window.innerHeight
 viewportWidth = window.innerWidth
 
+emailhash1 = "b99a950fa0b095ac59bec541a441b1b0"
+emailhash2 = "4d6ab0c2e472248f4fa9bfd682345297"
+
 fps = 50
 running = true
 tollerance = 5
@@ -62,6 +65,7 @@ bottom = 250 #px
 jumpHeight = 300
 
 player1 = {
+  name: "player1"
   up: false
   left: false
   right: false
@@ -74,6 +78,7 @@ player1 = {
 }
 
 player2 = {
+  name: "player2"
   up: false
   left: false
   right: false
@@ -131,16 +136,22 @@ objectPower =
 
 objectWidth = parseInt(getComputedStyle(object1.dom).width)
 
-objectList = [object0]
-queue = [object1]
+objectList = []
+queue = [object0, object1]
 
 fallCount = 0
 fallRound = 30
+columns = 12
+columnWidth = viewportWidth / columns
+lastColumn = 0
 
 
 ### Own methods ###
 getPlayer=(emailhash)->
-  player1
+  if (emailhash == emailhash2)
+    player1
+  else
+    player2
   
 directionJoystick=(msg, player)->
   player = getPlayer(msg.envelop.emailhash)
@@ -210,10 +221,14 @@ jump=(player)->
 updateObjects=()->
   for object in objectList
     falls(object)
+  console.log queue.length
   if (queue.length > 0)
     fallCount += 1
     if ( fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2 )
-      objectList[objectList.length] = queue[0]  
+      object = queue[0] 
+      object.side = getNewColumn() * columnWidth
+      object.dom.style.left = object.side + "px"
+      objectList.push object
       queue.splice(0)
       fallCount = 0
   true
@@ -225,6 +240,9 @@ falls=(object)->
     objectDown(object)
   object.dom.style.bottom = object.height + "px"
   true
+  
+getNewColumn=()->
+  Math.floor(Math.random() * 13)
   
 checkCollisions=()->
   for object in objectList
@@ -242,8 +260,9 @@ checkCollision=(object)->
   
 objectDown=(object)->
   object.height = heaven
-  objectList.remove(object)
-  queue[queue.length] = object
+  index = objectList.indexOf(object)
+  objectList.splice(object)
+  queue.push object
   calcSide(object)
   true
   

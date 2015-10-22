@@ -7,7 +7,7 @@ Define your functions here.
  */
 
 (function() {
-  var bottom, calcSide, checkCollision, checkCollisions, clear, collect, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, fallCount, fallRound, falls, fps, getPlayer, gravity, heaven, jump, jumpHeight, object0, object1, objectDown, objectList, objectWidth, player1, player2, playerHeight, playerWidth, players, queue, readyAndGo, running, tollerance, update, updateObjects, updatePlayer, updatePlayers, viewportHeight, viewportWidth;
+  var bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, emailhash1, emailhash2, fallCount, fallRound, falls, fps, getNewColumn, getPlayer, gravity, heaven, jump, jumpHeight, lastColumn, object0, object1, objectDown, objectList, objectWidth, player1, player2, playerHeight, playerWidth, players, queue, readyAndGo, running, tollerance, update, updateObjects, updatePlayer, updatePlayers, viewportHeight, viewportWidth;
 
   customLogger = function(s) {
     return console.log(s);
@@ -70,6 +70,10 @@ Define your functions here.
 
   viewportWidth = window.innerWidth;
 
+  emailhash1 = "b99a950fa0b095ac59bec541a441b1b0";
+
+  emailhash2 = "4d6ab0c2e472248f4fa9bfd682345297";
+
   fps = 50;
 
   running = true;
@@ -81,6 +85,7 @@ Define your functions here.
   jumpHeight = 300;
 
   player1 = {
+    name: "player1",
     up: false,
     left: false,
     right: false,
@@ -93,6 +98,7 @@ Define your functions here.
   };
 
   player2 = {
+    name: "player2",
     up: false,
     left: false,
     right: false,
@@ -157,19 +163,29 @@ Define your functions here.
 
   objectWidth = parseInt(getComputedStyle(object1.dom).width);
 
-  objectList = [object0];
+  objectList = [];
 
-  queue = [object1];
+  queue = [object0, object1];
 
   fallCount = 0;
 
   fallRound = 30;
 
+  columns = 12;
+
+  columnWidth = viewportWidth / columns;
+
+  lastColumn = 0;
+
 
   /* Own methods */
 
   getPlayer = function(emailhash) {
-    return player1;
+    if (emailhash === emailhash2) {
+      return player1;
+    } else {
+      return player2;
+    }
   };
 
   directionJoystick = function(msg, player) {
@@ -262,10 +278,14 @@ Define your functions here.
       object = objectList[i];
       falls(object);
     }
+    console.log(queue.length);
     if (queue.length > 0) {
       fallCount += 1;
       if (fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2) {
-        objectList[objectList.length] = queue[0];
+        object = queue[0];
+        object.side = getNewColumn() * columnWidth;
+        object.dom.style.left = object.side + "px";
+        objectList.push(object);
         queue.splice(0);
         fallCount = 0;
       }
@@ -280,6 +300,10 @@ Define your functions here.
     }
     object.dom.style.bottom = object.height + "px";
     return true;
+  };
+
+  getNewColumn = function() {
+    return Math.floor(Math.random() * 13);
   };
 
   checkCollisions = function() {
@@ -304,9 +328,11 @@ Define your functions here.
   };
 
   objectDown = function(object) {
+    var index;
     object.height = heaven;
-    objectList.remove(object);
-    queue[queue.length] = object;
+    index = objectList.indexOf(object);
+    objectList.splice(object);
+    queue.push(object);
     calcSide(object);
     return true;
   };
