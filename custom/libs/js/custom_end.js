@@ -94,7 +94,8 @@ Define your functions here.
     height: bottom,
     side: 50,
     dom: document.getElementById('player0'),
-    score: 0
+    score: 0,
+    scoreDom: document.getElementById('score1')
   };
 
   player2 = {
@@ -107,7 +108,8 @@ Define your functions here.
     height: bottom,
     side: 250,
     dom: document.getElementById('player1'),
-    score: 0
+    score: 0,
+    scoreDom: document.getElementById('score2')
   };
 
   players = [player1, player2];
@@ -121,7 +123,7 @@ Define your functions here.
   heaven = viewportHeight;
 
   object0 = {
-    value: 0,
+    value: 10,
     name: 'zero',
     height: 1000,
     velo: 5,
@@ -163,9 +165,9 @@ Define your functions here.
 
   objectWidth = parseInt(getComputedStyle(object1.dom).width);
 
-  objectList = [];
+  objectList = [object0];
 
-  queue = [object0, object1];
+  queue = [object1];
 
   fallCount = 0;
 
@@ -344,6 +346,7 @@ Define your functions here.
 
   collect = function(player, object) {
     player.score += object.value;
+    player.scoreDom.innerHTML = player.score;
     return true;
   };
 

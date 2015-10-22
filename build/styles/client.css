@@ -39,17 +39,15 @@ body {
 }
 .element {
   height: 100px;
-}
-#zero {
   left: 0px;
   position: absolute;
   bottom: 1000px; 
 }
-#one {
-  left: 100px;
-  position: absolute;
-  bottom: 1000px; 
-}  
+#highscore {
+  position: relative;
+/*  top: 5px;*/
+  float: left
+}
 .draggable {
   visibility: hidden;
   

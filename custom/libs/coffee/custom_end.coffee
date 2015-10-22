@@ -75,6 +75,7 @@ player1 = {
   side: 50 #px
   dom: document.getElementById('player0')
   score: 0
+  scoreDom: document.getElementById('score1')
 }
 
 player2 = {
@@ -88,6 +89,7 @@ player2 = {
   side: 250
   dom: document.getElementById('player1')
   score: 0
+  scoreDom: document.getElementById('score2')
 }
 
 players = [player1, player2]
@@ -98,7 +100,7 @@ gravity = 5
 heaven = viewportHeight
 
 object0 = 
-  value: 0
+  value: 10
   name: 'zero'
   height: 1000
   velo: 5
@@ -136,8 +138,8 @@ objectPower =
 
 objectWidth = parseInt(getComputedStyle(object1.dom).width)
 
-objectList = []
-queue = [object0, object1]
+objectList = [object0]
+queue = [object1]
 
 fallCount = 0
 fallRound = 30
@@ -272,6 +274,7 @@ calcSide=(object)->
   
 collect=(player, object)->
   player.score += object.value
+  player.scoreDom.innerHTML = player.score
   true
 
 clear=()->
