@@ -7,7 +7,7 @@ Define your functions here.
  */
 
 (function() {
-  var bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, emailhash1, emailhash2, fallCount, fallRound, falls, fps, getNewColumn, getPlayer, gravity, heaven, jump, jumpHeight, lastColumn, object0, object1, objectDown, objectList, objectWidth, player1, player2, playerHeight, playerWidth, players, queue, readyAndGo, running, tollerance, update, updateObjects, updatePlayer, updatePlayers, viewportHeight, viewportWidth;
+  var bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, emailhash1, emailhash2, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getNewColumn, getPlayer, gravity, heaven, jump, jumpHeight, lastColumn, object0, object1, object2, objectDown, objectList, objectWidth, player1, player2, playerHeight, playerWidth, players, queue, readyAndGo, running, tollerance, update, updateObjects, updatePlayer, updatePlayers, viewportHeight, viewportWidth;
 
   customLogger = function(s) {
     return console.log(s);
@@ -125,7 +125,7 @@ Define your functions here.
   object0 = {
     value: 10,
     name: 'zero',
-    height: 1000,
+    height: heaven,
     velo: 5,
     side: 10,
     dom: document.getElementById('zero')
@@ -134,21 +134,23 @@ Define your functions here.
   object1 = {
     value: 1,
     name: 'one',
-    height: 1000,
+    height: heaven,
     velo: 5,
     side: 40,
     dom: document.getElementById('one')
   };
 
+  object2 = {
+    value: 2,
+    name: 'two',
+    height: heaven,
+    velo: gravity,
+    side: 40,
+    dom: document.getElementById('two')
+  };
 
-  /*object2 = 
-    value: 2
-    name: 'two'
-    height: heaven
-    velo: gravity
-    dom: document.getElementById(name)
-    
-  objectBomb =
+
+  /*objectBomb =
     value: 0
     name: 'bomb'
     height: heaven
@@ -165,9 +167,9 @@ Define your functions here.
 
   objectWidth = parseInt(getComputedStyle(object1.dom).width);
 
-  objectList = [object0];
+  objectList = [];
 
-  queue = [object1];
+  queue = [object0, object1, object2];
 
   fallCount = 0;
 
@@ -275,12 +277,22 @@ Define your functions here.
   };
 
   updateObjects = function() {
+    fallObjects();
+    fillObjectList();
+    return true;
+  };
+
+  fallObjects = function() {
     var i, len, object;
     for (i = 0, len = objectList.length; i < len; i++) {
       object = objectList[i];
       falls(object);
     }
-    console.log(queue.length);
+    return true;
+  };
+
+  fillObjectList = function() {
+    var index, object;
     if (queue.length > 0) {
       fallCount += 1;
       if (fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2) {
@@ -288,7 +300,8 @@ Define your functions here.
         object.side = getNewColumn() * columnWidth;
         object.dom.style.left = object.side + "px";
         objectList.push(object);
-        queue.splice(0);
+        index = queue.indexOf(object);
+        queue.splice(index, 1);
         fallCount = 0;
       }
     }
@@ -323,7 +336,6 @@ Define your functions here.
       player = players[i];
       if ((player.height + playerHeight) >= (object.height + tollerance) && player.side + tollerance <= object.side && (player.side + playerWidth) >= (object.side + objectWidth + tollerance)) {
         collect(player, object);
-        objectDown(object);
       }
     }
     return true;
@@ -332,9 +344,10 @@ Define your functions here.
   objectDown = function(object) {
     var index;
     object.height = heaven;
-    index = objectList.indexOf(object);
-    objectList.splice(object);
+    object.dom.style.bottom = heaven + "px";
     queue.push(object);
+    index = objectList.indexOf(object);
+    objectList.splice(index, 1);
     calcSide(object);
     return true;
   };
@@ -347,6 +360,7 @@ Define your functions here.
   collect = function(player, object) {
     player.score += object.value;
     player.scoreDom.innerHTML = player.score;
+    objectDown(object);
     return true;
   };
 

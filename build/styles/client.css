@@ -39,6 +39,7 @@ body {
 }
 .element {
   height: 100px;
+  width: auto;
   left: 0px;
   position: absolute;
   bottom: 1000px; 

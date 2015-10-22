@@ -102,7 +102,7 @@ heaven = viewportHeight
 object0 = 
   value: 10
   name: 'zero'
-  height: 1000
+  height: heaven
   velo: 5
   side: 10
   dom: document.getElementById('zero')
@@ -110,19 +110,20 @@ object0 =
 object1 = 
   value: 1
   name: 'one'
-  height: 1000
+  height: heaven
   velo: 5
   side: 40
   dom: document.getElementById('one')
 
-###object2 = 
+object2 = 
   value: 2
   name: 'two'
   height: heaven
   velo: gravity
-  dom: document.getElementById(name)
+  side: 40
+  dom: document.getElementById('two')
   
-objectBomb =
+###objectBomb =
   value: 0
   name: 'bomb'
   height: heaven
@@ -138,8 +139,8 @@ objectPower =
 
 objectWidth = parseInt(getComputedStyle(object1.dom).width)
 
-objectList = [object0]
-queue = [object1]
+objectList = []
+queue = [object0, object1, object2]
 
 fallCount = 0
 fallRound = 30
@@ -221,17 +222,25 @@ jump=(player)->
   true
   
 updateObjects=()->
+  fallObjects()
+  fillObjectList()
+  true
+  
+fallObjects=()->
   for object in objectList
     falls(object)
-  console.log queue.length
+  true
+      
+fillObjectList=()->
   if (queue.length > 0)
     fallCount += 1
     if ( fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2 )
-      object = queue[0] 
+      object = queue[0]
       object.side = getNewColumn() * columnWidth
       object.dom.style.left = object.side + "px"
       objectList.push object
-      queue.splice(0)
+      index = queue.indexOf(object)
+      queue.splice(index,1)
       fallCount = 0
   true
       
@@ -257,14 +266,14 @@ checkCollision=(object)->
     player.side + tollerance <= object.side && 
     (player.side + playerWidth) >= (object.side + objectWidth + tollerance))
       collect(player, object)
-      objectDown(object)
   true
   
 objectDown=(object)->
   object.height = heaven
-  index = objectList.indexOf(object)
-  objectList.splice(object)
+  object.dom.style.bottom = heaven + "px"
   queue.push object
+  index = objectList.indexOf(object)
+  objectList.splice(index,1)
   calcSide(object)
   true
   
@@ -275,6 +284,7 @@ calcSide=(object)->
 collect=(player, object)->
   player.score += object.value
   player.scoreDom.innerHTML = player.score
+  objectDown(object)
   true
 
 clear=()->
