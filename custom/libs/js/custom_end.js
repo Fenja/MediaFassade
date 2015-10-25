@@ -7,7 +7,7 @@ Define your functions here.
  */
 
 (function() {
-  var bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, emailhash1, emailhash2, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getNewColumn, getPlayer, gravity, heaven, jump, jumpHeight, lastColumn, object0, object1, object2, objectDown, objectList, objectWidth, player1, player2, playerHeight, playerWidth, players, queue, readyAndGo, running, tollerance, update, updateObjects, updatePlayer, updatePlayers, viewportHeight, viewportWidth;
+  var bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, emailhash1, emailhash2, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getNewColumn, getPlayer, gravity, heaven, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, player1, player2, playerHeight, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, running, tollerance, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, viewportHeight, viewportWidth;
 
   customLogger = function(s) {
     return console.log(s);
@@ -91,8 +91,10 @@ Define your functions here.
     right: false,
     jumps: false,
     falls: false,
+    speed: 1,
     height: bottom,
     side: 50,
+    influenceTime: 0,
     dom: document.getElementById('player0'),
     score: 0,
     scoreDom: document.getElementById('score1')
@@ -105,8 +107,10 @@ Define your functions here.
     right: false,
     jumps: false,
     falls: false,
+    speed: 1,
     height: bottom,
     side: 250,
+    influenceTime: 0,
     dom: document.getElementById('player1'),
     score: 0,
     scoreDom: document.getElementById('score2')
@@ -149,27 +153,29 @@ Define your functions here.
     dom: document.getElementById('two')
   };
 
+  objectBomb = {
+    value: 0,
+    name: 'bomb',
+    height: heaven,
+    velo: gravity,
+    side: 40,
+    dom: document.getElementById('bomb')
+  };
 
-  /*objectBomb =
-    value: 0
-    name: 'bomb'
-    height: heaven
-    velo: gravity
-    dom: document.getElementById(name)
-  
-  objectPower = 
-    value: 0
-    name: "power"
-    height: heaven
-    velo: gravity
-    dom: document.getElementById(name)
-   */
+  objectPower = {
+    value: 0,
+    name: 'power',
+    height: heaven,
+    velo: gravity,
+    side: 40,
+    dom: document.getElementById('power')
+  };
 
   objectWidth = parseInt(getComputedStyle(object1.dom).width);
 
   objectList = [];
 
-  queue = [object0, object1, object2];
+  queue = [object0, object1, object2, objectBomb, objectPower];
 
   fallCount = 0;
 
@@ -180,6 +186,14 @@ Define your functions here.
   columnWidth = viewportWidth / columns;
 
   lastColumn = 0;
+
+  bombTime = 50;
+
+  powerTime = 75;
+
+  bombSpeed = 0.5;
+
+  powerSpeed = 2;
 
 
   /* Own methods */
@@ -243,10 +257,11 @@ Define your functions here.
   };
 
   updatePlayer = function(player) {
+    updateInfluence(player);
     if (player.left && player.side > 0) {
-      player.side -= 10;
+      player.side -= 10 * player.speed;
     } else if (player.right && player.side + playerWidth < viewportWidth) {
-      player.side += 10;
+      player.side += 10 * player.speed;
     }
     if (player.jumps || player.falls) {
       jump(player);
@@ -254,6 +269,16 @@ Define your functions here.
       jump(player);
     }
     player.dom.style.left = player.side + "px";
+    return true;
+  };
+
+  updateInfluence = function(player) {
+    if (player.influence > 0) {
+      player.influence -= 1;
+    } else {
+      player.speed = 1;
+      console.log('speed: ' + player.speed);
+    }
     return true;
   };
 
@@ -265,9 +290,9 @@ Define your functions here.
       player.falls = true;
     }
     if (player.jumps) {
-      player.height += 10;
+      player.height += 10 * player.speed;
     } else if (player.falls) {
-      player.height -= 10;
+      player.height -= 10 * player.speed;
       if (player.height <= bottom) {
         player.falls = false;
       }
@@ -360,7 +385,21 @@ Define your functions here.
   collect = function(player, object) {
     player.score += object.value;
     player.scoreDom.innerHTML = player.score;
+    influencePlayer(player, object);
     objectDown(object);
+    return true;
+  };
+
+  influencePlayer = function(player, object) {
+    if (object.name === 'bomb') {
+      player.influence = bombTime;
+      player.speed = bombSpeed;
+      console.log('speed: ' + player.speed);
+    } else if (object === 'power') {
+      player.influence = powerTime;
+      player.speed = powerSpeed;
+      console.log('speed: ' + player.speed);
+    }
     return true;
   };
 

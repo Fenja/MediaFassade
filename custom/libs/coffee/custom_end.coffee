@@ -71,8 +71,10 @@ player1 = {
   right: false
   jumps: false
   falls: false
+  speed: 1
   height: bottom
   side: 50 #px
+  influenceTime: 0
   dom: document.getElementById('player0')
   score: 0
   scoreDom: document.getElementById('score1')
@@ -85,8 +87,10 @@ player2 = {
   right: false
   jumps: false
   falls: false
+  speed: 1
   height: bottom
   side: 250
+  influenceTime: 0
   dom: document.getElementById('player1')
   score: 0
   scoreDom: document.getElementById('score2')
@@ -123,31 +127,36 @@ object2 =
   side: 40
   dom: document.getElementById('two')
   
-###objectBomb =
+objectBomb =
   value: 0
   name: 'bomb'
   height: heaven
   velo: gravity
-  dom: document.getElementById(name)
+  side: 40
+  dom: document.getElementById('bomb')
 
 objectPower = 
   value: 0
-  name: "power"
+  name: 'power'
   height: heaven
   velo: gravity
-  dom: document.getElementById(name)###
+  side: 40
+  dom: document.getElementById('power')
 
 objectWidth = parseInt(getComputedStyle(object1.dom).width)
 
 objectList = []
-queue = [object0, object1, object2]
+queue = [object0, object1, object2, objectBomb, objectPower]
 
 fallCount = 0
 fallRound = 30
 columns = 12
 columnWidth = viewportWidth / columns
 lastColumn = 0
-
+bombTime = 50
+powerTime = 75
+bombSpeed = 0.5
+powerSpeed = 2
 
 ### Own methods ###
 getPlayer=(emailhash)->
@@ -193,15 +202,24 @@ updatePlayers=()->
   true
   
 updatePlayer=(player)->
+  updateInfluence(player)
   if ( player.left && player.side > 0 ) 
-    player.side -= 10
+    player.side -= 10 * player.speed
   else if ( player.right && player.side + playerWidth < viewportWidth )
-    player.side += 10
+    player.side += 10*player.speed
   if (player.jumps || player.falls)
     jump(player)
   else if ( player.up )
     jump(player)
   player.dom.style.left = player.side + "px"
+  true
+  
+updateInfluence=(player)->
+  if (player.influence > 0)
+    player.influence -= 1
+  else
+    player.speed = 1
+    console.log 'speed: ' + player.speed
   true
   
 jump=(player)->
@@ -212,9 +230,9 @@ jump=(player)->
     player.falls = true
 
   if (player.jumps)
-    player.height += 10
+    player.height += 10 * player.speed
   else if (player.falls)
-    player.height -= 10
+    player.height -= 10 * player.speed
     if (player.height <= bottom)
       player.falls = false   
       
@@ -284,9 +302,21 @@ calcSide=(object)->
 collect=(player, object)->
   player.score += object.value
   player.scoreDom.innerHTML = player.score
+  influencePlayer(player, object)
   objectDown(object)
   true
-
+  
+influencePlayer=(player, object)->
+  if (object.name == 'bomb')
+    player.influence = bombTime
+    player.speed = bombSpeed
+    console.log 'speed: ' + player.speed
+  else if (object == 'power')
+    player.influence = powerTime
+    player.speed = powerSpeed
+    console.log 'speed: ' + player.speed
+  true
+  
 clear=()->
   for player in players
     player.up = false
