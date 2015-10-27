@@ -75,7 +75,7 @@ player1 = {
   height: bottom
   side: 50 #px
   influenceTime: 0
-  dom: document.getElementById('player0')
+  dom: document.getElementById('player1')
   score: 0
   scoreDom: document.getElementById('score1')
   time: 0
@@ -92,7 +92,7 @@ player2 = {
   height: bottom
   side: 250
   influenceTime: 0
-  dom: document.getElementById('player1')
+  dom: document.getElementById('player0')
   score: 0
   scoreDom: document.getElementById('score2')
   time: 0
@@ -103,7 +103,8 @@ players = []
 unregisteredPlayer = [player2, player1]
 playerWidth = parseInt(getComputedStyle(player1.dom).width)
 playerHeight = parseInt(getComputedStyle(player1.dom).height)
-timeLimit = 30
+timeLimit = 60
+fadeLimit = 55
 
 gravity = 5
 heaven = viewportHeight
@@ -206,6 +207,8 @@ registerPlayer=(id)->
     players.push(player)
     playerMap[id] = player
     player.time = new Date().getTime() /1000
+    player.dom.style.opacity = 1.0
+    player.dom.style.zIndex = 5
   true
   
 
@@ -243,11 +246,14 @@ updateInfluence=(player)->
   true
   
 updateTime=(player, now)->
-  console.log "Time: "+ (now - player.time)+", limit"+timeLimit
   if (now - player.time) >= timeLimit
     #unregisteredPlayer.push(player)
     index = players.indexOf(player)
     players.splice(index)
+    player.dom.style.opacity = 0.3
+    player.dom.style.zIndex = 2
+  else if (now-player.time) >= fadeLimit
+    player.dom.style.opacity = 0.7    
   true
   
 jump=(player)->

@@ -27,15 +27,19 @@ body {
 .player {
   height: 100px;
 }
-#player0 {
+#player1 {
   left: 0px;
   position: absolute;
   bottom: 250px;
+  opacity: 0.3;
+  z-index: 2;
 }
-#player1 {
+#player2 {
   left: 250px;
   position: absolute;
   bottom: 250px;
+  opacity: 0.3;
+  z-index: 2;
 }
 .element {
   height: 100px;

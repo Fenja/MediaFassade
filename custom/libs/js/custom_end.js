@@ -7,7 +7,7 @@ Define your functions here.
  */
 
 (function() {
-  var bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, emailhash1, emailhash2, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getNewColumn, getPlayer, gravity, heaven, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, player1, player2, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, viewportHeight, viewportWidth;
+  var bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, emailhash1, emailhash2, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getNewColumn, getPlayer, gravity, heaven, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, player1, player2, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, viewportHeight, viewportWidth;
 
   customLogger = function(s) {
     return console.log(s);
@@ -95,7 +95,7 @@ Define your functions here.
     height: bottom,
     side: 50,
     influenceTime: 0,
-    dom: document.getElementById('player0'),
+    dom: document.getElementById('player1'),
     score: 0,
     scoreDom: document.getElementById('score1'),
     time: 0
@@ -112,7 +112,7 @@ Define your functions here.
     height: bottom,
     side: 250,
     influenceTime: 0,
-    dom: document.getElementById('player1'),
+    dom: document.getElementById('player0'),
     score: 0,
     scoreDom: document.getElementById('score2'),
     time: 0
@@ -128,7 +128,9 @@ Define your functions here.
 
   playerHeight = parseInt(getComputedStyle(player1.dom).height);
 
-  timeLimit = 30;
+  timeLimit = 60;
+
+  fadeLimit = 55;
 
   gravity = 5;
 
@@ -262,6 +264,8 @@ Define your functions here.
       players.push(player);
       playerMap[id] = player;
       player.time = new Date().getTime() / 1000;
+      player.dom.style.opacity = 1.0;
+      player.dom.style.zIndex = 5;
     }
     return true;
   };
@@ -311,10 +315,13 @@ Define your functions here.
 
   updateTime = function(player, now) {
     var index;
-    console.log("Time: " + (now - player.time) + ", limit" + timeLimit);
     if ((now - player.time) >= timeLimit) {
       index = players.indexOf(player);
       players.splice(index);
+      player.dom.style.opacity = 0.3;
+      player.dom.style.zIndex = 2;
+    } else if ((now - player.time) >= fadeLimit) {
+      player.dom.style.opacity = 0.7;
     }
     return true;
   };
