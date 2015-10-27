@@ -78,6 +78,7 @@ player1 = {
   dom: document.getElementById('player0')
   score: 0
   scoreDom: document.getElementById('score1')
+  time: 0
 }
 
 player2 = {
@@ -94,11 +95,15 @@ player2 = {
   dom: document.getElementById('player1')
   score: 0
   scoreDom: document.getElementById('score2')
+  time: 0
 }
 
-players = [player1, player2]
+playerMap = {}
+players = []
+unregisteredPlayer = [player2, player1]
 playerWidth = parseInt(getComputedStyle(player1.dom).width)
 playerHeight = parseInt(getComputedStyle(player1.dom).height)
+timeLimit = 30
 
 gravity = 5
 heaven = viewportHeight
@@ -159,35 +164,48 @@ bombSpeed = 0.5
 powerSpeed = 2
 
 ### Own methods ###
-getPlayer=(emailhash)->
-  if (emailhash == emailhash2)
-    player1
-  else
-    player2
+getPlayer=(id)->
+  playerMap[id]
   
 directionJoystick=(msg, player)->
-  player = getPlayer(msg.envelop.emailhash)
-  x = msg.x
-  y = msg.y
-  type = msg.type
-  if (y < 0.4 && y < x-0.1)
-    player.up = true
-  else if (x < 0.4 && x < y-0.1)
-    player.left = true
-  else if (x > 0.6 && x > y+0.1)
-    player.right = true
+  id = msg.envelop.emailhash
+  player = getPlayer(id)
+  if (player?)
+    x = msg.x
+    y = msg.y
+    type = msg.type
+    if (y < 0.4 && y < x-0.1)
+      player.up = true
+    else if (x < 0.4 && x < y-0.1)
+      player.left = true
+    else if (x > 0.6 && x > y+0.1)
+      player.right = true
+  else
+    registerPlayer(id)
   true
   
 directionKey=(msg, player)->
-  player = getPlayer(msg.envelop.emailhash)
-  keys = msg.keys
-  for code in keys
-    if (code == 37)
-      player.left = true
-    if (code == 38)
-      player.up = true
-    if (code == 39)
-      player.right = true
+  id = msg.envelop.emailhash
+  player = getPlayer(id)
+  if (player?)
+    keys = msg.keys
+    for code in keys
+      if (code == 37)
+        player.left = true
+      if (code == 38)
+        player.up = true
+      if (code == 39)
+        player.right = true
+  else
+    registerPlayer(id)
+  true
+  
+registerPlayer=(id)->
+  if unregisteredPlayer.length > 0
+    player = unregisteredPlayer.pop()
+    players.push(player)
+    playerMap[id] = player
+    player.time = new Date().getTime() /1000
   true
   
 
@@ -197,8 +215,10 @@ update=()->
   checkCollisions()
 
 updatePlayers=()->
+  now = new Date().getTime() /1000
   for player in players
     updatePlayer(player)
+    updateTime(player, now)
   true
   
 updatePlayer=(player)->
@@ -220,6 +240,14 @@ updateInfluence=(player)->
   else
     player.speed = 1
     console.log 'speed: ' + player.speed
+  true
+  
+updateTime=(player, now)->
+  console.log "Time: "+ (now - player.time)+", limit"+timeLimit
+  if (now - player.time) >= timeLimit
+    #unregisteredPlayer.push(player)
+    index = players.indexOf(player)
+    players.splice(index)
   true
   
 jump=(player)->

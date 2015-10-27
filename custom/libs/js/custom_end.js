@@ -7,7 +7,7 @@ Define your functions here.
  */
 
 (function() {
-  var bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, emailhash1, emailhash2, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getNewColumn, getPlayer, gravity, heaven, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, player1, player2, playerHeight, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, running, tollerance, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, viewportHeight, viewportWidth;
+  var bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, emailhash1, emailhash2, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getNewColumn, getPlayer, gravity, heaven, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, player1, player2, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, viewportHeight, viewportWidth;
 
   customLogger = function(s) {
     return console.log(s);
@@ -97,7 +97,8 @@ Define your functions here.
     influenceTime: 0,
     dom: document.getElementById('player0'),
     score: 0,
-    scoreDom: document.getElementById('score1')
+    scoreDom: document.getElementById('score1'),
+    time: 0
   };
 
   player2 = {
@@ -113,14 +114,21 @@ Define your functions here.
     influenceTime: 0,
     dom: document.getElementById('player1'),
     score: 0,
-    scoreDom: document.getElementById('score2')
+    scoreDom: document.getElementById('score2'),
+    time: 0
   };
 
-  players = [player1, player2];
+  playerMap = {};
+
+  players = [];
+
+  unregisteredPlayer = [player2, player1];
 
   playerWidth = parseInt(getComputedStyle(player1.dom).width);
 
   playerHeight = parseInt(getComputedStyle(player1.dom).height);
+
+  timeLimit = 30;
 
   gravity = 5;
 
@@ -198,45 +206,62 @@ Define your functions here.
 
   /* Own methods */
 
-  getPlayer = function(emailhash) {
-    if (emailhash === emailhash2) {
-      return player1;
-    } else {
-      return player2;
-    }
+  getPlayer = function(id) {
+    return playerMap[id];
   };
 
   directionJoystick = function(msg, player) {
-    var type, x, y;
-    player = getPlayer(msg.envelop.emailhash);
-    x = msg.x;
-    y = msg.y;
-    type = msg.type;
-    if (y < 0.4 && y < x - 0.1) {
-      player.up = true;
-    } else if (x < 0.4 && x < y - 0.1) {
-      player.left = true;
-    } else if (x > 0.6 && x > y + 0.1) {
-      player.right = true;
+    var id, type, x, y;
+    id = msg.envelop.emailhash;
+    player = getPlayer(id);
+    if ((player != null)) {
+      x = msg.x;
+      y = msg.y;
+      type = msg.type;
+      if (y < 0.4 && y < x - 0.1) {
+        player.up = true;
+      } else if (x < 0.4 && x < y - 0.1) {
+        player.left = true;
+      } else if (x > 0.6 && x > y + 0.1) {
+        player.right = true;
+      }
+    } else {
+      registerPlayer(id);
     }
     return true;
   };
 
   directionKey = function(msg, player) {
-    var code, i, keys, len;
-    player = getPlayer(msg.envelop.emailhash);
-    keys = msg.keys;
-    for (i = 0, len = keys.length; i < len; i++) {
-      code = keys[i];
-      if (code === 37) {
-        player.left = true;
+    var code, i, id, keys, len;
+    id = msg.envelop.emailhash;
+    player = getPlayer(id);
+    if ((player != null)) {
+      keys = msg.keys;
+      for (i = 0, len = keys.length; i < len; i++) {
+        code = keys[i];
+        if (code === 37) {
+          player.left = true;
+        }
+        if (code === 38) {
+          player.up = true;
+        }
+        if (code === 39) {
+          player.right = true;
+        }
       }
-      if (code === 38) {
-        player.up = true;
-      }
-      if (code === 39) {
-        player.right = true;
-      }
+    } else {
+      registerPlayer(id);
+    }
+    return true;
+  };
+
+  registerPlayer = function(id) {
+    var player;
+    if (unregisteredPlayer.length > 0) {
+      player = unregisteredPlayer.pop();
+      players.push(player);
+      playerMap[id] = player;
+      player.time = new Date().getTime() / 1000;
     }
     return true;
   };
@@ -248,10 +273,12 @@ Define your functions here.
   };
 
   updatePlayers = function() {
-    var i, len, player;
+    var i, len, now, player;
+    now = new Date().getTime() / 1000;
     for (i = 0, len = players.length; i < len; i++) {
       player = players[i];
       updatePlayer(player);
+      updateTime(player, now);
     }
     return true;
   };
@@ -278,6 +305,16 @@ Define your functions here.
     } else {
       player.speed = 1;
       console.log('speed: ' + player.speed);
+    }
+    return true;
+  };
+
+  updateTime = function(player, now) {
+    var index;
+    console.log("Time: " + (now - player.time) + ", limit" + timeLimit);
+    if ((now - player.time) >= timeLimit) {
+      index = players.indexOf(player);
+      players.splice(index);
     }
     return true;
   };
