@@ -33,9 +33,14 @@ draggable_joystick_handler=(msg)->
   directionJoystick(msg)
   console.log 'Do something with msg: '+JSON.stringify msg
   
+  # handler for events of draggable_positionsensor #
+draggable_positionsensor_handler=(msg)->
+  console.log 'Do something with msg: '+JSON.stringify msg
+  
 ### Register your handler ###
 stk.framework.register_handler 'draggable_joystick', draggable_joystick_handler
 stk.framework.register_handler 'draggable_keylistener', draggable_keylistener_handler
+stk.framework.register_handler 'draggable_positionsensor', draggable_positionsensor_handler
 
 ###
 Doing "onLoad"-Stuff
@@ -204,13 +209,24 @@ directionKey=(msg, player)->
 registerPlayer=(id)->
   if unregisteredPlayer.length > 0
     player = unregisteredPlayer.pop()
-    players.push(player)
+    activatePlayer(player)
     playerMap[id] = player
-    player.time = new Date().getTime() /1000
-    player.dom.style.opacity = 1.0
-    player.dom.style.zIndex = 5
+    player.dom.style.left = 10 +"px"
   true
   
+activatePlayer=(player)->
+  players.push(player)
+  player.time = new Date().getTime() /1000
+  player.dom.style.opacity = 1.0
+  player.dom.style.zIndex = 5
+  true
+  
+deactivatePlayer=(player)->
+  index = players.indexOf(player)
+  players.splice(index)
+  player.dom.style.opacity = 0.3
+  player.dom.style.zIndex = 2
+  true
 
 update=()->
   updatePlayers()
@@ -247,11 +263,7 @@ updateInfluence=(player)->
   
 updateTime=(player, now)->
   if (now - player.time) >= timeLimit
-    #unregisteredPlayer.push(player)
-    index = players.indexOf(player)
-    players.splice(index)
-    player.dom.style.opacity = 0.3
-    player.dom.style.zIndex = 2
+    deactivatePlayer(player)
   else if (now-player.time) >= fadeLimit
     player.dom.style.opacity = 0.7    
   true
@@ -357,3 +369,60 @@ clear=()->
     player.left = false
     player.right = false
   true
+  
+  ###
+stk.framework
+
+stk.framework.timer [TIME_IN_MS as int, FUNCTION_NAME]
+every TIME_IN_MS milli seconds repeat FUNCTION_NAME 
+
+stk.framework.delay TIME_IN_MS, FUNCTION_NAME
+after TIME_IN_MS milli seconds execute FUNCTION_NAME once
+
+stk.framework.isVibrationSupported
+returns [true | false]
+
+stk.framework.addVibratePattern pattern
+pattern={id:STRING,timestamp:[timestamp|0],list:[PAUSE_MS,VIBRATE_MS,PAUSE_MS,VIBRATE_MS,...,PAUSE_MS,VIBRATE_MS]}
+id: identifier of a pattern
+timstamp: starttime as local timestamp.
+          if the timestamp lays in the past list will be truncated by the difference of timestamp to local time
+          if the timestamp till the time of the last ms of the last VIBRATE_MS lays bevore the local time the pattern will be dropped
+          if timestamp == 0 the pattern will be started immediately
+          if a new pattern starts while another pattern runs, the runnig pattern will be played and the part of new pattern that lasts longer than the playing pattern will be played subsequent to end of the running pattern. No pattern mixing occurs 
+Example
+pattern={id:"whge",timestamp:new Date().getTime()+2200,list:[500,1000,200,300]}
+
+stk.framework.removeVibratePattern id
+removes a pattern from scheduling
+if the pattern is playing it will be stopped
+succeeding pattern will be left unchanged, notably beforehand truncated patten will NOT be brought to their original state, there will be a pause in the amount of time the removed pattern would have been played
+
+###
+
+#stk.framework.addVibratePattern {id:"start1",timestamp:new Date().getTime()+200,list:[0,100,50,100]}
+
+#stk.framework.addVibratePattern {id:"start2",timestamp:new Date().getTime()+3000,list:[0,12345]}
+
+###
+you may get your own cliendID via stk.framework.getClientID()
+###
+#console.log "My clientID:", stk.framework.getClientID()
+
+###
+With the 'custommessage' type  you can send your custom messages to all clients in your group
+The 'custommessage' type is also capable to send messages to one ore more specific clients
+If you provide an empty list to the sendTo attribute (or omit the sendTo attribute) your message will be broadcasted to any client in your group.
+Otherwise, if you declare one or more client ids in the sendTo list, your message will be send only to the listed clients.
+
+###
+#stk.framework.sendMessage('custommessage',{type:'custommessage',sendTo:[stk.framework.getClientID()],txt:"This message goes only to myself "+stk.framework.getClientID()})
+#
+#stk.framework.sendMessage('custommessage',{type:'addVibratePattern',sendTo:[stk.framework.getClientID()],pattern:{id:"viacustommessage",timestamp:new Date().getTime()+2000,list:[0,2000,500,2000]}})
+
+###
+Doing "onLoad"-Stuff
+If you want a function be called after the last script (it is this script - custom_end.coffee/custom_end.js) is loaded, add your code here.
+If it should be executed after the "loading..." animation ends, add a delay call of 1200 ms
+
+###

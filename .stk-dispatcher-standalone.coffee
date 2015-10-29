@@ -9,6 +9,42 @@ url = require("url")
 #stk_network=require('./modules/stk_network_n.js')()
 #stk_network.showInterfaces()      
 
+users={}
+clients={}
+
+addClient = (id,socket) ->
+  clients[id]={id:id,socket:socket}
+  
+getClientsList=()->
+  Object.keys(clients)
+
+addUser = (emailhash,socket) ->
+  if emailhash!=undefined
+    if users[emailhash] == undefined
+      users[emailhash]=[socket]
+    else
+      if users[emailhash].indexOf(socket)<0
+        users[emailhash].push socket
+      
+removeUser = (emailhash) ->
+  if users[emailhash] != undefined
+    delete users[emailhash]
+    
+showUsers=()->
+  for emailhash, sockets in users
+    console.log emailhash, ":", sockets
+    
+getUsersList=()->
+  Object.keys(users)
+    
+removeSocket=(socket)->
+  for emailhash, sockets in users
+    sockets.splice(sockets.indexOf(socket),1)
+      
+sendToUser=(id,msg) ->
+  for socket in users[id]
+    socket.emit('receivedMessage', msg)
+
 port=3000
 http.listen port, () -> console.log "listening on *:#{port}"
 
@@ -49,11 +85,39 @@ app.get('/*', (req, res)->
 
 ## Socket connection
 
-ioEmit=(msgType,msg)->
+ioEmit=(socket,msgType,msg)->
   if msg.envelop!=undefined && msg.envelop.emailhash!=undefined
+    msg.envelop.socket={}
+    msg.envelop.socket.id=socket.conn.id
+    msg.envelop.socket.remoteaddress=socket.conn.remoteAddress
+    #msg.envelop.session={key:req.session.key}
     io.sockets.in(msg.envelop.emailhash).emit(msgType, msg)
-  else
+  else if msg.envelop!=undefined
+    msg.envelop.socket={}
+    msg.envelop.socket.id=socket.conn.id
+    msg.envelop.socket.remoteaddress=socket.conn.remoteAddress
+    #msg.envelop.session={key:req.session.key}
     io.emit msgType, msg
+  else
+    msg.envelop={}
+    msg.envelop.socket={}
+    msg.envelop.socket.id=socket.conn.id
+    msg.envelop.socket.remoteaddress=socket.conn.remoteAddress
+    #msg.envelop.session={key:req.session.key}
+    io.emit msgType, msg
+    
+ioEmitToClients=(toClients,msgType,msg)->
+  for c in toClients
+    if clients[c]!=undefined
+      if msg.envelop==undefined
+        msg.envelop={}
+      msg.envelop.socket={}
+      msg.envelop.socket.id=clients[c].socket.conn.id
+      msg.envelop.socket.remoteaddress=clients[c].socket.conn.remoteAddress
+      #msg.envelop.session={key:req.session.key}
+      console.log "Do sending", msgType, msg
+      
+      (clients[c].socket).emit(msgType, msg)
 
 io.on('connection', (socket) ->
   console.log 'a user connected'
@@ -61,30 +125,65 @@ io.on('connection', (socket) ->
   socket.on 'join', (msg) ->
     socket.join msg.emailhash
     console.log "JOINING "+msg.emailhash    
-    
+    addUser msg.emailhash, socket
+    ioEmit socket,'users', {users:getUsersList()}
+
   socket.on 'disconnect', () ->
     console.log 'user disconnected'
-  
+    removeSocket socket
+    ioEmit socket,'users', {users:getUsersList()}
+    
+  socket.on 'join_client', (msg) ->
+    console.log "JOINING Client", msg.clientid
+    addClient msg.clientid, socket
+    ioEmit socket,'clients', {clients:getClientsList()}  
+    
+  socket.on 'custommessage', (msg) ->
+    console.log "custommessage", msg
+    if msg.type==undefined then msg.type='custommessage'
+    if msg.sendTo==undefined || msg.sendTo.length==0
+      console.log "ioEmit", msg.sendTo
+      ioEmit socket,'custommessage', msg  
+    else
+      console.log "ioEmitToClients"
+      ioEmitToClients msg.sendTo,'custommessage', msg 
+
   socket.on 'touchmove', (msg) ->
-    ioEmit 'touchmove', msg
+    ioEmit socket,'touchmove', msg
     console.log 'touchmove', msg
     
   socket.on 'keyevent', (msg) ->
-    ioEmit 'keyevent', msg
+    ioEmit socket,'keyevent', msg
     console.log 'keyevent', msg
+    
+  socket.on 'vibration.isSupported', (msg) ->
+    ioEmit socket,'vibration.isSupported', msg
+    console.log 'vibration.isSupported', msg
+    
+  socket.on 'vibration.support', (msg) ->
+    ioEmit socket,'vibration.support', msg
+    console.log 'vibration.support', msg
+
+  socket.on 'vibration.addVibratePattern', (msg) ->
+    ioEmit socket,'vibration.addVibratePattern', msg
+    console.log 'vibration.addVibratePattern', msg
+
+  socket.on 'vibration.removeVibratePattern', (msg) ->
+    ioEmit socket,'vibration.removeVibratePattern', msg
+    console.log 'vibration.removeVibratePattern', msg
      
   socket.on 'deviceorientation', (msg) ->
-    ioEmit 'deviceorientation', msg
+    ioEmit socket,'deviceorientation', msg
     console.log 'deviceorientation', msg
     
   socket.on 'reset', (msg) ->
-    ioEmit 'reset', msg
+    ioEmit socket,'reset', msg
     console.log 'reset', msg
   
   requestqrscancode={}
   
   socket.on 'qrdecode', (msg) ->
-    ioEmit 'qrdecode', msg
+    ioEmit socket,'qrdecode', msg
     console.log 'qrdecode', msg
     console.log JSON.stringify(requestqrscancode )
     if requestqrscancode[msg.text]!=undefined # && requestqrscancode[msg.text].timestamp!=undefined
@@ -92,12 +191,12 @@ io.on('connection', (socket) ->
     
   socket.on 'requestqrscan', (msg) ->
     requestqrscancode[msg.text]={text:msg.text,timestamp:(new Date()).getTime()}
-    ioEmit 'requestqrscan', msg
+    ioEmit socket,'requestqrscan', msg
     console.log 'requestqrscan', msg , JSON.stringify(requestqrscancode )
     
   socket.on 'getkey', (msg) ->
     k=getKey(4)
-    ioEmit 'key', {key:k}
+    ioEmit socket,'key', {key:k}
     console.log 'new key: '+k
           
   socket.error (msg)->
