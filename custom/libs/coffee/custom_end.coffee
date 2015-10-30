@@ -97,9 +97,77 @@ player2 = {
   height: bottom
   side: 250
   influenceTime: 0
-  dom: document.getElementById('player0')
+  dom: document.getElementById('player2')
   score: 0
   scoreDom: document.getElementById('score2')
+  time: 0
+}
+
+player3 = {
+  name: "player3"
+  up: false
+  left: false
+  right: false
+  jumps: false
+  falls: false
+  speed: 1
+  height: bottom
+  side: 250
+  influenceTime: 0
+  dom: document.getElementById('player3')
+  score: 0
+  scoreDom: document.getElementById('score3')
+  time: 0
+}
+
+player4 = {
+  name: "player4"
+  up: false
+  left: false
+  right: false
+  jumps: false
+  falls: false
+  speed: 1
+  height: bottom
+  side: 250
+  influenceTime: 0
+  dom: document.getElementById('player4')
+  score: 0
+  scoreDom: document.getElementById('score4')
+  time: 0
+}
+
+player5 = {
+  name: "player5"
+  up: false
+  left: false
+  right: false
+  jumps: false
+  falls: false
+  speed: 1
+  height: bottom
+  side: 250
+  influenceTime: 0
+  dom: document.getElementById('player5')
+  score: 0
+  scoreDom: document.getElementById('score5')
+  time: 0
+}
+
+player6 = {
+  name: "player6"
+  up: false
+  left: false
+  right: false
+  jumps: false
+  falls: false
+  speed: 1
+  height: bottom
+  side: 250
+  influenceTime: 0
+  dom: document.getElementById('player6')
+  score: 0
+  scoreDom: document.getElementById('score6')
   time: 0
 }
 
@@ -115,7 +183,7 @@ gravity = 5
 heaven = viewportHeight
 
 object0 = 
-  value: 10
+  value: 0
   name: 'zero'
   height: heaven
   velo: 5
