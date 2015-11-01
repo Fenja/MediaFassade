@@ -7,7 +7,7 @@ Define your functions here.
  */
 
 (function() {
-  var activatePlayer, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, deactivatePlayer, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, draggable_positionsensor_handler, emailhash1, emailhash2, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getNewColumn, getPlayer, gravity, heaven, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, player1, player2, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, viewportHeight, viewportWidth;
+  var activatePlayer, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, deactivatePlayer, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, draggable_positionsensor_handler, emailhash1, emailhash2, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getNewColumn, getPlayer, gravity, heaven, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, player1, player2, player3, player4, player5, player6, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, viewportHeight, viewportWidth;
 
   customLogger = function(s) {
     return console.log(s);
@@ -118,9 +118,77 @@ Define your functions here.
     height: bottom,
     side: 250,
     influenceTime: 0,
-    dom: document.getElementById('player0'),
+    dom: document.getElementById('player2'),
     score: 0,
     scoreDom: document.getElementById('score2'),
+    time: 0
+  };
+
+  player3 = {
+    name: "player3",
+    up: false,
+    left: false,
+    right: false,
+    jumps: false,
+    falls: false,
+    speed: 1,
+    height: bottom,
+    side: 250,
+    influenceTime: 0,
+    dom: document.getElementById('player3'),
+    score: 0,
+    scoreDom: document.getElementById('score3'),
+    time: 0
+  };
+
+  player4 = {
+    name: "player4",
+    up: false,
+    left: false,
+    right: false,
+    jumps: false,
+    falls: false,
+    speed: 1,
+    height: bottom,
+    side: 250,
+    influenceTime: 0,
+    dom: document.getElementById('player4'),
+    score: 0,
+    scoreDom: document.getElementById('score4'),
+    time: 0
+  };
+
+  player5 = {
+    name: "player5",
+    up: false,
+    left: false,
+    right: false,
+    jumps: false,
+    falls: false,
+    speed: 1,
+    height: bottom,
+    side: 250,
+    influenceTime: 0,
+    dom: document.getElementById('player5'),
+    score: 0,
+    scoreDom: document.getElementById('score5'),
+    time: 0
+  };
+
+  player6 = {
+    name: "player6",
+    up: false,
+    left: false,
+    right: false,
+    jumps: false,
+    falls: false,
+    speed: 1,
+    height: bottom,
+    side: 250,
+    influenceTime: 0,
+    dom: document.getElementById('player6'),
+    score: 0,
+    scoreDom: document.getElementById('score6'),
     time: 0
   };
 
@@ -143,7 +211,7 @@ Define your functions here.
   heaven = viewportHeight;
 
   object0 = {
-    value: 10,
+    value: 0,
     name: 'zero',
     height: heaven,
     velo: 5,
@@ -309,6 +377,7 @@ Define your functions here.
   };
 
   updatePlayer = function(player) {
+    console.log("update player: " + player);
     updateInfluence(player);
     if (player.left && player.side > 0) {
       player.side -= 10 * player.speed;

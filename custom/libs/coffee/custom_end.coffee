@@ -309,6 +309,7 @@ updatePlayers=()->
   true
   
 updatePlayer=(player)->
+  console.log "update player: " + player
   updateInfluence(player)
   if ( player.left && player.side > 0 ) 
     player.side -= 10 * player.speed
