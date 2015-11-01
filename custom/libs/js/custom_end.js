@@ -86,7 +86,7 @@ Define your functions here.
 
   tollerance = 5;
 
-  bottom = 250;
+  bottom = 0;
 
   jumpHeight = 300;
 

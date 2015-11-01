@@ -25,16 +25,17 @@ body {
   position: relative;
 }
 .player {
-  height: 100px;
+  height: auto;
+  widht: 10%;
   left: -250px;
   position: absolute;
-  bottom: 250px;
+  bottom: 0px;
   opacity: 0.3;
   z-index: 2;
 }
 .element {
-  height: 100px;
-  width: auto;
+  height: auto;
+  width: 8%;
   left: 0px;
   position: absolute;
   bottom: 1000px; 

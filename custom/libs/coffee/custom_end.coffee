@@ -66,7 +66,7 @@ fps = 50
 running = true
 tollerance = 5
 
-bottom = 250 #px
+bottom = 0 #px
 jumpHeight = 300
 
 player1 = {

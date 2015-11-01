@@ -176,6 +176,10 @@ io.on('connection', (socket) ->
     ioEmit socket,'deviceorientation', msg
     console.log 'deviceorientation', msg
     
+  socket.on 'deviceacceleration', (msg) ->
+    ioEmit socket,'deviceacceleration', msg
+    console.log 'deviceacceleration', msg
+    
   socket.on 'reset', (msg) ->
     ioEmit socket,'reset', msg
     console.log 'reset', msg

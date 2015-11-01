@@ -1,5 +1,5 @@
 var cachedModules=[];
-cachedModules[7720]={exports:{}};
+cachedModules[5593]={exports:{}};
 (function(module,exports) {var socket;
 
 socket = io();
@@ -14,9 +14,9 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[7720],cachedModules[7720].exports);
-cachedModules[5404]={exports:{}};
-(function(module,exports) {var configuration, headers, onError, req;
+}).call(this,cachedModules[5593],cachedModules[5593].exports);
+cachedModules[6611]={exports:{}};
+(function(module,exports) {var clientID, configuration, headers, onError, req;
 
 headers = "";
 
@@ -47,6 +47,17 @@ onError = function(err) {
     return console.log(err);
   }
 };
+
+function relPathToAbs(sRelPath){
+  var nUpLn, sDir = "", sPath = location.pathname.replace(/[^\/]*$/, sRelPath.replace(/(\/|^)(?:\.?\/+)+/g, "$1"));
+  for (var nEnd, nStart = 0; nEnd = sPath.indexOf("/../", nStart), nEnd > -1; nStart = nEnd + nUpLn) {
+    nUpLn = /^\/(?:\.\.\/)*/.exec(sPath.slice(nEnd))[0].length;
+    sDir = (sDir + sPath.substring(nStart, nEnd)).replace(new RegExp("(?:\\\/+[^\\\/]*){0," + ((nUpLn - 1) / 3) + "}$"), "/");
+  }
+  return sDir + sPath.substr(nStart);
+};
+
+clientID = null;
 
 module.exports = function() {
   return {
@@ -124,19 +135,31 @@ module.exports = function() {
         state: "not found"
       };
     },
-    setCookie: function(k, v, u) {
+    setItem: function(k, v, u, p, d, s) {
       if (u == null) {
         u = Infinity;
       }
       console.log("Remove " + k);
       docCookies.removeItem(k);
       console.log("Set " + k + " to " + v);
-      return docCookies.setItem(k, v, u);
+      return docCookies.setItem(k, v, u, p, d, s);
+    },
+    getItem: function(k) {
+      return docCookies.getItem(k);
+    },
+    relPathToAbs: function(sRelPath) {
+      return relPathToAbs(sRelPath);
+    },
+    getClientID: function(realm) {
+      return clientID;
+    },
+    setClientID: function(id, realm) {
+      return clientID = id;
     }
   };
 };
-}).call(this,cachedModules[5404],cachedModules[5404].exports);
-cachedModules[3556]={exports:{}};
+}).call(this,cachedModules[6611],cachedModules[6611].exports);
+cachedModules[1579]={exports:{}};
 (function(module,exports) {/*
  * JavaScript MD5 1.0.1
  * https://github.com/blueimp/JavaScript-MD5
@@ -411,15 +434,15 @@ cachedModules[3556]={exports:{}};
         $.md5 = md5;
     }
 }(this));
-}).call(this,cachedModules[3556],cachedModules[3556].exports);
-cachedModules[6726]={exports:{}};
+}).call(this,cachedModules[1579],cachedModules[1579].exports);
+cachedModules[7743]={exports:{}};
 (function(module,exports) {var callback, dialogLogin, formLogin, loginUser, stk_config, stk_socket;
 
-cachedModules[3556].exports;
+cachedModules[1579].exports;
 
-stk_config = cachedModules[5404].exports;
+stk_config = cachedModules[6611].exports;
 
-stk_socket = cachedModules[7720].exports;
+stk_socket = cachedModules[5593].exports;
 
 callback = function(ret) {
   if (ret.state) {
@@ -436,8 +459,8 @@ loginUser = function() {
   name = $("#login-form #name").val();
   email = $("#login-form #email").val();
   emailhash = window.md5(email.toLowerCase().trim());
-  stk_config().setCookie('emailhash', emailhash);
-  stk_config().setCookie('email', email);
+  stk_config().setItem('emailhash', emailhash);
+  stk_config().setItem('email', email);
   stk_config().getGravatar(emailhash, callback);
   return true;
 };
@@ -472,8 +495,8 @@ module.exports = function() {
     prepare: prepare
   };
 };
-}).call(this,cachedModules[6726],cachedModules[6726].exports);
-cachedModules[1321]={exports:{}};
+}).call(this,cachedModules[7743],cachedModules[7743].exports);
+cachedModules[1253]={exports:{}};
 (function(module,exports) {module.exports = function() {
   return {
     delay: function(ms, fn) {
@@ -481,11 +504,28 @@ cachedModules[1321]={exports:{}};
     },
     timer: function(ms, fn) {
       return setInterval(fn, ms);
+    },
+    timestamp: function() {
+      if (window.performance.now) {
+        return {
+          hp: window.performance.now(),
+          ts: new Date().getTime()
+        };
+      } else if (window.performance.webkitNow) {
+        return {
+          hp: window.performance.webkitNow(),
+          ts: new Date().getTime()
+        };
+      } else {
+        return {
+          ts: new Date().getTime()
+        };
+      }
     }
   };
 };
-}).call(this,cachedModules[1321],cachedModules[1321].exports);
-cachedModules[9675]={exports:{}};
+}).call(this,cachedModules[1253],cachedModules[1253].exports);
+cachedModules[7989]={exports:{}};
 (function(module,exports) {module.exports = function() {
   return {
     requireFullscreen: function(callback) {
@@ -570,20 +610,29 @@ cachedModules[9675]={exports:{}};
     }
   };
 };
-}).call(this,cachedModules[9675],cachedModules[9675].exports);var stk;
+}).call(this,cachedModules[7989],cachedModules[7989].exports);var stk;
 
 stk = {};
 
 $(function() {
-  var a, actualObject, addObject, decider, drawObject, emailhash, envelop, eventhandler, fetchFFF, ff, ffcontainer, fff, getStageDimensions, injectObject, injectObjects, is_dragging, justPrintOut, key, keys, keysPressed, keysReleased, load, objects, sendKeys, setFramesOnOff, setKey, socket, socketEmit, stage, stk_common, stk_config, stk_fullscreen, stk_login, stk_socket, up, updateJoystick;
+
+  /* {separatestart:['view']} */
+  var actualObject, addObject, addVibratePattern_handler, clientID, clientType, decider, drawObject, emailhash, envelop, eventhandler, fetchFFF, ff, ffcontainer, fff, getKey, getStageDimensions, injectObject, injectObjects, is_dragging, justPrintOut, key, keys, keysPressed, keysReleased, load, nothing_to_do, objects, realm, runAnimation, sendKeys, setFramesOnOff, setKey, socket, socketEmit, stage, stk_common, stk_config, stk_fullscreen, stk_login, stk_socket, stk_vibrate, up, updateJoystick;
+  clientType = "control";
+
+  /* {separateend:['view']} */
+
+  
+  console.log("My clientType is: ", clientType);
   up = 0;
   decider = 0;
   is_dragging = false;
-  stk_socket = cachedModules[7720].exports;
+  stk_socket = cachedModules[5593].exports;
   socket = stk_socket().getSocket();
-  stk_config = cachedModules[5404].exports;
-  stk_login = cachedModules[6726].exports;
-  stk_common = cachedModules[1321].exports;
+  stk_config = cachedModules[6611].exports;
+  stk_login = cachedModules[7743].exports;
+  stk_common = cachedModules[1253].exports;
+//  stk_vibrate = require("../modules/stk_vibrate_b.js");
   ff = stk_config().parseGetparameter("formfactor");
   fff = 1;
   fetchFFF = function() {
@@ -593,8 +642,16 @@ $(function() {
       return fff = screen.height / screen.width;
     }
   };
-  stk_fullscreen = cachedModules[9675].exports;
+  stk_fullscreen = cachedModules[7989].exports;
   stk_fullscreen().requireFullscreen(fetchFFF);
+  envelop = {
+    state: void 0
+  };
+  socketEmit = function(msgType, msg) {
+    msg.envelop = envelop;
+    msg.envelop.timestamp = stk_common().timestamp();
+    return stk_socket().emit(msgType, msg);
+  };
   key = void 0;
   keys = [];
   keysPressed = function(e) {
@@ -710,6 +767,7 @@ $(function() {
     switch (object.type) {
       case "draggable_background":
       case "draggable_image":
+      case "draggable_iframe":
         thisObject.url = object.url;
     }
     console.log("CREATED:" + JSON.stringify(thisObject));
@@ -744,12 +802,8 @@ $(function() {
   console.log(stage);
   actualObject = null;
   objects = {};
-  socketEmit = function(msgType, msg) {
-    msg.envelop = envelop;
-    return stk_socket().emit(msgType, msg);
-  };
-  emailhash = docCookies.getItem('emailhash');
-  if (emailhash !== null) {
+  emailhash = stk_config().getItem('emailhash');
+  if (emailhash !== void 0 && emailhash !== null) {
     socketEmit('join', {
       emailhash: emailhash
     });
@@ -758,12 +812,37 @@ $(function() {
     };
   } else {
     if (stk_config().parseGetparameter("embeded") !== "true") {
-      a = a;
+      nothing_to_do = "nothing_to_do";
     }
     envelop = {
       emailhash: void 0
     };
   }
+  realm = "../../../";
+  getKey = function(l) {
+    var k, num, s, _i;
+    if (l == null) {
+      l = 8;
+    }
+    s = "acdefghknprstvwxyz23459";
+    k = "";
+    while (k === "") {
+      for (num = _i = 1; 1 <= l ? _i <= l : _i >= l; num = 1 <= l ? ++_i : --_i) {
+        k += s[Math.floor(Math.random() * s.length)];
+      }
+    }
+    return k;
+  };
+  clientID = stk_config().getItem('clientid');
+  if (clientID === null) {
+    clientID = getKey(8);
+    stk_config().setItem('clientid', clientID, Infinity, stk_config().relPathToAbs(realm));
+  }
+  envelop.clientid = clientID;
+  stk_config().setClientID(clientID);
+  socketEmit('join_client', {
+    clientid: clientID
+  });
   $(ffcontainer).droppable({
     drop: function(event, ui) {
       var id, lastX, lastY, m, offset, type;
@@ -808,6 +887,31 @@ $(function() {
   justPrintOut = function(msg) {
     return console.log("justPrintOut: " + JSON.stringify(msg));
   };
+  getKey = function(l) {
+    var k, num, s, _i;
+    if (l == null) {
+      l = 8;
+    }
+    s = "acdefghknprstvwxyz23459";
+    k = "";
+    while (k === "") {
+      for (num = _i = 1; 1 <= l ? _i <= l : _i >= l; num = 1 <= l ? ++_i : --_i) {
+        k += s[Math.floor(Math.random() * s.length)];
+      }
+    }
+    return k;
+  };
+  clientID = stk_config().getItem('clientid');
+  if (clientID === null) {
+    clientID = getKey(8);
+    stk_config().setItem('clientid', clientID);
+    envelop.clientid = clientID;
+  } else {
+    envelop.clientid = clientID;
+  }
+  socketEmit('join_client', {
+    clientid: clientID
+  });
 
   /* {separatestart:['embeded']} */
 
@@ -819,14 +923,26 @@ $(function() {
   eventhandler = {
     draggable_joystick: justPrintOut,
     draggable_touchpad: justPrintOut,
-    draggable_positionsensor: justPrintOut,
-    draggable_keylistener: justPrintOut
+    deviceorientation: justPrintOut,
+    deviceacceleration: justPrintOut,
+    draggable_keylistener: justPrintOut,
+    custommessage: justPrintOut,
+    addVibratePattern: addVibratePattern_handler
   };
 
   /* {separateend:['view']} */
+  socket.on("custommessage", function(msg) {
+    console.log("custommessage", msg);
+    if (msg.toClientTypes !== void 0 && $.inArray(clientType, msg.toClientTypes) > -1) {
+      return eventhandler[msg.type](msg);
+    } else if (msg.toClientTypes === void 0 || msg.toClientTypes === []) {
+      return eventhandler[msg.type](msg);
+    }
+  });
   socket.on("touchmove", function(msg) {
 
     /* {separatestart:['embeded']} */
+    var a;
     eventhandler[msg.type](msg);
 
     /* {separateend:['embeded']} */
@@ -845,11 +961,32 @@ $(function() {
 
   /* {separateend:['view']} */
 
+  
+
   /* {separatestart:['embeded']} */
 
   
 
   /* {separateend:['embeded']} */
+  socket.on('vibration.isSupported', function(msg) {
+    ioEmit(socket, 'vibration.support', {
+      vibrationSupported: stk_vibrate().isSupported()
+    });
+    return console.log('vibration.support', {
+      vibrationSupported: stk_vibrate().isSupported()
+    });
+  });
+  socket.on('vibration.support', function(msg) {
+    return console.log('vibration.support', msg);
+  });
+  socket.on('vibration.addVibratePattern', function(msg) {
+    stk_vibrate().addVibratePattern(msg.pattern);
+    return console.log('vibration.addVibratePattern', msg);
+  });
+  socket.on('vibration.removeVibratePattern', function(msg) {
+    stk_vibrate().removeVibratePattern(msg.id);
+    return console.log('vibration.removeVibratePattern', msg);
+  });
   socket.on("reset", function(msg) {
     console.log("reload(true)");
     return location.reload(true);
@@ -871,10 +1008,15 @@ $(function() {
   socket.on("attributechange", function(msg) {
     if (msg.attributes.url !== void 0) {
       objects[msg.type].objects[msg.id].url = msg.attributes.url;
-      $("#" + msg.type + msg.id).css({
-        "background-image": "url(" + objects[msg.type].objects[msg.id].url + ")",
-        "background-size": "cover"
-      });
+      if (msg.type === "draggable_iframe") {
+        console.log("Set iframe #" + msg.type.replace("draggable_", "") + msg.id, msg.attributes.url);
+        $("#" + msg.type.replace("draggable_", "") + msg.id).attr("src", msg.attributes.url);
+      } else {
+        $("#" + msg.type + msg.id).css({
+          "background-image": "url(" + objects[msg.type].objects[msg.id].url + ")",
+          "background-size": "cover"
+        });
+      }
     }
     if (msg.attributes.zindex !== void 0) {
       objects[msg.type].objects[msg.id].zindex = msg.attributes.zindex;
@@ -919,7 +1061,7 @@ $(function() {
     return _results;
   };
   injectObject = function(msg) {
-    var cnr, j, jb, newObject, objName, objir;
+    var cnr, f, j, jb, newObject, objName, objir;
     console.log(JSON.stringify(msg.object));
     newObject = addObject(msg.object);
     if (newObject.id !== msg.object.id) {
@@ -950,7 +1092,13 @@ $(function() {
           cnr.html("Touchpad");
           break;
         case "draggable_positionsensor":
-          a = a;
+          cnr.html("Position sensor");
+          break;
+        case "draggable_orientationsensor":
+          cnr.html("Orientation sensor");
+          break;
+        case "draggable_accelerationsensor":
+          cnr.html("Acceleration sensor");
           break;
         case "draggable_background":
         case "draggable_image":
@@ -961,6 +1109,14 @@ $(function() {
           break;
         case "draggable_keylistener":
           cnr.html("Keylistener");
+          break;
+        case "draggable_iframe":
+          f = $("<iframe />", {
+            name: "iframe" + newObject.id,
+            id: "iframe" + newObject.id,
+            src: newObject.url
+          });
+          cnr.append(f);
       }
       stage = getStageDimensions(ffcontainer);
       console.log("Drop created to:" + $(this) + "  " + (newObject.x * 100) + "%");
@@ -1000,8 +1156,8 @@ $(function() {
           window.addEventListener('keydown', keysPressed, false);
           window.addEventListener('keyup', keysReleased, false);
           break;
-        case "draggable_positionsensor":
-          if (stk_config().parseGetparameter("embeded") === "false") {
+        case "draggable_orientationsensor":
+          if (stk_config().parseGetparameter("embeded") !== "true") {
             if (window.DeviceOrientationEvent) {
               window.addEventListener('deviceorientation', function(event) {
                 var alpha, beta, factor, gamma, m, obereKante;
@@ -1032,6 +1188,7 @@ $(function() {
                                        '<br />decider: ' + decider;
                    */
                   m = {
+                    type: "deviceorientation",
                     a: alpha,
                     b: beta,
                     g: gamma,
@@ -1043,9 +1200,13 @@ $(function() {
                 }
               }, false);
             }
+          }
+          break;
+        case "draggable_accelerationsensor":
+          if (stk_config().parseGetparameter("embeded") !== "true") {
             if (window.DeviceMotionEvent) {
               window.addEventListener('devicemotion', function(event) {
-                var r, x, y, z;
+                var m, r, x, y, z;
                 x = event.accelerationIncludingGravity.x;
                 y = event.accelerationIncludingGravity.y;
                 z = event.accelerationIncludingGravity.z;
@@ -1061,9 +1222,22 @@ $(function() {
                   decider = 0;
                 }
                 if (x < 0) {
-                  return decider = 1;
+                  decider = 1;
                 }
-              });
+                m = {
+                  type: "deviceacceleration",
+                  x: event.accelerationIncludingGravity.x,
+                  y: event.accelerationIncludingGravity.y,
+                  z: event.accelerationIncludingGravity.z,
+                  xraw: event.acceleration.x,
+                  yraw: event.acceleration.y,
+                  zraw: event.acceleration.z,
+                  rotationRate: event.rotationRate,
+                  interval: event.interval,
+                  objName: objName
+                };
+                return socketEmit('deviceacceleration', m);
+              }, false);
             }
           }
 
@@ -1086,5 +1260,17 @@ $(function() {
   
 
   /* {separateend:['embeded']} */
+  runAnimation = function() {
+    var gamepads, pad, _i, _len, _results;
+//    window.requestAnimationFrame(runAnimation);
+    gamepads = navigator.getGamepads;
+    _results = [];
+    for (_i = 0, _len = gamepads.length; _i < _len; _i++) {
+      pad = gamepads[_i];
+      _results.push(console.log(pad));
+    }
+    return _results;
+  };
+//  window.requestAnimationFrame(runAnimation);
   return true;
 });
