@@ -173,7 +173,8 @@ player6 = {
 
 playerMap = {}
 players = []
-unregisteredPlayer = [player2, player1]
+inactivePlayers = []
+unregisteredPlayer = [player2, player1, player4, player5, player3, player6]
 playerWidth = parseInt(getComputedStyle(player1.dom).width)
 playerHeight = parseInt(getComputedStyle(player1.dom).height)
 timeLimit = 60
@@ -230,7 +231,7 @@ queue = [object0, object1, object2, objectBomb, objectPower]
 fallCount = 0
 fallRound = 30
 columns = 12
-columnWidth = viewportWidth / columns
+columnWidth = viewportWidth / (columns +2)
 lastColumn = 0
 bombTime = 50
 powerTime = 75
@@ -277,6 +278,7 @@ directionKey=(msg, player)->
 registerPlayer=(id)->
   if unregisteredPlayer.length > 0
     player = unregisteredPlayer.pop()
+    inactivePlayers.push(player)
     activatePlayer(player)
     playerMap[id] = player
     player.dom.style.left = 10 +"px"
@@ -284,12 +286,15 @@ registerPlayer=(id)->
   
 activatePlayer=(player)->
   players.push(player)
+  index = inactivePlayers.indexOf(player)
+  inactivePlayers.splice(index)
   player.time = new Date().getTime() /1000
   player.dom.style.opacity = 1.0
   player.dom.style.zIndex = 5
   true
   
 deactivatePlayer=(player)->
+  inactivePlayers.push(player)
   index = players.indexOf(player)
   players.splice(index)
   player.dom.style.opacity = 0.3
@@ -369,7 +374,7 @@ fillObjectList=()->
     fallCount += 1
     if ( fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2 )
       object = queue[0]
-      object.side = getNewColumn() * columnWidth
+      object.side = getNewColumn() * columnWidth + columnWidth
       object.dom.style.left = object.side + "px"
       objectList.push object
       index = queue.indexOf(object)
@@ -379,8 +384,7 @@ fillObjectList=()->
       
 falls=(object)->
   object.height -= object.velo
-#  if (object.height <= bottom)
-  if (object.height <= 0)
+  if (object.height <= bottom)
     objectDown(object)
   object.dom.style.bottom = object.height + "px"
   true
