@@ -5,11 +5,10 @@ compress = require('compression')
 app.use(compress())
 http = require('http').Server(app)
 io = require('socket.io')(http)
-
 url = require("url")
 
 #stk_network=require('./modules/stk_network_n.js')()
-#stk_network.showInterfaces()      
+#stk_network.showInterfaces()
 
 users={}
 clients={}
@@ -31,7 +30,7 @@ addUser = (emailhash,socket) ->
 removeUser = (emailhash) ->
   if users[emailhash] != undefined
     delete users[emailhash]
-    
+
 showUsers=()->
   for emailhash, sockets in users
     console.log emailhash, ":", sockets
@@ -50,7 +49,6 @@ sendToUser=(id,msg) ->
 port=3000
 http.listen port, () -> console.log "listening on *:#{port}"
 
-  
 getKey=(l=8)->
   s="acdefghknprstvwxyz23459"
   k=""
@@ -79,7 +77,6 @@ sendLocalFile=(res,p) ->
   console.log __dirname + p
   res.sendFile __dirname + p
 
-  
 app.get('/*', (req, res)->
   console.log req._parsedUrl.path  
   sendLocalFile res, req._parsedUrl.pathname
@@ -89,12 +86,16 @@ app.get('/*', (req, res)->
 
 ioEmit=(socket,msgType,msg)->
   if msg.envelop!=undefined && msg.envelop.emailhash!=undefined
+    msg.envelop.servertimestamp=new Date().getTime()
+    msg.envelop.timestampdifference=msg.envelop.servertimestamp-msg.envelop.timestamp.ts
     msg.envelop.socket={}
     msg.envelop.socket.id=socket.conn.id
     msg.envelop.socket.remoteaddress=socket.conn.remoteAddress
     #msg.envelop.session={key:req.session.key}
     io.sockets.in(msg.envelop.emailhash).emit(msgType, msg)
   else if msg.envelop!=undefined
+    msg.envelop.servertimestamp=new Date().getTime()    
+    msg.envelop.timestampdifference=msg.envelop.servertimestamp-msg.envelop.timestamp.ts
     msg.envelop.socket={}
     msg.envelop.socket.id=socket.conn.id
     msg.envelop.socket.remoteaddress=socket.conn.remoteAddress
@@ -102,6 +103,8 @@ ioEmit=(socket,msgType,msg)->
     io.emit msgType, msg
   else
     msg.envelop={}
+    msg.envelop.servertimestamp=new Date().getTime()    
+    msg.envelop.timestampdifference=msg.envelop.servertimestamp-msg.envelop.timestamp.ts
     msg.envelop.socket={}
     msg.envelop.socket.id=socket.conn.id
     msg.envelop.socket.remoteaddress=socket.conn.remoteAddress
@@ -126,7 +129,7 @@ io.on('connection', (socket) ->
   
   socket.on 'join', (msg) ->
     socket.join msg.emailhash
-    console.log "JOINING "+msg.emailhash    
+    console.log "JOINING "+msg.emailhash
     addUser msg.emailhash, socket
     ioEmit socket,'users', {users:getUsersList()}
 
@@ -150,9 +153,17 @@ io.on('connection', (socket) ->
       console.log "ioEmitToClients"
       ioEmitToClients msg.sendTo,'custommessage', msg 
 
+  socket.on 'touchstart', (msg) ->
+    ioEmit socket,'touchstart', msg
+    console.log 'touchstart', msg
+    
   socket.on 'touchmove', (msg) ->
     ioEmit socket,'touchmove', msg
     console.log 'touchmove', msg
+    
+  socket.on 'touchend', (msg) ->
+    ioEmit socket,'touchend', msg
+    console.log 'touchend', msg
     
   socket.on 'keyevent', (msg) ->
     ioEmit socket,'keyevent', msg
@@ -173,7 +184,7 @@ io.on('connection', (socket) ->
   socket.on 'vibration.removeVibratePattern', (msg) ->
     ioEmit socket,'vibration.removeVibratePattern', msg
     console.log 'vibration.removeVibratePattern', msg
-     
+
   socket.on 'deviceorientation', (msg) ->
     ioEmit socket,'deviceorientation', msg
     console.log 'deviceorientation', msg
@@ -185,9 +196,18 @@ io.on('connection', (socket) ->
   socket.on 'reset', (msg) ->
     ioEmit socket,'reset', msg
     console.log 'reset', msg
-  
+    
+  socket.on 'state', (msg) ->
+    ioEmit socket,'state', msg
+    console.log 'state', msg
+    
+  socket.on 'getkey', (msg) ->
+    k=getKey(4)
+    ioEmit socket,'key', {key:k}
+    console.log 'new key: '+k
+
   requestqrscancode={}
-  
+
   socket.on 'qrdecode', (msg) ->
     ioEmit socket,'qrdecode', msg
     console.log 'qrdecode', msg
@@ -200,10 +220,7 @@ io.on('connection', (socket) ->
     ioEmit socket,'requestqrscan', msg
     console.log 'requestqrscan', msg , JSON.stringify(requestqrscancode )
     
-  socket.on 'getkey', (msg) ->
-    k=getKey(4)
-    ioEmit socket,'key', {key:k}
-    console.log 'new key: '+k
+  
           
   socket.error (msg)->
     console.log msg  
