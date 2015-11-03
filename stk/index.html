@@ -24,11 +24,11 @@
     <link rel="icon" href="media/favicon/favicon.ico" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="styles/client.css">
-    <script src="../external/libs/js/jquery/jquery-2.1.4.min.js"></script>
-    <script src="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.css">
     <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css">
     <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css">
+    <script src="../external/libs/js/jquery/jquery-2.1.4.min.js"></script>
+    <script src="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>    
     <script src="../external/libs/js/doccookies.js"></script>
     <script>
       var objectsToInject={"draggable_orientationsensor":{"lastID":0,"objects":[{"type":"draggable_orientationsensor","id":0,"x":0.17777777777777778,"y":0.07313829787234043,"h":0.1,"w":0.1,"scale":1,"constraint":false,"zindex":66,"opacity":1}]},"draggable_accelerationsensor":{"lastID":0,"objects":[{"type":"draggable_accelerationsensor","id":0,"x":0.11794871794871795,"y":0.4895516717325228,"h":0.1,"w":0.1,"scale":1,"constraint":false,"zindex":66,"opacity":1}]},"draggable_joystick":{"lastID":0,"objects":[{"type":"draggable_joystick","id":0,"x":0.7333333333333333,"y":0.3314969604863222,"h":0.5,"w":0.5,"scale":1,"constraint":true,"zindex":66,"opacity":1}]},"draggable_keylistener":{"lastID":0,"objects":[{"type":"draggable_keylistener","id":0,"x":0.39487179487179486,"y":0.37708966565349544,"h":0.1,"w":0.1,"scale":1,"constraint":false,"zindex":66,"opacity":1}]}};
@@ -223,7 +223,7 @@
       </script>
       <script>
         $(function() {
-          opt={socketserver:'http://mfhaw.de'};
+          opt={socketserver:'http://192.168.0.100:3000'};
           $.getScript(opt.socketserver+'/socket.io/socket.io.js')
             .done(function( script, textStatus ) {
               //console.log( textStatus );

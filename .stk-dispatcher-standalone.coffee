@@ -1,9 +1,11 @@
 #   cfcoptions : { "out": ".dev0/"  }
 
 app = require('express')()
-
+compress = require('compression')
+app.use(compress())
 http = require('http').Server(app)
 io = require('socket.io')(http)
+
 url = require("url")
 
 #stk_network=require('./modules/stk_network_n.js')()

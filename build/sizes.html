@@ -24,11 +24,11 @@
     <link rel="icon" href="media/favicon/favicon.ico" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="styles/client-sizes.css">
-    <script src="../external/libs/js/jquery/jquery-2.1.4.min.js"></script>
-    <script src="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.css">
     <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css">
     <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css">
+    <script src="../external/libs/js/jquery/jquery-2.1.4.min.js"></script>
+    <script src="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
     <script src="../external/libs/js/doccookies.js"></script>
     <script>
       var objectsToInject={"draggable_joystick":{"lastID":0,"objects":[{"type":"draggable_joystick","id":0,"x":0.611974833610649,"y":0.41420118343195267,"h":0.5,"w":0.5,"scale":1,"constraint":true,"zindex":66,"opacity":1}]},"draggable_keylistener":{"lastID":0,"objects":[{"type":"draggable_keylistener","id":0,"x":0.27602433444259566,"y":0.4970414201183432,"h":0.1,"w":0.1,"scale":1,"constraint":false,"zindex":66,"opacity":1}]}};
@@ -227,7 +227,7 @@
       </script>
       <script>
         $(function() {
-          opt={socketserver:'http://127.0.0.1:3000'};
+          opt={socketserver:'http://192.168.0.100:3000'};
           $.getScript(opt.socketserver+'/socket.io/socket.io.js')
             .done(function( script, textStatus ) {
               //console.log( textStatus );
