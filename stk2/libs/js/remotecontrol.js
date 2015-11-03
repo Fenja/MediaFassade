@@ -1854,6 +1854,7 @@ $(function() {
                   x: x,
                   y: y
                 };
+                //stk.framework.addVibratePattern({id:"touchstart",timestamp:new Date().getTime()+30,list:[0,123]});
                 return socketEmit("touchstart", m);
               }
             }

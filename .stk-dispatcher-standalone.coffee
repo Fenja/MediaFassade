@@ -87,7 +87,10 @@ app.get('/*', (req, res)->
 ioEmit=(socket,msgType,msg)->
   if msg.envelop!=undefined && msg.envelop.emailhash!=undefined
     msg.envelop.servertimestamp=new Date().getTime()
-    msg.envelop.timestampdifference=msg.envelop.servertimestamp-msg.envelop.timestamp.ts
+    if msg.envelop.timestamp!=undefined
+      msg.envelop.timestampdifference=msg.envelop.servertimestamp-msg.envelop.timestamp.ts
+    else
+      msg.envelop.timestampdifference=undefined
     msg.envelop.socket={}
     msg.envelop.socket.id=socket.conn.id
     msg.envelop.socket.remoteaddress=socket.conn.remoteAddress
@@ -95,7 +98,10 @@ ioEmit=(socket,msgType,msg)->
     io.sockets.in(msg.envelop.emailhash).emit(msgType, msg)
   else if msg.envelop!=undefined
     msg.envelop.servertimestamp=new Date().getTime()    
-    msg.envelop.timestampdifference=msg.envelop.servertimestamp-msg.envelop.timestamp.ts
+    if msg.envelop.timestamp!=undefined
+      msg.envelop.timestampdifference=msg.envelop.servertimestamp-msg.envelop.timestamp.ts
+    else
+      msg.envelop.timestampdifference=undefined
     msg.envelop.socket={}
     msg.envelop.socket.id=socket.conn.id
     msg.envelop.socket.remoteaddress=socket.conn.remoteAddress
@@ -104,7 +110,7 @@ ioEmit=(socket,msgType,msg)->
   else
     msg.envelop={}
     msg.envelop.servertimestamp=new Date().getTime()    
-    msg.envelop.timestampdifference=msg.envelop.servertimestamp-msg.envelop.timestamp.ts
+    msg.envelop.timestampdifference=undefined
     msg.envelop.socket={}
     msg.envelop.socket.id=socket.conn.id
     msg.envelop.socket.remoteaddress=socket.conn.remoteAddress
