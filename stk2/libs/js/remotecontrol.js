@@ -1,5 +1,5 @@
 var cachedModules=[];
-cachedModules[6463]={exports:{}};
+cachedModules[8190]={exports:{}};
 (function(module,exports) {var socket;
 
 socket = io();
@@ -14,8 +14,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[6463],cachedModules[6463].exports);
-cachedModules[7969]={exports:{}};
+}).call(this,cachedModules[8190],cachedModules[8190].exports);
+cachedModules[1344]={exports:{}};
 (function(module,exports) {var clientID, configuration, headers, onError, req;
 
 headers = "";
@@ -158,8 +158,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[7969],cachedModules[7969].exports);
-cachedModules[4622]={exports:{}};
+}).call(this,cachedModules[1344],cachedModules[1344].exports);
+cachedModules[986]={exports:{}};
 (function(module,exports) {/*
  * JavaScript MD5 1.0.1
  * https://github.com/blueimp/JavaScript-MD5
@@ -434,15 +434,15 @@ cachedModules[4622]={exports:{}};
         $.md5 = md5;
     }
 }(this));
-}).call(this,cachedModules[4622],cachedModules[4622].exports);
-cachedModules[6832]={exports:{}};
+}).call(this,cachedModules[986],cachedModules[986].exports);
+cachedModules[7270]={exports:{}};
 (function(module,exports) {var callback, dialogLogin, formLogin, loginUser, stk_config, stk_socket;
 
-cachedModules[4622].exports;
+cachedModules[986].exports;
 
-stk_config = cachedModules[7969].exports;
+stk_config = cachedModules[1344].exports;
 
-stk_socket = cachedModules[6463].exports;
+stk_socket = cachedModules[8190].exports;
 
 callback = function(ret) {
   if (ret.state) {
@@ -495,8 +495,8 @@ module.exports = function() {
     prepare: prepare
   };
 };
-}).call(this,cachedModules[6832],cachedModules[6832].exports);
-cachedModules[1427]={exports:{}};
+}).call(this,cachedModules[7270],cachedModules[7270].exports);
+cachedModules[6096]={exports:{}};
 (function(module,exports) {module.exports = function() {
   return {
     delay: function(ms, fn) {
@@ -524,9 +524,9 @@ cachedModules[1427]={exports:{}};
     }
   };
 };
-}).call(this,cachedModules[1427],cachedModules[1427].exports);
-cachedModules[811]={exports:{}};
-(function(module,exports) {var addVibratePattern, removeVibratePattern, stopVibratePattern, test, vibrate, vibrateEnd, vibratePattern, vibrateTimeouts, vibrating,
+}).call(this,cachedModules[6096],cachedModules[6096].exports);
+cachedModules[5264]={exports:{}};
+(function(module,exports) {var addVibratePattern, removeVibratePattern, stopVibratePattern, vibrate, vibrateEnd, vibratePattern, vibrateTimeouts, vibrating,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 vibratePattern = {};
@@ -545,77 +545,81 @@ vibrate = function(id, rawPattern) {
     console.log(id, index, p);
     timeSum += p;
   }
-  if (vibrating === "") {
-    vibrating = id;
-    navigator.vibrate(rawPattern);
-    vibrateEnd = new Date().getTime() + timeSum;
-    f = function() {
-      removeVibratePattern(id);
-      vibrateEnd = 0;
-      return vibrating === "";
-    };
-    return setTimeout(f, timeSum);
+  if (timeSum < 6) {
+    return console.log("Skip pattern " + id + ", timeSum is only " + timeSum);
   } else {
-
-    /*
-    Schedule after
-     */
-    console.log("Schedule after", vibrating, id);
-    difference = vibrateEnd - new Date().getTime();
-    if (difference < 0 && difference > -21) {
-      difference = 0;
-    } else if (difference > 0) {
-      console.log("difference > 0 :", difference);
+    if (vibrating === "") {
+      vibrating = id;
+      navigator.vibrate(rawPattern);
+      vibrateEnd = new Date().getTime() + timeSum;
+      f = function() {
+        removeVibratePattern(id);
+        vibrateEnd = 0;
+        return vibrating === "";
+      };
+      return setTimeout(f, timeSum);
     } else {
-      console.log("difference < -20 :", difference);
-    }
-    console.log("startdifference", difference);
-    newRawPattern = [];
-    for (index = _j = 0, _len1 = rawPattern.length; _j < _len1; index = ++_j) {
-      p = rawPattern[index];
-      if (difference > 0) {
-        if (difference >= p) {
-          difference = difference - p;
-        } else {
-          p = p - difference;
-          if (index & 1) {
-            newRawPattern.push(p);
-            for (index2 = _k = 0, _len2 = rawPattern.length; _k < _len2; index2 = ++_k) {
-              p2 = rawPattern[index2];
-              if (index2 > index) {
-                newRawPattern.push(p2);
-              }
-            }
-            f = function() {
-              return vibrate(id, newRawPattern);
-            };
-            vibratePattern[id].timestamp = vibrateEnd;
-            vibratePattern[id].list = [0].concat(newRawPattern);
-            vibrateTimeouts[id] = setTimeout(f, vibrateEnd - new Date().getTime());
-            difference = -1;
+
+      /*
+      Schedule after
+       */
+      console.log("Schedule after", vibrating, id);
+      difference = vibrateEnd - new Date().getTime();
+      if (difference < 0 && difference > -21) {
+        difference = 0;
+      } else if (difference > 0) {
+        console.log("difference > 0 :", difference);
+      } else {
+        console.log("difference < -20 :", difference);
+      }
+      console.log("startdifference", difference);
+      newRawPattern = [];
+      for (index = _j = 0, _len1 = rawPattern.length; _j < _len1; index = ++_j) {
+        p = rawPattern[index];
+        if (difference > 0) {
+          if (difference >= p) {
+            difference = difference - p;
           } else {
-            newRawPattern.push(p);
-            for (index2 = _l = 0, _len3 = rawPattern.length; _l < _len3; index2 = ++_l) {
-              p2 = rawPattern[index2];
-              if (index2 > index) {
-                newRawPattern.push(p2);
+            p = p - difference;
+            if (index & 1) {
+              newRawPattern.push(p);
+              for (index2 = _k = 0, _len2 = rawPattern.length; _k < _len2; index2 = ++_k) {
+                p2 = rawPattern[index2];
+                if (index2 > index) {
+                  newRawPattern.push(p2);
+                }
               }
+              f = function() {
+                return vibrate(id, newRawPattern);
+              };
+              vibratePattern[id].timestamp = vibrateEnd;
+              vibratePattern[id].list = [0].concat(newRawPattern);
+              vibrateTimeouts[id] = setTimeout(f, vibrateEnd - new Date().getTime());
+              difference = -1;
+            } else {
+              newRawPattern.push(p);
+              for (index2 = _l = 0, _len3 = rawPattern.length; _l < _len3; index2 = ++_l) {
+                p2 = rawPattern[index2];
+                if (index2 > index) {
+                  newRawPattern.push(p2);
+                }
+              }
+              f = function() {
+                return vibrate(id, newRawPattern);
+              };
+              vibratePattern[id].timestamp = vibrateEnd;
+              vibratePattern[id].list = newRawPattern;
+              vibrateTimeouts[id] = setTimeout(f, vibrateEnd - new Date().getTime());
+              difference = -1;
             }
-            f = function() {
-              return vibrate(id, newRawPattern);
-            };
-            vibratePattern[id].timestamp = vibrateEnd;
-            vibratePattern[id].list = newRawPattern;
-            vibrateTimeouts[id] = setTimeout(f, vibrateEnd - new Date().getTime());
-            difference = -1;
+            break;
           }
-          break;
         }
       }
-    }
-    if (difference >= 0) {
-      console.log("Skip pattern ", id);
-      return removeVibratePattern(id);
+      if (difference >= 0) {
+        console.log("Skip pattern ", id);
+        return removeVibratePattern(id);
+      }
     }
   }
 };
@@ -703,10 +707,23 @@ removeVibratePattern = function(id) {
   }
 };
 
-test = function() {};
-
 
 /*
+test=()->
+   *addVibratePattern {id:"wege",timestamp:0,list:[500,1000,200,300]}
+   *addVibratePattern {id:"wege",timestamp:new Date().getTime()+2000,list:[500,1000,200,300]}
+  
+   *addVibratePattern {id:"wege",timestamp:new Date().getTime()+2200,list:[500,1000,200,300]}
+   *removeVibratePattern "wege"
+  
+   *addVibratePattern {id:"wege",timestamp:new Date().getTime()+1000,list:[500,1000,200,10000-1700]}
+   *addVibratePattern {id:"weg2e",timestamp:new Date().getTime()+1000,list:[11000,5000]}
+  
+   *addVibratePattern {id:"start1",timestamp:new Date().getTime()+200,list:[0,1111,666,2222]}
+
+   *addVibratePattern {id:"start2",timestamp:new Date().getTime()+500,list:[1000,1000]}
+
+
 test()
  */
 
@@ -723,12 +740,19 @@ module.exports = function() {
     },
     removeVibratePattern: function(id) {
       return removeVibratePattern(id);
+    },
+    vibrateNow: function(pattern) {
+      if (pattern.list !== void 0) {
+        return navigator.vibrate(pattern.list.slice(1));
+      } else {
+        return navigator.vibrate(pattern.slice(1));
+      }
     }
   };
 };
-}).call(this,cachedModules[811],cachedModules[811].exports);
-cachedModules[1856]={exports:{}};
-(function(module,exports) {var fadeSound, getDuration, getState, muteSound, pauseSound, playSound, prepare, removeSound, seekSound, setRate, soundObjects, soundTimeouts, startSound, stopSound, test, unmuteSound, volumeSound;
+}).call(this,cachedModules[5264],cachedModules[5264].exports);
+cachedModules[6786]={exports:{}};
+(function(module,exports) {var fadeSound, getDuration, getState, muteSound, pauseSound, playSound, prepare, removeSound, seekSound, setRate, soundObjects, soundTimeouts, startSound, stopSound, unmuteSound, volumeSound;
 
 soundObjects = {};
 
@@ -753,8 +777,8 @@ prepare = function(so) {
       return console.log('ready:', this);
     },
     onloaderror: function() {
-      console.log("Error loading ", id);
-      return removeSound(id);
+      console.log("Error loading ", so.id, " from ", so.src);
+      return removeSound(so.id);
     },
     onplay: function() {
       return console.log('Playing', {
@@ -792,7 +816,7 @@ getDuration = function(id, cb) {
   if (soundObjects[id] !== void 0) {
     if (cb === void 0) {
       if (so.isReady) {
-        return so.howl.duration;
+        return so.howl.duration();
       } else {
         return 0;
       }
@@ -818,12 +842,12 @@ getState = function(id) {
     return {
       timestamp: new Date().getTime(),
       state: soundObjects[id].state,
-      muted: soundObjects[id].howl.mute,
-      volume: soundObjects[id].howl.volume,
-      position: soundObjects[id].howl.seek,
-      looping: soundObjects[id].howl.loop,
-      duration: soundObjects[id].howl.duration,
-      rate: soundObjects[id].howl.rate
+      muted: soundObjects[id].howl.mute(),
+      volume: soundObjects[id].howl.volume(),
+      position: soundObjects[id].howl.seek(),
+      looping: soundObjects[id].howl.loop(),
+      duration: soundObjects[id].howl.duration(),
+      rate: soundObjects[id].howl.rate()
     };
   }
   return {};
@@ -831,120 +855,128 @@ getState = function(id) {
 
 setRate = function(id, rate) {
   if (soundObjects[id] !== void 0) {
-    return soundObjects[id].howl.rate = rate;
+    return soundObjects[id].howl.rate(rate);
   }
 };
 
 startSound = function(id, timestamp) {
-  var difference, f;
+  var difference, f, now;
   if (timestamp == null) {
     timestamp = 0;
   }
   if (soundObjects[id] !== void 0) {
-    if (timestamp === 0 || timestamp === new Date().getTime()) {
+    now = new Date().getTime();
+    if (timestamp === 0 || timestamp === now) {
       soundObjects[id].howl.play();
       soundObjects[id].howl.seek(0);
-      return soundObjects[id].state = 'playing';
-    } else if (new Date().getTime() > timestamp) {
-      difference = new Date().getTime() - timestamp;
-      if (soundObjects[id].howl.seek + 1000 * difference < soundObjects[id].howl.duration) {
+      soundObjects[id].state = 'playing';
+      return console.log("# play immediately", id);
+    } else if (now > timestamp) {
+      difference = (now - timestamp) / 1000;
+      console.log("# Seek forward to missed timestamp", id, difference, soundObjects[id].howl.duration());
+      if (difference < soundObjects[id].howl.duration()) {
         soundObjects[id].howl.play();
-        soundObjects[id].howl.seek(soundObjects[id].howl.seek + 1000 * difference);
+        soundObjects[id].howl.seek(difference);
         return soundObjects[id].state = 'playing';
       }
-    } else if (new Date().getTime() < timestamp) {
-      console.log("play in " + (timestamp - new Date().getTime()) + "ms");
+    } else if (now < timestamp) {
+      console.log("# Schedule play in " + (timestamp - now) + "ms");
       f = function() {
         soundObjects[id].howl.play();
         soundObjects[id].howl.seek(0);
         return soundObjects[id].state = 'playing';
       };
-      return soundTimeouts[id] = setTimeout(f, timestamp - new Date().getTime());
+      return soundTimeouts[id] = setTimeout(f, timestamp - now);
     }
+  } else {
+    return console.log("soundObjects[" + id + "] is undefined");
   }
 };
 
 pauseSound = function(id, timestamp) {
-  var difference, f;
+  var difference, f, now;
   if (timestamp == null) {
     timestamp = 0;
   }
   if (soundObjects[id] !== void 0) {
-    if (timestamp === 0 || timestamp === new Date().getTime()) {
-      soundObjects[id].howl.pause;
+    now = new Date().getTime();
+    if (timestamp === 0 || timestamp === now) {
+      soundObjects[id].howl.pause();
       return soundObjects[id].state = 'paused';
-    } else if (new Date().getTime() > timestamp) {
-      difference = new Date().getTime() - timestamp;
-      soundObjects[id].howl.pause;
+    } else if (now > timestamp) {
+      difference = (now - timestamp) / 1000;
+      soundObjects[id].howl.pause();
       soundObjects[id].state = 'paused';
-      if (soundObjects[id].howl.seek + 1000 * difference < soundObjects[id].howl.duration) {
-        return soundObjects[id].howl.seek(soundObjects[id].howl.seek + 1000 * difference);
+      if (soundObjects[id].howl.seek()(difference < soundObjects[id].howl.duration())) {
+        return soundObjects[id].howl.seek(soundObjects[id].howl.seek() + difference);
       } else {
-        return soundObjects[id].howl.seek(soundObjects[id].howl.duration);
+        return soundObjects[id].howl.seek(soundObjects[id].howl.duration());
       }
-    } else if (new Date().getTime() < timestamp) {
-      console.log("pause in " + (timestamp - new Date().getTime()) + "ms");
+    } else if (now < timestamp) {
+      console.log("pause in " + (timestamp - now) + "ms");
       f = function() {
-        soundObjects[id].howl.pause;
+        soundObjects[id].howl.pause();
         return soundObjects[id].state = 'paused';
       };
-      return soundTimeouts[id] = setTimeout(f, timestamp - new Date().getTime());
+      return soundTimeouts[id] = setTimeout(f, timestamp - now);
     }
   }
 };
 
 seekSound = function(id, to, timestamp) {
-  var f;
+  var f, now;
   if (timestamp == null) {
     timestamp = 0;
   }
   if (soundObjects[id] !== void 0 && to >= 0) {
-    if (timestamp === 0 || timestamp <= new Date().getTime()) {
-      if (to < soundObjects[id].howl.duration) {
+    now = new Date().getTime();
+    if (timestamp === 0 || timestamp <= now) {
+      if (to < soundObjects[id].howl.duration()) {
         return soundObjects[id].howl.seek(to);
       } else {
-        return soundObjects[id].howl.seek(soundObjects[id].howl.duration);
+        return soundObjects[id].howl.seek(soundObjects[id].howl.duration());
       }
-    } else if (new Date().getTime() < timestamp) {
-      console.log("seek in " + (timestamp - new Date().getTime()) + "ms");
+    } else if (now < timestamp) {
+      console.log("seek in " + (timestamp - now) + "ms");
       f = function() {
-        if (to < soundObjects[id].howl.duration) {
+        if (to < soundObjects[id].howl.duration()) {
           return soundObjects[id].howl.seek(to);
         } else {
-          return soundObjects[id].howl.seek(soundObjects[id].howl.duration);
+          return soundObjects[id].howl.seek(soundObjects[id].howl.duration());
         }
       };
-      return soundTimeouts[id] = setTimeout(f, timestamp - new Date().getTime());
+      return soundTimeouts[id] = setTimeout(f, timestamp - now);
     }
   }
 };
 
 playSound = function(id, timestamp) {
-  var difference, f, hid;
+  var difference, f, hid, now;
   if (timestamp == null) {
     timestamp = 0;
   }
   if (soundObjects[id] !== void 0) {
-    if (timestamp === 0 || timestamp === new Date().getTime()) {
+    now = new Date().getTime();
+    if (timestamp === 0 || timestamp === now) {
       console.log("NOW", soundObjects[id]);
       hid = soundObjects[id].howl.play();
       return soundObjects[id].state = 'playing';
-    } else if (new Date().getTime() > timestamp) {
-      difference = new Date().getTime() - timestamp;
-      if (soundObjects[id].howl.seek + 1000 * difference < soundObjects[id].howl.duration) {
+    } else if (now > timestamp) {
+      difference = (now - timestamp) / 1000;
+      if (soundObjects[id].howl.seek() + difference < soundObjects[id].howl.duration()) {
         soundObjects[id].howl.play();
-        soundObjects[id].howl.seek(soundObjects[id].howl.seek + 1000 * difference);
+        soundObjects[id].howl.seek(soundObjects[id].howl.seek() + difference);
         return soundObjects[id].state = 'playing';
       } else {
-        return soundObjects[id].howl.seek(soundObjects[id].howl.duration);
+        return soundObjects[id].howl.seek(soundObjects[id].howl.duration());
       }
-    } else if (new Date().getTime() < timestamp) {
-      console.log("play in " + (timestamp - new Date().getTime()) + "ms");
+    } else if (now < timestamp) {
+      console.log("play in " + (timestamp - now) + "ms");
       f = function() {
         soundObjects[id].howl.play();
         return soundObjects[id].state = 'playing';
       };
-      return soundTimeouts[id] = setTimeout(f, timestamp - new Date().getTime());
+      return soundTimeouts[id] = setTimeout(f, timestamp - now);
     }
   } else {
     return console.log("soundObjects[" + id + "] not found");
@@ -952,93 +984,98 @@ playSound = function(id, timestamp) {
 };
 
 stopSound = function(id, timestamp) {
-  var f;
+  var f, now;
   if (timestamp == null) {
     timestamp = 0;
   }
   if (soundObjects[id] !== void 0) {
-    if (timestamp === 0 || timestamp <= new Date().getTime()) {
-      soundObjects[id].howl.stop;
+    now = new Date().getTime();
+    if (timestamp === 0 || timestamp <= now) {
+      soundObjects[id].howl.stop();
       return soundObjects[id].state = 'stoped';
     } else {
-      console.log("stop in " + (timestamp - new Date().getTime()) + "ms");
+      console.log("stop in " + (timestamp - now) + "ms");
       f = function() {
-        soundObjects[id].howl.stop;
+        soundObjects[id].howl.stop();
         return soundObjects[id].state = 'stoped';
       };
-      return soundTimeouts[id] = setTimeout(f, timestamp - new Date().getTime());
+      return soundTimeouts[id] = setTimeout(f, timestamp - now);
     }
   }
 };
 
 muteSound = function(id, timestamp) {
-  var f;
+  var f, now;
   if (timestamp == null) {
     timestamp = 0;
   }
   if (soundObjects[id] !== void 0) {
-    if (timestamp === 0 || timestamp <= new Date().getTime()) {
-      return soundObjects[id].howl.mute;
+    now = new Date().getTime();
+    if (timestamp === 0 || timestamp <= now) {
+      return soundObjects[id].howl.mute();
     } else {
-      console.log("mute in " + (timestamp - new Date().getTime()) + "ms");
+      console.log("mute in " + (timestamp - now) + "ms");
       f = function() {
-        return soundObjects[id].howl.mute;
+        return soundObjects[id].howl.mute();
       };
-      return soundTimeouts[id] = setTimeout(f, timestamp - new Date().getTime());
+      return soundTimeouts[id] = setTimeout(f, timestamp - now);
     }
   }
 };
 
 unmuteSound = function(id, timestamp) {
-  var f;
+  var f, now;
   if (timestamp == null) {
     timestamp = 0;
   }
   if (soundObjects[id] !== void 0) {
-    if (timestamp === 0 || timestamp <= new Date().getTime()) {
-      return soundObjects[id].howl.unmute;
+    now = new Date().getTime();
+    if (timestamp === 0 || timestamp <= now) {
+      return soundObjects[id].howl.unmute();
     } else {
-      console.log("unmute in " + (timestamp - new Date().getTime()) + "ms");
+      console.log("unmute in " + (timestamp - now) + "ms");
       f = function() {
-        return soundObjects[id].howl.unmute;
+        return soundObjects[id].howl.unmute();
       };
-      return soundTimeouts[id] = setTimeout(f, timestamp - new Date().getTime());
+      return soundTimeouts[id] = setTimeout(f, timestamp - now);
     }
   }
 };
 
 volumeSound = function(id, volume, timestamp) {
-  var f;
+  var f, now;
   if (timestamp == null) {
     timestamp = 0;
   }
   if (soundObjects[id] !== void 0) {
-    if (timestamp === 0 || timestamp <= new Date().getTime()) {
+    now = new Date().getTime();
+    if (timestamp === 0 || timestamp <= now) {
       return soundObjects[id].howl.volume(volume);
-    } else if (new Date().getTime() < timestamp) {
-      console.log("volume in " + (timestamp - new Date().getTime()) + "ms");
+    } else if (now < timestamp) {
+      console.log("volume in " + (timestamp - now) + "ms");
       f = function() {
         return soundObjects[id].howl.volume(volume);
       };
-      return soundTimeouts[id] = setTimeout(f, timestamp - new Date().getTime());
+      return soundTimeouts[id] = setTimeout(f, timestamp - now);
     }
   }
 };
 
 fadeSound = function(id, fromVolume, toVolume, duration, timestamp) {
-  var f;
+  var f, now;
   if (timestamp == null) {
     timestamp = 0;
   }
   if (soundObjects[id] !== void 0) {
-    if (timestamp === 0 || timestamp <= new Date().getTime()) {
+    now = new Date().getTime();
+    if (timestamp === 0 || timestamp <= now) {
       return soundObjects[id].fade(fromVolume, toVolume, duration);
-    } else if (new Date().getTime() < timestamp) {
-      console.log("fade in " + (timestamp - new Date().getTime()) + "ms");
+    } else if (now < timestamp) {
+      console.log("fade in " + (timestamp - now) + "ms");
       f = function() {
         return soundObjects[id].fade(fromVolume, toVolume, duration);
       };
-      return soundTimeouts[id] = setTimeout(f, timestamp - new Date().getTime());
+      return soundTimeouts[id] = setTimeout(f, timestamp - now);
     }
   }
 };
@@ -1049,27 +1086,26 @@ removeSound = function(id) {
     delete soundTimeouts[id];
   }
   if (soundObjects[id] !== void 0) {
-    soundObjects[id].howl.unload;
+    soundObjects[id].howl.unload();
     return delete soundObjects[id];
   }
 };
 
-test = function() {
-  prepare({
-    id: "pling",
-    src: ['../media/sounds/glass_ping-Go445-1207030150.mp3', '../media/sounds/glass_ping-Go445-1207030150.wav'],
-    loop: false,
-    rate: 1.0,
-    volume: 1.0,
-    duration: 0
-  });
-  return startSound("pling", new Date().getTime() + 3000);
-};
+
+/*
+test=()->
+  prepare {id:"pling",src:['../media/sounds/glass_ping-Go445-1207030150.mp3','../media/sounds/glass_ping-Go445-1207030150.wav'],loop:false,rate:1.0,volume:1.0,duration:0}
+  
+  startSound "pling", (new Date().getTime()+3000)
+  
+test()
+ */
 
 module.exports = function() {
   return {
     addSoundObject: function(soundObject) {
-      return prepare(soundObject);
+      prepare(soundObject);
+      return console.log("pling:", soundObject);
     },
     getDuration: function(id, cb) {
       if (cb == null) {
@@ -1084,6 +1120,7 @@ module.exports = function() {
       if (timestamp == null) {
         timestamp = 0;
       }
+      console.log("stk_auto start", id, timestamp);
       return startSound(id, timestamp);
     },
     pause: function(id, timestamp) {
@@ -1162,16 +1199,16 @@ module.exports = function() {
       _results = [];
       for (_j = 0, _len1 = soundObjects.length; _j < _len1; _j++) {
         so = soundObjects[_j];
-        so.howl.stop;
-        so.howl.volume = so.volume;
-        _results.push(so.howl.unmute);
+        so.howl.stop();
+        so.howl.volume(so.volume);
+        _results.push(so.howl.unmute());
       }
       return _results;
     }
   };
 };
-}).call(this,cachedModules[1856],cachedModules[1856].exports);
-cachedModules[2674]={exports:{}};
+}).call(this,cachedModules[6786],cachedModules[6786].exports);
+cachedModules[2023]={exports:{}};
 (function(module,exports) {module.exports = function() {
   return {
     requireFullscreen: function(callback) {
@@ -1256,13 +1293,14 @@ cachedModules[2674]={exports:{}};
     }
   };
 };
-}).call(this,cachedModules[2674],cachedModules[2674].exports);var stk;
+}).call(this,cachedModules[2023],cachedModules[2023].exports);var stk;
 
 stk = {};
 
 $(function() {
   var actualObject, addObject, addVibratePattern_handler, clientID, clientType, decider, drawObject, emailhash, envelop, eventhandler, fetchFFF, ff, ffcontainer, fff, getKey, getStageDimensions, getTimestampdifference, injectObject, injectObjects, is_dragging, justPrintOut, key, keys, keysPressed, keysReleased, load, nothing_to_do, objects, realm, runAnimation, sendKeys, sendState, setFramesOnOff, setKey, socket, socketEmit, stage, stk_audio, stk_common, stk_config, stk_fullscreen, stk_login, stk_socket, stk_vibrate, timestampdifference, up, updateJoystick;
-  console.log("Started execution");
+  key = window.key;
+  console.log("Started execution ", key);
 
   /* {separatestart:['view']} */
   clientType = "control";
@@ -1274,13 +1312,13 @@ $(function() {
   up = 0;
   decider = 0;
   is_dragging = false;
-  stk_socket = cachedModules[6463].exports;
+  stk_socket = cachedModules[8190].exports;
   socket = stk_socket().getSocket();
-  stk_config = cachedModules[7969].exports;
-  stk_login = cachedModules[6832].exports;
-  stk_common = cachedModules[1427].exports;
-  stk_vibrate = cachedModules[811].exports;
-  stk_audio = cachedModules[1856].exports;
+  stk_config = cachedModules[1344].exports;
+  stk_login = cachedModules[7270].exports;
+  stk_common = cachedModules[6096].exports;
+  stk_vibrate = cachedModules[5264].exports;
+  stk_audio = cachedModules[6786].exports;
   ff = stk_config().parseGetparameter("formfactor");
   fff = 1;
   fetchFFF = function() {
@@ -1290,7 +1328,7 @@ $(function() {
       return fff = screen.height / screen.width;
     }
   };
-  stk_fullscreen = cachedModules[2674].exports;
+  stk_fullscreen = cachedModules[2023].exports;
   stk_fullscreen().requireFullscreen(fetchFFF);
   envelop = {
     state: "undefined"
@@ -1306,7 +1344,7 @@ $(function() {
   };
   stk_audio().addSoundObject({
     id: "pling",
-    src: ['media/sounds/glass_ping-Go445-1207030150.mp3', 'media/sounds/glass_ping-Go445-1207030150.wav'],
+    src: ['media/sounds/' + key + '_glass_ping-Go445-1207030150.mp3', 'media/sounds/' + key + '_glass_ping-Go445-1207030150.wav'],
     loop: false,
     rate: 1.0,
     volume: 1.0,
@@ -1323,7 +1361,15 @@ $(function() {
       });
     });
   }
-  key = void 0;
+  stk_common().delay(5134, function() {
+    return socketEmit('do_audio', {
+      task: "play",
+      parameter: {
+        id: "pling",
+        timestamp: new Date().getTime()
+      }
+    });
+  });
   keys = [];
   keysPressed = function(e) {
     keys[e.keyCode] = true;
@@ -1441,6 +1487,15 @@ $(function() {
       case "draggable_image":
       case "draggable_iframe":
         thisObject.url = object.url;
+        break;
+      case "draggable_touchpad":
+      case "draggable_joystick":
+        thisObject.touchstart = object.touchstart;
+        thisObject.touchmove = object.touchmove;
+        thisObject.touchend = object.touchend;
+        thisObject.touchstartvibrate = object.touchstartvibrate;
+        thisObject.touchmovevibrate = object.touchmovevibrate;
+        thisObject.touchendvibrate = object.touchendvibrate;
     }
     console.log("CREATED:" + JSON.stringify(thisObject));
     return thisObject;
@@ -1466,7 +1521,13 @@ $(function() {
     ffcontainer = "body";
     $(".framesXbyY").remove();
     fff = screen.height / screen.width;
+    document.body.addEventListener('touchstart', function(event) {
+      return event.preventDefault();
+    }, false);
     document.body.addEventListener('touchmove', function(event) {
+      return event.preventDefault();
+    }, false);
+    document.body.addEventListener('touchend', function(event) {
       return event.preventDefault();
     }, false);
   }
@@ -1559,7 +1620,7 @@ $(function() {
     console.log("do_audio", msg);
     if (stk_config().parseGetparameter("embeded") !== "true") {
       stk_audio().start(msg.parameter.id, msg.parameter.timestamp - getTimestampdifference());
-      return console.log("do_audio with", msg.parameter.timestamp - getTimestampdifference());
+      return console.log("do_audio with", msg.parameter.id, msg.parameter.timestamp - getTimestampdifference(), new Date().getTime());
     }
   });
   justPrintOut = function(msg) {
@@ -1828,7 +1889,8 @@ $(function() {
           cnr.append(f);
       }
       stage = getStageDimensions(ffcontainer);
-      console.log("Drop created to:" + $(this) + "  " + (newObject.x * 100) + "%");
+      console.log("Drop created to:" + (newObject.x * 100) + "%, " + (newObject.y * 100) + "%");
+      console.log("newObject:", newObject);
       $(ffcontainer).append(cnr);
       drawObject(newObject.type, newObject.id);
 
@@ -1838,67 +1900,114 @@ $(function() {
       switch (newObject.type) {
         case "draggable_joystick":
         case "draggable_touchpad":
-          objir.addEventListener('touchstart', function(event) {
-            var m, o, offset, self, touch, x, y, _ref, _ref1;
-            if (event.targetTouches.length === 1) {
-              touch = event.targetTouches[0];
-              self = $('#' + objName);
-              offset = self.offset();
-              if ((offset.left <= (_ref = touch.pageX) && _ref <= offset.left + self.width()) && (offset.top <= (_ref1 = touch.pageY) && _ref1 <= offset.top + self.height())) {
-                o = objects[newObject.type].objects[newObject.id];
-                x = (touch.pageX - offset.left) / self.width();
-                y = (touch.pageY - offset.top) / self.height();
-                m = {
-                  type: newObject.type,
-                  id: newObject.id,
-                  x: x,
-                  y: y
-                };
-                //stk.framework.addVibratePattern({id:"touchstart",timestamp:new Date().getTime()+30,list:[0,123]});
-                return socketEmit("touchstart", m);
+          if (newObject.touchstart) {
+            console.log("Adding touchstart eventlistener");
+            objir.addEventListener('touchstart', function(event) {
+              var m, o, offset, self, touch, x, y, _ref, _ref1;
+              if (event.targetTouches.length === 1) {
+                touch = event.targetTouches[0];
+                self = $('#' + objName);
+                offset = self.offset();
+                if ((offset.left <= (_ref = touch.pageX) && _ref <= offset.left + self.width()) && (offset.top <= (_ref1 = touch.pageY) && _ref1 <= offset.top + self.height())) {
+                  o = objects[newObject.type].objects[newObject.id];
+                  x = (touch.pageX - offset.left) / self.width();
+                  y = (touch.pageY - offset.top) / self.height();
+                  m = {
+                    type: newObject.type,
+                    id: newObject.id,
+                    x: x,
+                    y: y
+                  };
+                  socketEmit("touchstart", m);
+                  if (newObject.touchstartvibrate) {
+                    stk_vibrate().vibrateNow([0, 50]);
+                    return stk_audio().start("pling");
+                  }
+                }
               }
-            }
-          }, false);
-          objir.addEventListener('touchmove', function(event) {
-            var m, o, offset, self, touch, x, y, _ref, _ref1;
-            if (event.targetTouches.length === 1) {
-              touch = event.targetTouches[0];
-              self = $('#' + objName);
-              offset = self.offset();
-              if ((offset.left <= (_ref = touch.pageX) && _ref <= offset.left + self.width()) && (offset.top <= (_ref1 = touch.pageY) && _ref1 <= offset.top + self.height())) {
-                o = objects[newObject.type].objects[newObject.id];
-                x = (touch.pageX - offset.left) / self.width();
-                y = (touch.pageY - offset.top) / self.height();
-                m = {
-                  type: newObject.type,
-                  id: newObject.id,
-                  x: x,
-                  y: y
-                };
-                return socketEmit("touchmove", m);
+            }, false);
+          }
+          if (newObject.touchmove) {
+            console.log("Adding touchmove eventlistener");
+            objir.addEventListener('touchmove', function(event) {
+              var m, o, offset, self, touch, x, y, _ref, _ref1;
+              if (event.targetTouches.length === 1) {
+                touch = event.targetTouches[0];
+                self = $('#' + objName);
+                offset = self.offset();
+                if ((offset.left <= (_ref = touch.pageX) && _ref <= offset.left + self.width()) && (offset.top <= (_ref1 = touch.pageY) && _ref1 <= offset.top + self.height())) {
+                  o = objects[newObject.type].objects[newObject.id];
+                  x = (touch.pageX - offset.left) / self.width();
+                  y = (touch.pageY - offset.top) / self.height();
+                  m = {
+                    type: newObject.type,
+                    id: newObject.id,
+                    x: x,
+                    y: y
+                  };
+                  socketEmit("touchmove", m);
+                  console.log("touchmove eventlistener", newObject);
+                  if (newObject.touchmovevibrate) {
+                    return stk_vibrate().vibrateNow({
+                      list: [0, 50]
+                    });
+                  }
+                }
               }
-            }
-          }, false);
-          objir.addEventListener('touchend', function(event) {
-            var m, o, offset, self, touch, x, y, _ref, _ref1;
-            if (event.targetTouches.length === 1) {
-              touch = event.targetTouches[0];
-              self = $('#' + objName);
-              offset = self.offset();
-              if ((offset.left <= (_ref = touch.pageX) && _ref <= offset.left + self.width()) && (offset.top <= (_ref1 = touch.pageY) && _ref1 <= offset.top + self.height())) {
-                o = objects[newObject.type].objects[newObject.id];
-                x = (touch.pageX - offset.left) / self.width();
-                y = (touch.pageY - offset.top) / self.height();
-                m = {
-                  type: newObject.type,
-                  id: newObject.id,
-                  x: x,
-                  y: y
-                };
-                return socketEmit("touchend", m);
+            }, false);
+          }
+          if (newObject.touchend) {
+            console.log("Adding touchend eventlistener");
+            objir.addEventListener('touchend', function(event) {
+              var m, o, offset, self, touch, x, y, _ref, _ref1;
+              if (event.targetTouches.length === 1) {
+                touch = event.targetTouches[0];
+                self = $('#' + objName);
+                offset = self.offset();
+                if ((offset.left <= (_ref = touch.pageX) && _ref <= offset.left + self.width()) && (offset.top <= (_ref1 = touch.pageY) && _ref1 <= offset.top + self.height())) {
+                  o = objects[newObject.type].objects[newObject.id];
+                  x = (touch.pageX - offset.left) / self.width();
+                  y = (touch.pageY - offset.top) / self.height();
+                  m = {
+                    type: newObject.type,
+                    id: newObject.id,
+                    x: x,
+                    y: y
+                  };
+                  socketEmit("touchend", m);
+                  console.log("touchend eventlistener", newObject);
+                  if (newObject.touchendvibrate) {
+                    return stk_vibrate().vibrateNow([0, 50]);
+                  }
+                }
               }
-            }
-          }, false);
+            }, false);
+            objir.addEventListener('touchcancel', function(event) {
+              var m, o, offset, self, touch, x, y, _ref, _ref1;
+              if (event.targetTouches.length === 1) {
+                touch = event.targetTouches[0];
+                self = $('#' + objName);
+                offset = self.offset();
+                if ((offset.left <= (_ref = touch.pageX) && _ref <= offset.left + self.width()) && (offset.top <= (_ref1 = touch.pageY) && _ref1 <= offset.top + self.height())) {
+                  o = objects[newObject.type].objects[newObject.id];
+                  x = (touch.pageX - offset.left) / self.width();
+                  y = (touch.pageY - offset.top) / self.height();
+                  m = {
+                    type: newObject.type,
+                    id: newObject.id,
+                    x: x,
+                    y: y
+                  };
+                  socketEmit("touchend", m);
+                  console.log("touchcancel eventlistener", newObject);
+                  if (newObject.touchendvibrate) {
+                    return stk_vibrate().vibrateNow([0, 50]);
+                  }
+                }
+              }
+            }, false);
+          }
+
           /* {separatestart:['embeded']} */
           break;
         case "draggable_keylistener":

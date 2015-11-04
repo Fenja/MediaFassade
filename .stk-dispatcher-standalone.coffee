@@ -47,6 +47,15 @@ sendToUser=(id,msg) ->
     socket.emit('receivedMessage', msg)
 
 port=3000
+console.log "Arguments:"
+process.argv.forEach((val, index, array)->
+  console.log(index + ': ' + val);
+  switch val
+    when "port"
+      port=array[index+1]
+)
+console.log "You may set following arguments, separate key and value by space"
+console.log "port PORTNUMBER"
 http.listen port, () -> console.log "listening on *:#{port}"
 
 getKey=(l=8)->
