@@ -66,7 +66,9 @@ fps = 50
 running = true
 tollerance = 5
 
-bottom = 0 #px
+gravity = 5
+heaven = viewportHeight
+bottom = 0
 jumpHeight = 300
 
 player1 = {
@@ -171,7 +173,8 @@ player6 = {
   time: 0
 }
 
-playerMap = {}
+playerMap = {}  
+  
 players = []
 inactivePlayers = []
 unregisteredPlayer = [player2, player1, player4, player5, player3, player6]
@@ -179,9 +182,6 @@ playerWidth = parseInt(getComputedStyle(player1.dom).width)
 playerHeight = parseInt(getComputedStyle(player1.dom).height)
 timeLimit = 60
 fadeLimit = 55
-
-gravity = 5
-heaven = viewportHeight
 
 object0 = 
   value: 0
@@ -231,7 +231,7 @@ queue = [object0, object1, object2, objectBomb, objectPower]
 fallCount = 0
 fallRound = 30
 columns = 12
-columnWidth = viewportWidth / (columns +2)
+columnWidth = viewportWidth / (2 + columns)
 lastColumn = 0
 bombTime = 50
 powerTime = 75
@@ -240,10 +240,13 @@ powerSpeed = 2
 
 ### Own methods ###
 getPlayer=(id)->
-  playerMap[id]
+  if playerMap[id]? && playerMap[id] in players
+    playerMap[id]
+  else
+    registerPlayer(id)
   
 directionJoystick=(msg, player)->
-  id = msg.envelop.emailhash
+  id = msg.envelop.clientid
   player = getPlayer(id)
   if (player?)
     x = msg.x
@@ -255,12 +258,10 @@ directionJoystick=(msg, player)->
       player.left = true
     else if (x > 0.6 && x > y+0.1)
       player.right = true
-  else
-    registerPlayer(id)
   true
   
 directionKey=(msg, player)->
-  id = msg.envelop.emailhash
+  id = msg.envelop.clientid
   player = getPlayer(id)
   if (player?)
     keys = msg.keys
@@ -271,8 +272,6 @@ directionKey=(msg, player)->
         player.up = true
       if (code == 39)
         player.right = true
-  else
-    registerPlayer(id)
   true
   
 registerPlayer=(id)->
@@ -280,8 +279,13 @@ registerPlayer=(id)->
     player = unregisteredPlayer.pop()
     inactivePlayers.push(player)
     activatePlayer(player)
+    
     playerMap[id] = player
+    console.log "register "+player.name+" for "+id
+    
     player.dom.style.left = 10 +"px"
+    index = unregisteredPlayer.indexOf(player)
+    unregisteredPlayer.splice(index,1)
   true
   
 activatePlayer=(player)->
@@ -289,6 +293,7 @@ activatePlayer=(player)->
   index = inactivePlayers.indexOf(player)
   inactivePlayers.splice(index)
   player.time = new Date().getTime() /1000
+  player.score = 0
   player.dom.style.opacity = 1.0
   player.dom.style.zIndex = 5
   true
@@ -309,13 +314,11 @@ update=()->
 updatePlayers=()->
   now = new Date().getTime() /1000
   for player in players
-    updatePlayer(player)
     updateTime(player, now)
+    updatePlayer(player)
   true
   
 updatePlayer=(player)->
-  console.log "update player: " + player
-  updateInfluence(player)
   if ( player.left && player.side > 0 ) 
     player.side -= 10 * player.speed
   else if ( player.right && player.side + playerWidth < viewportWidth )
@@ -325,20 +328,20 @@ updatePlayer=(player)->
   else if ( player.up )
     jump(player)
   player.dom.style.left = player.side + "px"
+  updateInfluence(player)
   true
   
 updateInfluence=(player)->
-  if (player.influence > 0)
+  if player.influence > 0
     player.influence -= 1
-  else
-    player.speed = 1
-    console.log 'speed: ' + player.speed
+    if player.influence == 0
+      player.speed = 1
   true
   
 updateTime=(player, now)->
   if (now - player.time) >= timeLimit
     deactivatePlayer(player)
-  else if (now-player.time) >= fadeLimit
+  else if (now - player.time) >= fadeLimit
     player.dom.style.opacity = 0.7    
   true
   
@@ -429,11 +432,9 @@ influencePlayer=(player, object)->
   if (object.name == 'bomb')
     player.influence = bombTime
     player.speed = bombSpeed
-    console.log 'speed: ' + player.speed
   else if (object == 'power')
     player.influence = powerTime
     player.speed = powerSpeed
-    console.log 'speed: ' + player.speed
   true
   
 clear=()->

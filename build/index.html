@@ -168,7 +168,7 @@
         </div>
       </div>-->
     <div id="screen">
-      <div id="emptymarker"></div>
+      <!--<div id="emptymarker"></div>
       <button id="login">Login</button>
       <div id="login-form" title="Login" style="z-index:11111">
         <form>
@@ -180,7 +180,7 @@
             <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
           </fieldset>
         </form>
-      </div>
+      </div>-->
       <script src="../custom/libs/js/custom_body.js"></script>
       <script>
         function opendialog(title,content,closeable){
@@ -226,7 +226,7 @@
       </script>
       <script>
         $(function() {
-          opt={socketserver:'http://192.168.0.100:3000'};
+          opt={socketserver:'http://127.0.0.1:3000'};
           $.getScript(opt.socketserver+'/socket.io/socket.io.js')
             .done(function( script, textStatus ) {
               //console.log( textStatus );
