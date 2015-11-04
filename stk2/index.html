@@ -32,9 +32,9 @@
     <script src="../external/libs/js/doccookies.js"></script>
     <script src="../external/libs/js/howler.js/howler.min.js"></script>
     <script>
-      var objectsToInject={"draggable_touchpad":{"lastID":0,"objects":[{"type":"draggable_touchpad","id":0,"x":0,"y":0,"h":0.5,"w":1.0,"scale":1,"constraint":false,"zindex":66,"opacity":1}]},"draggable_image":{"lastID":0,"objects":[{"type":"draggable_image","id":0,"x":0,"y":0.5,"h":0.5,"w":1.0,"scale":1,"constraint":false,"zindex":64,"opacity":1,"url":"../build/images/mf_bg.png"}]},"draggable_background":{"lastID":0,"objects":[{"type":"draggable_background","id":0,"x":0.0,"y":0.0,"h":1.0,"w":1.0,"scale":1,"constraint":false,"zindex":62,"opacity":1,"url":"../build/images/black.png"}]}};
-      var key='h24d';
-      
+      var objectsToInject={"draggable_image":{"lastID":0,"objects":[{"type":"draggable_image","id":0,"x":0,"y":0.545,"h":0.446,"w":1,"scale":1,"constraint":false,"zindex":66,"opacity":1,"url":"/media/images/22nz_draggable_image0.png"}]},"draggable_background":{"lastID":0,"objects":[{"type":"draggable_background","id":0,"x":0.27269654742096505,"y":0.5621301775147929,"h":1,"w":1,"scale":1,"constraint":false,"zindex":64,"opacity":1,"url":"/media/images/22nz_bgr.png"}]},"draggable_touchpad":{"lastID":0,"objects":[{"type":"draggable_touchpad","id":0,"x":0,"y":0,"h":0.5,"w":1,"scale":1,"constraint":false,"zindex":66,"opacity":1,"touchstart":true,"touchmove":true,"touchend":false,"touchstartvibrate":true,"touchmovevibrate":true,"touchendvibrate":true}]}};
+      var key='22nz';
+      key='kdtr';
         
     </script>
     <script>
@@ -224,51 +224,66 @@
       </script>
       <script>
         $(function() {
+<<<<<<< HEAD
+          opt={socketserver:window.location.protocol+'//'+window.location.host};
+=======
           opt={socketserver:'http://mfhaw.de'};
+>>>>>>> 1e75d7d4f66bc59404f8845f3f7166333cc298a0
           console.log ("Fetching from Socketserver: " + opt.socketserver)
           
           console.log ("- window.location.host: " + window.location.host)
           console.log ("- window.location.hostname: " + window.location.hostname)
           console.log ("- window.location.port: " + window.location.port)
           console.log ("- window.location.protocol: " + window.location.protocol)
+          
+          console.log ("loadscript: " + opt.socketserver+'/socket.io/socket.io.js')
           $.getScript(opt.socketserver+'/socket.io/socket.io.js')
             .done(function( script, textStatus ) {
               //console.log( textStatus );
               var s='libs/js/remotecontrol.js';
               //console.log(s);
               
-              console.log ("- s : " + s)
+              console.log ("loadscript: " + s)
           
               $.getScript(s)
                 .done(function( script, textStatus ) {
                   var s2='';
                   
-                  console.log ("- s2 : " + s2)
-                  
                   if(s2==""){
                     loaded();
                   }else{
-                    
+                    console.log ("loadscript: " + s2)
                     $.getScript(s2)
                       .done(function( script, textStatus ) {
                         loaded();
                       })
                       .fail(function( jqxhr, settings, exception ) {
-                        opendialog("Fehler","Triggered ajaxError handler for <i><a href=\""+s2+"\""+s2+"</i><br /><br />"+exception,false );
+                        opendialog("Fehler","Triggered ajaxError 3. handler for <i><a href=\""+s2+"\""+s2+"<br /><br />"+exception+"</a></i>",false );
+                        console.log(exception);
+                        console.log("scriptname:"+scriptname);
+                        console.log("s:"+s);
+                        console.log("s2:"+s2);
                     });
                     
                   }
                 })
                 .fail(function( jqxhr, settings, exception ) {
-                  opendialog("Fehler","Triggered ajaxError handler for <i><a href=\""+s+"\""+s+"</i><br /><br />"+exception,false );
+                  opendialog("Fehler","Triggered ajaxError 2. handler for <i><a href=\""+s+"\""+s+"<br /><br />"+exception+"</a></i>",false );
+                  console.log(exception);
+                  console.log("scriptname:"+scriptname);
+                  console.log("s:"+s);
+                  console.log("s2:"+s2);
               });
             })
             .fail(function( jqxhr, settings, exception ) {
-              opendialog("Fehler","Triggered ajaxError handler for <i>"+script+"</i><br /><br />"+exception,false );
+              opendialog("Fehler","Triggered ajaxError 1. handler for <i><a href=\""+script+"\""+script+"<br /><br />"+exception+"</a></i>",false );
+              console.log(exception);
+              console.log("scriptname:"+scriptname);
+              console.log("s:"+s);
+              console.log("s2:"+s2);
           });
         });
       </script>
     </div>
   </body>
 </html>
-
