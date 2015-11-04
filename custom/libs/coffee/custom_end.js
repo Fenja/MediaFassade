@@ -383,8 +383,8 @@ Define your functions here.
     now = new Date().getTime() / 1000;
     for (i = 0, len = players.length; i < len; i++) {
       player = players[i];
-      updatePlayer(player);
       updateTime(player, now);
+      updatePlayer(player);
     }
     return true;
   };
