@@ -1,0 +1,5 @@
+[submodule "DbConnector"]
+	path = DbConnector
+	url = https://github.com/chaconinc/DbConnectorHowle
+
+git@github.com:Fenja/MediaFassade.git

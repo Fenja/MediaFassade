@@ -1,5 +1,31 @@
 #   cfcoptions : { "out": ".dev0/"  }
 
+fs = require('fs')
+
+port=3000
+hooks={}
+
+console.log "Arguments:"
+process.argv.forEach((val, index, array)->
+  console.log(index + ': ' + val);
+  switch val
+    when "port"
+      port=array[index+1]
+    when "hooks"
+      fs.access(array[index+1], fs.R_OK, (err)->
+        if not err
+          custom_hooks=require(array[index+1])()
+          hooks=custom_hooks.getHooks()
+        else
+          console.log 'No custom hooks @ '+array[index+1]+' available'
+        console.log 'hooks:',hooks
+      )      
+)
+console.log "You may set following arguments, separate key and value by space"
+console.log "port PORTNUMBER                            listen on port"
+console.log "hooks PathToJavaScriptOrCoffeScriptFile    file with custom hooks for touchstart,touchmove,touchend,keyevent,"
+console.log "                                           draggable_orientationsensor,draggable_accelerationsensor"
+
 app = require('express')()
 compress = require('compression')
 app.use(compress())
@@ -46,16 +72,6 @@ sendToUser=(id,msg) ->
   for socket in users[id]
     socket.emit('receivedMessage', msg)
 
-port=3000
-console.log "Arguments:"
-process.argv.forEach((val, index, array)->
-  console.log(index + ': ' + val);
-  switch val
-    when "port"
-      port=array[index+1]
-)
-console.log "You may set following arguments, separate key and value by space"
-console.log "port PORTNUMBER"
 http.listen port, () -> console.log "listening on *:#{port}"
 
 getKey=(l=8)->
@@ -141,6 +157,7 @@ ioEmitToClients=(toClients,msgType,msg)->
 
 io.on('connection', (socket) ->
   console.log 'a user connected'
+  console.log 'hooks:',hooks
   
   socket.on 'join', (msg) ->
     socket.join msg.emailhash
@@ -168,21 +185,33 @@ io.on('connection', (socket) ->
       console.log "ioEmitToClients"
       ioEmitToClients msg.sendTo,'custommessage', msg 
 
+  if hooks['touchstart']==undefined
+    hooks['touchstart']=(msg)->
+      console.log 'touchstart', msg
   socket.on 'touchstart', (msg) ->
     ioEmit socket,'touchstart', msg
-    console.log 'touchstart', msg
-    
+    hooks[''](msg)
+  
+  if hooks['touchmove']==undefined
+    hooks['touchmove']=(msg)->
+      console.log 'touchmove', msg
   socket.on 'touchmove', (msg) ->
     ioEmit socket,'touchmove', msg
-    console.log 'touchmove', msg
-    
+    hooks['touchmove'](msg)
+  
+  if hooks['touchend']==undefined
+    hooks['touchend']=(msg)->
+      console.log 'touchend', msg
   socket.on 'touchend', (msg) ->
     ioEmit socket,'touchend', msg
-    console.log 'touchend', msg
-    
+    hooks['touchend'](msg)
+  
+  if hooks['keyevent']==undefined
+    hooks['keyevent']=(msg)->
+      console.log 'keyevent', msg
   socket.on 'keyevent', (msg) ->
     ioEmit socket,'keyevent', msg
-    console.log 'keyevent', msg
+    hooks['keyevent'](msg)
     
   socket.on 'vibration.isSupported', (msg) ->
     ioEmit socket,'vibration.isSupported', msg
@@ -200,13 +229,19 @@ io.on('connection', (socket) ->
     ioEmit socket,'vibration.removeVibratePattern', msg
     console.log 'vibration.removeVibratePattern', msg
 
-  socket.on 'deviceorientation', (msg) ->
-    ioEmit socket,'deviceorientation', msg
-    console.log 'deviceorientation', msg
+  if hooks['draggable_orientationsensor']==undefined
+    hooks['draggable_orientationsensor']=(msg)->
+      console.log 'draggable_orientationsensor', msg
+  socket.on 'draggable_orientationsensor', (msg) ->
+    ioEmit socket,'draggable_orientationsensor', msg
+    hooks['draggable_orientationsensor'](msg)
     
-  socket.on 'deviceacceleration', (msg) ->
-    ioEmit socket,'deviceacceleration', msg
-    console.log 'deviceacceleration', msg
+  if hooks['draggable_accelerationsensor']==undefined
+    hooks['draggable_accelerationsensor']=(msg)->
+      console.log 'draggable_accelerationsensor', msg
+  socket.on 'draggable_accelerationsensor', (msg) ->
+    ioEmit socket,'draggable_accelerationsensor', msg
+    hooks['draggable_accelerationsensor'](msg)
     
   socket.on 'reset', (msg) ->
     ioEmit socket,'reset', msg
@@ -235,8 +270,6 @@ io.on('connection', (socket) ->
     ioEmit socket,'requestqrscan', msg
     console.log 'requestqrscan', msg , JSON.stringify(requestqrscancode )
     
-  
-          
   socket.error (msg)->
     console.log msg  
 )
