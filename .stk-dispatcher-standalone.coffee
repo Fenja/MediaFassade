@@ -190,7 +190,7 @@ io.on('connection', (socket) ->
       console.log 'touchstart', msg
   socket.on 'touchstart', (msg) ->
     ioEmit socket,'touchstart', msg
-    hooks[''](msg)
+    hooks['touchstart'](msg)
   
   if hooks['touchmove']==undefined
     hooks['touchmove']=(msg)->
