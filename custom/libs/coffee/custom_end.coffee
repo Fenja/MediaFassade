@@ -240,7 +240,8 @@ powerSpeed = 2
 
 ### Own methods ###
 getPlayer=(id)->
-  if playerMap[id]? && playerMap[id] in players
+  console.log playerMap[id]
+  if (playerMap[id]? && playerMap[id] in players)
     playerMap[id]
   else
     registerPlayer(id)
@@ -275,13 +276,12 @@ directionKey=(msg, player)->
   true
   
 registerPlayer=(id)->
-  if unregisteredPlayer.length > 0
+  if (unregisteredPlayer.length > 0)
     player = unregisteredPlayer.pop()
     inactivePlayers.push(player)
     activatePlayer(player)
     
     playerMap[id] = player
-    console.log "register "+player.name+" for "+id
     
     player.dom.style.left = 10 +"px"
     index = unregisteredPlayer.indexOf(player)
@@ -314,8 +314,8 @@ update=()->
 updatePlayers=()->
   now = new Date().getTime() /1000
   for player in players
-    updateTime(player, now)
-    updatePlayer(player)
+    if updateTime(player, now)
+      updatePlayer(player)
   true
   
 updatePlayer=(player)->
@@ -341,9 +341,12 @@ updateInfluence=(player)->
 updateTime=(player, now)->
   if (now - player.time) >= timeLimit
     deactivatePlayer(player)
+    true
   else if (now - player.time) >= fadeLimit
     player.dom.style.opacity = 0.7    
-  true
+    false
+  else
+    true
   
 jump=(player)->
   if (player.height <= bottom)
@@ -432,6 +435,7 @@ influencePlayer=(player, object)->
   if (object.name == 'bomb')
     player.influence = bombTime
     player.speed = bombSpeed
+    stk.framework.sendMessage('custommessage',{type:'addVibratePattern',sendTo:[getClientID(player)],pattern:{id:"viacustommessage",timestamp:new Date().getTime()+2000,list:[0,2000,500,2000]}}) 
   else if (object == 'power')
     player.influence = powerTime
     player.speed = powerSpeed
@@ -443,6 +447,11 @@ clear=()->
     player.left = false
     player.right = false
   true
+  
+getClientID=(player)->
+  for id in playerMap
+    if playerMap[id] == player
+      id
   
   ###
 stk.framework

@@ -14,43 +14,9 @@
    id="svg4403"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="zero.svg">
+   sodipodi:docname="one.svg">
   <defs
      id="defs3">
-    <filter
-       inkscape:collect="always"
-       id="filter4925"
-       color-interpolation-filters="sRGB">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.12602539"
-         id="feGaussianBlur4927" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter4953"
-       x="-0.29652208"
-       width="1.593044"
-       y="-0.19755375"
-       height="1.3951075"
-       color-interpolation-filters="sRGB">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="2.4903221"
-         id="feGaussianBlur4955" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter5069"
-       x="-0.30011624"
-       width="1.6002325"
-       y="-0.19994837"
-       height="1.3998967">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="2.5205075"
-         id="feGaussianBlur5071" />
-    </filter>
     <filter
        inkscape:collect="always"
        id="filter5137">
@@ -99,7 +65,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -109,7 +75,7 @@
      id="layer1"
      transform="translate(0,-832.67716)">
     <g
-       transform="matrix(6.3347963,0,0,6.3347963,-54.402701,456.43281)"
+       transform="matrix(6.3911615,0,0,6.3911615,-55.537821,452.01998)"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#00ff00;fill-opacity:1;stroke:none;font-family:Sans"
        id="flowRoot5126">
       <path
@@ -125,18 +91,13 @@
     </g>
     <g
        id="g5155"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#00ff00;fill-opacity:1;stroke:none;font-family:Sans;filter:url(#filter5173)"
-       transform="matrix(6.3347963,0,0,6.3347963,-54.907777,446.83636)">
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#00ff00;fill-opacity:1;stroke:none;filter:url(#filter5173);font-family:Sans"
+       transform="matrix(5.9384455,0,0,5.9384455,-45.915645,479.38185)">
       <path
          style="filter:url(#filter5137)"
          inkscape:connector-curvature="0"
          id="path5157"
          d="m 12.023438,89.549654 6.445312,0 0,-22.246094 -7.011719,1.40625 0,-3.59375 6.972656,-1.40625 3.945313,0 0,25.839844 6.445312,0 0,3.320312 -16.796874,0 0,-3.320312" />
-      <path
-         style="filter:url(#filter5137)"
-         d="m 12.023438,89.549654 6.445312,0 0,-22.246094 -7.011719,1.40625 0,-3.59375 6.972656,-1.40625 3.945313,0 0,25.839844 6.445312,0 0,3.320312 -16.796874,0 0,-3.320312"
-         id="path5159"
-         inkscape:connector-curvature="0" />
     </g>
   </g>
 </svg>

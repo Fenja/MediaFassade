@@ -7,7 +7,7 @@ Define your functions here.
  */
 
 (function() {
-  var activatePlayer, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, deactivatePlayer, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, draggable_positionsensor_handler, emailhash1, emailhash2, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getNewColumn, getPlayer, gravity, heaven, inactivePlayers, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, player1, player2, player3, player4, player5, player6, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, viewportHeight, viewportWidth,
+  var activatePlayer, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, deactivatePlayer, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, draggable_positionsensor_handler, emailhash1, emailhash2, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getClientID, getNewColumn, getPlayer, gravity, heaven, inactivePlayers, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, player1, player2, player3, player4, player5, player6, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, viewportHeight, viewportWidth,
     indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   customLogger = function(s) {
@@ -287,6 +287,8 @@ Define your functions here.
 
   getPlayer = function(id) {
     var ref;
+    console.log("getPlayer");
+    console.log(playerMap[id]);
     if ((playerMap[id] != null) && (ref = playerMap[id], indexOf.call(players, ref) >= 0)) {
       return playerMap[id];
     } else {
@@ -383,8 +385,9 @@ Define your functions here.
     now = new Date().getTime() / 1000;
     for (i = 0, len = players.length; i < len; i++) {
       player = players[i];
-      updatePlayer(player);
-      updateTime(player, now);
+      if (updateTime(player, now)) {
+        updatePlayer(player);
+      }
     }
     return true;
   };
@@ -418,10 +421,13 @@ Define your functions here.
   updateTime = function(player, now) {
     if ((now - player.time) >= timeLimit) {
       deactivatePlayer(player);
+      return true;
     } else if ((now - player.time) >= fadeLimit) {
       player.dom.style.opacity = 0.7;
+      return false;
+    } else {
+      return true;
     }
-    return true;
   };
 
   jump = function(player) {
@@ -536,6 +542,15 @@ Define your functions here.
     if (object.name === 'bomb') {
       player.influence = bombTime;
       player.speed = bombSpeed;
+      stk.framework.sendMessage('custommessage', {
+        type: 'addVibratePattern',
+        sendTo: [getClientID(player)],
+        pattern: {
+          id: "viacustommessage",
+          timestamp: new Date().getTime() + 2000,
+          list: [0, 2000, 500, 2000]
+        }
+      });
     } else if (object === 'power') {
       player.influence = powerTime;
       player.speed = powerSpeed;
@@ -552,6 +567,20 @@ Define your functions here.
       player.right = false;
     }
     return true;
+  };
+
+  getClientID = function(player) {
+    var i, id, len, results;
+    results = [];
+    for (i = 0, len = playerMap.length; i < len; i++) {
+      id = playerMap[i];
+      if (playerMap[id] === player) {
+        results.push(id);
+      } else {
+        results.push(void 0);
+      }
+    }
+    return results;
 
     /*
     stk.framework
