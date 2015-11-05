@@ -7,7 +7,7 @@ Define your functions here.
  */
 
 (function() {
-  var activatePlayer, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, deactivatePlayer, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, draggable_positionsensor_handler, emailhash1, emailhash2, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getClientID, getNewColumn, getPlayer, gravity, heaven, inactivePlayers, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, player1, player2, player3, player4, player5, player6, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, viewportHeight, viewportWidth,
+  var activatePlayer, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, deactivatePlayer, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, draggable_positionsensor_handler, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getClientID, getNewColumn, getPlayer, gravity, heaven, inactivePlayers, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, objects, player1, player2, player3, player4, player5, player6, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, resize, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, viewportHeight, viewportWidth,
     indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   customLogger = function(s) {
@@ -24,6 +24,7 @@ Define your functions here.
   customLoggerD = function() {
 
     /*customLogger "Delay" */
+    resize();
     return stk.framework.timer(100, customLoggerT);
   };
 
@@ -76,10 +77,6 @@ Define your functions here.
   viewportHeight = window.innerHeight;
 
   viewportWidth = window.innerWidth;
-
-  emailhash1 = "b99a950fa0b095ac59bec541a441b1b0";
-
-  emailhash2 = "4d6ab0c2e472248f4fa9bfd682345297";
 
   fps = 50;
 
@@ -260,6 +257,8 @@ Define your functions here.
 
   objectWidth = parseInt(getComputedStyle(object1.dom).width);
 
+  objects = [object0, object1, object2, objectBomb, objectPower];
+
   objectList = [];
 
   queue = [object0, object1, object2, objectBomb, objectPower];
@@ -287,13 +286,39 @@ Define your functions here.
 
   getPlayer = function(id) {
     var ref;
-    console.log("getPlayer");
     console.log(playerMap[id]);
     if ((playerMap[id] != null) && (ref = playerMap[id], indexOf.call(players, ref) >= 0)) {
       return playerMap[id];
     } else {
       return registerPlayer(id);
     }
+  };
+
+  resize = function() {
+    var i, j, k, len, len1, len2, object, player, score, scores;
+    console.log("resize");
+    viewportHeight = window.innerHeight;
+    heaven = viewportHeight;
+    columnWidth = viewportWidth / (2 + columns);
+    for (i = 0, len = objects.length; i < len; i++) {
+      object = objects[i];
+      object.dom.style.width = columnWidth + "px";
+      object.dom.style.height = columnWidth + "px";
+      object.dom.style.backgroundSize = columnWidth + "px " + columnWidth + "px";
+    }
+    for (j = 0, len1 = unregisteredPlayer.length; j < len1; j++) {
+      player = unregisteredPlayer[j];
+      player.dom.style.width = (columnWidth * 2) + "px";
+      player.dom.style.height = (columnWidth * 4) + "px";
+      player.dom.style.backgroundSize = (columnWidth * 2) + "px " + (columnWidth * 4) + "px";
+    }
+    scores = document.getElementsByClassName('highscore');
+    for (k = 0, len2 = scores.length; k < len2; k++) {
+      score = scores[k];
+      score.style.left = columnWidth + "px";
+      score.style.top = (columnWidth * 1.25) + "px";
+    }
+    return objectWidth = columnWidth;
   };
 
   directionJoystick = function(msg, player) {
@@ -344,7 +369,6 @@ Define your functions here.
       inactivePlayers.push(player);
       activatePlayer(player);
       playerMap[id] = player;
-      console.log("register " + player.name + " for " + id);
       player.dom.style.left = 10 + "px";
       index = unregisteredPlayer.indexOf(player);
       unregisteredPlayer.splice(index, 1);

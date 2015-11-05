@@ -17,6 +17,7 @@ customLoggerT=()->
   
 customLoggerD=()->
   ###customLogger "Delay"###
+  resize()
   stk.framework.timer 100, customLoggerT
   
 stk.framework.delay 500, customLoggerD
@@ -58,9 +59,6 @@ stk.framework.delay 1200, readyAndGo
 
 viewportHeight = window.innerHeight
 viewportWidth = window.innerWidth
-
-emailhash1 = "b99a950fa0b095ac59bec541a441b1b0"
-emailhash2 = "4d6ab0c2e472248f4fa9bfd682345297"
 
 fps = 50
 running = true
@@ -225,6 +223,7 @@ objectPower =
 
 objectWidth = parseInt(getComputedStyle(object1.dom).width)
 
+objects = [object0, object1, object2, objectBomb, objectPower]
 objectList = []
 queue = [object0, object1, object2, objectBomb, objectPower]
 
@@ -245,6 +244,25 @@ getPlayer=(id)->
     playerMap[id]
   else
     registerPlayer(id)
+    
+resize=()->
+  console.log "resize"
+  viewportHeight = window.innerHeight
+  heaven = viewportHeight
+  columnWidth = viewportWidth / (2 + columns)
+  for object in objects
+    object.dom.style.width = columnWidth + "px"
+    object.dom.style.height = columnWidth + "px"
+    object.dom.style.backgroundSize = columnWidth + "px " + columnWidth + "px"
+  for player in unregisteredPlayer
+    player.dom.style.width = (columnWidth * 2) + "px"
+    player.dom.style.height = (columnWidth * 4) + "px"
+    player.dom.style.backgroundSize = (columnWidth * 2) + "px " + (columnWidth * 4) + "px"
+  scores = document.getElementsByClassName('highscore')
+  for score in scores
+    score.style.left = columnWidth + "px"
+    score.style.top = (columnWidth * 2.25) + "px"
+  objectWidth = columnWidth
   
 directionJoystick=(msg, player)->
   id = msg.envelop.clientid
