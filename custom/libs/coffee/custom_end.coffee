@@ -40,6 +40,7 @@ draggable_orientationsensor_handler=(msg)->
 
 # handler for events of draggable_accelerationsensor #
 draggable_accelerationsensor_handler=(msg)->
+  directionAcceleration(msg)
   console.log 'Do something with msg: '+JSON.stringify msg
 
   
@@ -269,6 +270,14 @@ resize=()->
     score.style.left = columnWidth + "px"
     score.style.top = (columnWidth * 2.25) + "px"
   objectWidth = columnWidth
+
+directionAcceleration=(msg, player)->
+  console.log msg.dev
+  player = getPlayer(msg.envelop.clientid)
+  if (player?)
+    if msg.dev.z>10
+      player.up = true
+  true
   
 directionJoystick=(msg, player)->
   id = msg.envelop.clientid

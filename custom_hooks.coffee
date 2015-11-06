@@ -93,7 +93,7 @@ module.exports = () ->
           #console.log 'custom_hook for draggable_accelerationsensor,y:', lastys,sum
         ret[r]=sum 
          
-      console.log 'custom_hook for draggable_accelerationsensor ',ret
+      console.log 'custom_hook for draggable_accelerationsensor ',clientid,ret
       
       return ret
       
