@@ -1,5 +1,5 @@
 var cachedModules=[];
-cachedModules[5593]={exports:{}};
+cachedModules[666]={exports:{}};
 (function(module,exports) {var socket;
 
 socket = io();
@@ -14,8 +14,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[5593],cachedModules[5593].exports);
-cachedModules[6611]={exports:{}};
+}).call(this,cachedModules[666],cachedModules[666].exports);
+cachedModules[8693]={exports:{}};
 (function(module,exports) {var clientID, configuration, headers, onError, req;
 
 headers = "";
@@ -158,8 +158,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[6611],cachedModules[6611].exports);
-cachedModules[1579]={exports:{}};
+}).call(this,cachedModules[8693],cachedModules[8693].exports);
+cachedModules[6587]={exports:{}};
 (function(module,exports) {/*
  * JavaScript MD5 1.0.1
  * https://github.com/blueimp/JavaScript-MD5
@@ -434,15 +434,15 @@ cachedModules[1579]={exports:{}};
         $.md5 = md5;
     }
 }(this));
-}).call(this,cachedModules[1579],cachedModules[1579].exports);
-cachedModules[7743]={exports:{}};
+}).call(this,cachedModules[6587],cachedModules[6587].exports);
+cachedModules[505]={exports:{}};
 (function(module,exports) {var callback, dialogLogin, formLogin, loginUser, stk_config, stk_socket;
 
-cachedModules[1579].exports;
+cachedModules[6587].exports;
 
-stk_config = cachedModules[6611].exports;
+stk_config = cachedModules[8693].exports;
 
-stk_socket = cachedModules[5593].exports;
+stk_socket = cachedModules[666].exports;
 
 callback = function(ret) {
   if (ret.state) {
@@ -495,8 +495,8 @@ module.exports = function() {
     prepare: prepare
   };
 };
-}).call(this,cachedModules[7743],cachedModules[7743].exports);
-cachedModules[1253]={exports:{}};
+}).call(this,cachedModules[505],cachedModules[505].exports);
+cachedModules[1672]={exports:{}};
 (function(module,exports) {module.exports = function() {
   return {
     delay: function(ms, fn) {
@@ -524,8 +524,8 @@ cachedModules[1253]={exports:{}};
     }
   };
 };
-}).call(this,cachedModules[1253],cachedModules[1253].exports);
-cachedModules[7989]={exports:{}};
+}).call(this,cachedModules[1672],cachedModules[1672].exports);
+cachedModules[6703]={exports:{}};
 (function(module,exports) {module.exports = function() {
   return {
     requireFullscreen: function(callback) {
@@ -610,28 +610,27 @@ cachedModules[7989]={exports:{}};
     }
   };
 };
-}).call(this,cachedModules[7989],cachedModules[7989].exports);var stk;
+}).call(this,cachedModules[6703],cachedModules[6703].exports);var stk;
 
 stk = {};
 
 $(function() {
 
-  /* {separatestart:['view']} */
-  var actualObject, addObject, addVibratePattern_handler, clientID, clientType, decider, drawObject, emailhash, envelop, eventhandler, fetchFFF, ff, ffcontainer, fff, getKey, getStageDimensions, injectObject, injectObjects, is_dragging, justPrintOut, key, keys, keysPressed, keysReleased, load, nothing_to_do, objects, realm, runAnimation, sendKeys, setFramesOnOff, setKey, socket, socketEmit, stage, stk_common, stk_config, stk_fullscreen, stk_login, stk_socket, stk_vibrate, up, updateJoystick;
-  clientType = "control";
-
-  /* {separateend:['view']} */
-
   
+
+  /* {separatestart:['remotecontrol']} */
+  clientType = "view";
+
+  /* {separateend:['remotecontrol']} */
   console.log("My clientType is: ", clientType);
   up = 0;
   decider = 0;
   is_dragging = false;
-  stk_socket = cachedModules[5593].exports;
+  stk_socket = cachedModules[666].exports;
   socket = stk_socket().getSocket();
-  stk_config = cachedModules[6611].exports;
-  stk_login = cachedModules[7743].exports;
-  stk_common = cachedModules[1253].exports;
+  stk_config = cachedModules[8693].exports;
+  stk_login = cachedModules[505].exports;
+  stk_common = cachedModules[1672].exports;
 //  stk_vibrate = require("../modules/stk_vibrate_b.js");
   ff = stk_config().parseGetparameter("formfactor");
   fff = 1;
@@ -642,7 +641,7 @@ $(function() {
       return fff = screen.height / screen.width;
     }
   };
-  stk_fullscreen = cachedModules[7989].exports;
+  stk_fullscreen = cachedModules[6703].exports;
   stk_fullscreen().requireFullscreen(fetchFFF);
   envelop = {
     state: void 0
@@ -685,15 +684,24 @@ $(function() {
 
   /* {separatestart:['embeded']} */
 
-  
+  /* {separatestart:['remotecontrol']} */
+  setKey = function(k) {
+    return key = k.replace("\r", '');
+  };
+  load = stk_config().parseGetparameter('load');
+  if (load !== "") {
+    setKey(load);
+    socketEmit('load', {
+      key: load,
+      "private": true
+    });
+  }
+
+  /* {separateend:['remotecontrol']} */
 
   /* {separateend:['embeded']} */
 
-  /* {separatestart:['view']} */
-
   
-
-  /* {separateend:['view']} */
   getStageDimensions = function(c) {
     var stage;
     stage = {
@@ -785,11 +793,7 @@ $(function() {
     return ocss.css("opacity", o.opacity);
   };
 
-  /* {separatestart:['view']} */
-
   
-
-  /* {separateend:['view']} */
   if (ff === "") {
     ffcontainer = "body";
     $(".framesXbyY").remove();
@@ -915,13 +919,18 @@ $(function() {
 
   /* {separatestart:['embeded']} */
 
-  
-
-  /* {separateend:['embeded']} */
-
-  /* {separatestart:['view']} */
+  /* {separatestart:['remotecontrol']} */
+  updateJoystick = function(msg) {
+    console.log("touchmove draggable_joystick " + JSON.stringify(msg));
+    $('#joystick' + msg.id).css("left", ((msg.x - 0.5) * 20) + '%');
+    return $('#joystick' + msg.id).css("top", ((msg.y - 0.5) * 20) + '%');
+  };
+  addVibratePattern_handler = function(msg) {
+    stk_vibrate().addVibratePattern(msg.pattern);
+    return console.log('Let it vibrate: ' + JSON.stringify(msg));
+  };
   eventhandler = {
-    draggable_joystick: justPrintOut,
+    draggable_joystick: updateJoystick,
     draggable_touchpad: justPrintOut,
     deviceorientation: justPrintOut,
     deviceacceleration: justPrintOut,
@@ -930,7 +939,11 @@ $(function() {
     addVibratePattern: addVibratePattern_handler
   };
 
-  /* {separateend:['view']} */
+  /* {separateend:['remotecontrol']} */
+
+  /* {separateend:['embeded']} */
+
+  
   socket.on("custommessage", function(msg) {
     console.log("custommessage", msg);
     if (msg.toClientTypes !== void 0 && $.inArray(clientType, msg.toClientTypes) > -1) {
@@ -947,25 +960,29 @@ $(function() {
 
     /* {separateend:['embeded']} */
 
-    /* {separatestart:['view']} */
-
     
-
-    /* {separateend:['view']} */
   });
-
-  /* {separatestart:['view']} */
-  socket.on("keyevent", function(msg) {
-    return justPrintOut(msg);
-  });
-
-  /* {separateend:['view']} */
 
   
+
+  /* {separatestart:['remotecontrol']} */
+  socket.on("deviceorientation", function(msg) {
+    return eventhandler[msg.type](msg);
+  });
+  socket.on("deviceacceleration", function(msg) {
+    return eventhandler[msg.type](msg);
+  });
+
+  /* {separateend:['remotecontrol']} */
 
   /* {separatestart:['embeded']} */
 
-  
+  /* {separatestart:['remotecontrol']} */
+  socket.on("keyevent", function(msg) {
+    return eventhandler[msg.type](msg);
+  });
+
+  /* {separateend:['remotecontrol']} */
 
   /* {separateend:['embeded']} */
   socket.on('vibration.isSupported', function(msg) {
@@ -1123,132 +1140,7 @@ $(function() {
       $(ffcontainer).append(cnr);
       drawObject(newObject.type, newObject.id);
 
-      /* {separatestart:['view']} */
-      objName = newObject.type + newObject.id;
-      objir = document.getElementById(objName);
-      switch (newObject.type) {
-        case "draggable_joystick":
-        case "draggable_touchpad":
-          objir.addEventListener('touchmove', function(event) {
-            var m, o, offset, self, touch, x, y, _ref, _ref1;
-            if (event.targetTouches.length === 1) {
-              touch = event.targetTouches[0];
-              self = $('#' + objName);
-              offset = self.offset();
-              if ((offset.left <= (_ref = touch.pageX) && _ref <= offset.left + self.width()) && (offset.top <= (_ref1 = touch.pageY) && _ref1 <= offset.top + self.height())) {
-                o = objects[newObject.type].objects[newObject.id];
-                x = (touch.pageX - offset.left) / self.width();
-                y = (touch.pageY - offset.top) / self.height();
-                m = {
-                  type: newObject.type,
-                  id: newObject.id,
-                  x: x,
-                  y: y
-                };
-                return socketEmit("touchmove", m);
-              }
-            }
-          }, false);
-
-          /* {separatestart:['embeded']} */
-          break;
-        case "draggable_keylistener":
-          window.addEventListener('keydown', keysPressed, false);
-          window.addEventListener('keyup', keysReleased, false);
-          break;
-        case "draggable_orientationsensor":
-          if (stk_config().parseGetparameter("embeded") !== "true") {
-            if (window.DeviceOrientationEvent) {
-              window.addEventListener('deviceorientation', function(event) {
-                var alpha, beta, factor, gamma, m, obereKante;
-                alpha = event.alpha;
-                beta = event.beta;
-                gamma = event.gamma;
-                if (alpha !== null || beta !== null || gamma !== null) {
-                  if (beta < 0) {
-                    obereKante = "unten";
-                    up = -1;
-                  }
-                  if (beta > 0) {
-                    obereKante = "oben";
-                    up = 1;
-                  }
-                  factor = (beta + 90) / 180;
-                  if (factor > 1) {
-                    factor = 2 - factor;
-                  }
-                  if (decider === 0) {
-                    factor = Math.abs(factor);
-                  } else {
-                    factor = 1 - Math.abs(factor);
-                  }
-
-                  /*  dataContainerOrientation.innerHTML = 'beta: ' + beta + '<br />abs-90: ' + (Math.abs(beta) - 90) + '<br />factor: ' + factor + '<br />up: ' + up +
-                                       '<br />alpha: ' + alpha + '<br/>beta: ' + beta + '<br />gamma: ' + gamma + '<br />obereKante: ' + obereKante +
-                                       '<br />decider: ' + decider;
-                   */
-                  m = {
-                    type: "deviceorientation",
-                    a: alpha,
-                    b: beta,
-                    g: gamma,
-                    f: factor,
-                    up: up,
-                    objName: objName
-                  };
-                  return socketEmit('deviceorientation', m);
-                }
-              }, false);
-            }
-          }
-          break;
-        case "draggable_accelerationsensor":
-          if (stk_config().parseGetparameter("embeded") !== "true") {
-            if (window.DeviceMotionEvent) {
-              window.addEventListener('devicemotion', function(event) {
-                var m, r, x, y, z;
-                x = event.accelerationIncludingGravity.x;
-                y = event.accelerationIncludingGravity.y;
-                z = event.accelerationIncludingGravity.z;
-                r = event.rotationRate;
-
-                /*var html = 'Acceleration:<br />';
-                        html += 'x: ' + x + '<br />y: ' + y + '<br/>z: ' + z + '<br />';
-                        html += 'Rotation rate:<br />';
-                        if (r != null) html += 'alpha: ' + r.alpha + '<br />beta: ' + r.beta + '<br/>gamma: ' + r.gamma + '<br />';
-                        dataContainerMotion.innerHTML = html;
-                 */
-                if (x > 0) {
-                  decider = 0;
-                }
-                if (x < 0) {
-                  decider = 1;
-                }
-                m = {
-                  type: "deviceacceleration",
-                  x: event.accelerationIncludingGravity.x,
-                  y: event.accelerationIncludingGravity.y,
-                  z: event.accelerationIncludingGravity.z,
-                  xraw: event.acceleration.x,
-                  yraw: event.acceleration.y,
-                  zraw: event.acceleration.z,
-                  rotationRate: event.rotationRate,
-                  interval: event.interval,
-                  objName: objName
-                };
-                return socketEmit('deviceacceleration', m);
-              }, false);
-            }
-          }
-
-          /* {separateend:['embeded']} */
-      }
-
       
-
-      
-
-      /* {separateend:['view']} */
     }
   };
 
@@ -1257,12 +1149,64 @@ $(function() {
     injectObjects(objectsToInject);
   }
 
-  
+  /* {separatestart:['remotecontrol']} */
+  stk = {
+    framework: {
+      register_handler: function(type, handler) {
+        eventhandler[type] = handler;
+        return console.log("Got " + type, handler);
+      },
+      delay: function(ms, fn) {
+        return stk_common().delay(ms, fn);
+      },
+      timer: function(ms, fn) {
+        return stk_common().timer(ms, fn);
+      },
+      isVibrationSupported: function(receiver) {
+        if (receiver == null) {
+          receiver = "self";
+        }
+        if (receiver === "self") {
+          return stk_vibrate().isSupported;
+        }
+      },
+      addVibratePattern: function(pattern, receiver) {
+        if (receiver == null) {
+          receiver = "self";
+        }
+        if (receiver === "self") {
+          return stk_vibrate().addVibratePattern(pattern);
+        }
+      },
+      removeVibratePattern: function(id, receiver) {
+        if (receiver == null) {
+          receiver = "self";
+        }
+        if (receiver === "self") {
+          return stk_vibrate().removeVibratePattern(id);
+        }
+      },
+      getClientID: function() {
+        return stk_config().getClientID(realm);
+      },
+      sendMessage: function(msgType, msg) {
+        if (msgType == null) {
+          msgType = 'custommessage';
+        }
+        if (msg == null) {
+          msg = {};
+        }
+        return socketEmit(msgType, msg);
+      }
+    }
+  };
+
+  /* {separateend:['remotecontrol']} */
 
   /* {separateend:['embeded']} */
   runAnimation = function() {
     var gamepads, pad, _i, _len, _results;
-//    window.requestAnimationFrame(runAnimation);
+    window.requestAnimationFrame(runAnimation);
     gamepads = navigator.getGamepads;
     _results = [];
     for (_i = 0, _len = gamepads.length; _i < _len; _i++) {
@@ -1271,6 +1215,6 @@ $(function() {
     }
     return _results;
   };
-//  window.requestAnimationFrame(runAnimation);
+  window.requestAnimationFrame(runAnimation);
   return true;
 });

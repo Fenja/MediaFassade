@@ -1,5 +1,5 @@
 var cachedModules=[];
-cachedModules[6239]={exports:{}};
+cachedModules[9056]={exports:{}};
 (function(module,exports) {var socket;
 
 socket = io();
@@ -14,8 +14,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[6239],cachedModules[6239].exports);
-cachedModules[508]={exports:{}};
+}).call(this,cachedModules[9056],cachedModules[9056].exports);
+cachedModules[2245]={exports:{}};
 (function(module,exports) {var clientID, configuration, headers, onError, req;
 
 headers = "";
@@ -158,8 +158,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[508],cachedModules[508].exports);
-cachedModules[3826]={exports:{}};
+}).call(this,cachedModules[2245],cachedModules[2245].exports);
+cachedModules[1048]={exports:{}};
 (function(module,exports) {/*
  * JavaScript MD5 1.0.1
  * https://github.com/blueimp/JavaScript-MD5
@@ -434,15 +434,15 @@ cachedModules[3826]={exports:{}};
         $.md5 = md5;
     }
 }(this));
-}).call(this,cachedModules[3826],cachedModules[3826].exports);
-cachedModules[6434]={exports:{}};
+}).call(this,cachedModules[1048],cachedModules[1048].exports);
+cachedModules[7857]={exports:{}};
 (function(module,exports) {var callback, dialogLogin, formLogin, loginUser, stk_config, stk_socket;
 
-cachedModules[3826].exports;
+cachedModules[1048].exports;
 
-stk_config = cachedModules[508].exports;
+stk_config = cachedModules[2245].exports;
 
-stk_socket = cachedModules[6239].exports;
+stk_socket = cachedModules[9056].exports;
 
 callback = function(ret) {
   if (ret.state) {
@@ -495,8 +495,8 @@ module.exports = function() {
     prepare: prepare
   };
 };
-}).call(this,cachedModules[6434],cachedModules[6434].exports);
-cachedModules[3158]={exports:{}};
+}).call(this,cachedModules[7857],cachedModules[7857].exports);
+cachedModules[2415]={exports:{}};
 (function(module,exports) {module.exports = function() {
   return {
     delay: function(ms, fn) {
@@ -524,8 +524,8 @@ cachedModules[3158]={exports:{}};
     }
   };
 };
-}).call(this,cachedModules[3158],cachedModules[3158].exports);
-cachedModules[921]={exports:{}};
+}).call(this,cachedModules[2415],cachedModules[2415].exports);
+cachedModules[6779]={exports:{}};
 (function(module,exports) {var addVibratePattern, removeVibratePattern, stopVibratePattern, vibrate, vibrateEnd, vibratePattern, vibrateTimeouts, vibrating,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -750,8 +750,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[921],cachedModules[921].exports);
-cachedModules[5895]={exports:{}};
+}).call(this,cachedModules[6779],cachedModules[6779].exports);
+cachedModules[3247]={exports:{}};
 (function(module,exports) {var fadeSound, getDuration, getState, muteSound, pauseSound, playSound, prepare, removeSound, seekSound, setRate, soundObjects, soundTimeouts, startSound, stopSound, unmuteSound, volumeSound;
 
 soundObjects = {};
@@ -1207,8 +1207,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[5895],cachedModules[5895].exports);
-cachedModules[7320]={exports:{}};
+}).call(this,cachedModules[3247],cachedModules[3247].exports);
+cachedModules[7590]={exports:{}};
 (function(module,exports) {module.exports = function() {
   return {
     requireFullscreen: function(callback) {
@@ -1293,12 +1293,12 @@ cachedModules[7320]={exports:{}};
     }
   };
 };
-}).call(this,cachedModules[7320],cachedModules[7320].exports);var stk;
+}).call(this,cachedModules[7590],cachedModules[7590].exports);var stk;
 
 stk = {};
 
 $(function() {
-  var actualObject, addObject, addVibratePattern_handler, clientID, clientType, decider, drawObject, emailhash, envelop, eventhandler, fetchFFF, ff, ffcontainer, fff, getKey, getStageDimensions, getTimestampdifference, injectObject, injectObjects, is_dragging, justPrintOut, key, keys, keysPressed, keysReleased, load, nothing_to_do, objects, realm, runAnimation, sendKeys, sendState, setFramesOnOff, setKey, socket, socketEmit, stage, stk_audio, stk_common, stk_config, stk_fullscreen, stk_login, stk_socket, stk_vibrate, timestampdifference, up, updateJoystick;
+  var actualObject, addObject, addVibratePattern_handler, battery, batteryFailure, batterySuccess, batterystate, clientID, clientType, decider, drawObject, emailhash, envelop, eventhandler, fetchFFF, ff, ffcontainer, fff, getKey, getStageDimensions, getTimestampdifference, injectObject, injectObjects, is_dragging, justPrintOut, key, keys, keysPressed, keysReleased, load, nothing_to_do, objects, preventEventPropagation, realm, runAnimation, sendKeys, sendState, setFramesOnOff, setKey, socket, socketEmit, stage, stk_audio, stk_common, stk_config, stk_fullscreen, stk_login, stk_socket, stk_vibrate, timestampdifference, up, updateBatteryState, updateJoystick;
   key = window.key;
   console.log("Started execution ", key);
 
@@ -1312,13 +1312,13 @@ $(function() {
   up = 0;
   decider = 0;
   is_dragging = false;
-  stk_socket = cachedModules[6239].exports;
+  stk_socket = cachedModules[9056].exports;
   socket = stk_socket().getSocket();
-  stk_config = cachedModules[508].exports;
-  stk_login = cachedModules[6434].exports;
-  stk_common = cachedModules[3158].exports;
-  stk_vibrate = cachedModules[921].exports;
-  stk_audio = cachedModules[5895].exports;
+  stk_config = cachedModules[2245].exports;
+  stk_login = cachedModules[7857].exports;
+  stk_common = cachedModules[2415].exports;
+  stk_vibrate = cachedModules[6779].exports;
+  stk_audio = cachedModules[3247].exports;
   ff = stk_config().parseGetparameter("formfactor");
   fff = 1;
   fetchFFF = function() {
@@ -1328,19 +1328,48 @@ $(function() {
       return fff = screen.height / screen.width;
     }
   };
-  stk_fullscreen = cachedModules[7320].exports;
+  stk_fullscreen = cachedModules[7590].exports;
   stk_fullscreen().requireFullscreen(fetchFFF);
   envelop = {
     state: "undefined"
   };
+  preventEventPropagation = {};
   socketEmit = function(msgType, msg) {
+    var now;
     if (msg == null) {
       msg = {};
     }
-    msg.envelop = envelop;
-    msg.envelop.timestamp = stk_common().timestamp();
-    msg.envelop.clienttype = clientType;
-    return stk_socket().emit(msgType, msg);
+    if (preventEventPropagation[msgType] === void 0) {
+      msg.envelop = envelop;
+      msg.envelop.timestamp = stk_common().timestamp();
+      msg.envelop.clienttype = clientType;
+      return stk_socket().emit(msgType, msg);
+    } else {
+      now = new Date().getTime();
+      switch (msgType) {
+        case "touchstart":
+        case "touchmove":
+        case "touchend":
+          if (preventEventPropagation[msgType][msg.type + msg.id] !== void 0) {
+            if (now >= preventEventPropagation[msgType][msg.type + msg.id].lastsend + preventEventPropagation[msgType][msg.type + msg.id].timeout) {
+              msg.envelop = envelop;
+              msg.envelop.timestamp = stk_common().timestamp();
+              msg.envelop.clienttype = clientType;
+              stk_socket().emit(msgType, msg);
+              return preventEventPropagation[msgType][msg.type + msg.id].lastsend = now;
+            }
+          }
+          break;
+        default:
+          if (now >= preventEventPropagation[msgType].lastsend + preventEventPropagation[msgType].timeout) {
+            msg.envelop = envelop;
+            msg.envelop.timestamp = stk_common().timestamp();
+            msg.envelop.clienttype = clientType;
+            stk_socket().emit(msgType, msg);
+            return preventEventPropagation[msgType].lastsend = now;
+          }
+      }
+    }
   };
   stk_audio().addSoundObject({
     id: "pling",
@@ -1496,6 +1525,13 @@ $(function() {
         thisObject.touchstartvibrate = object.touchstartvibrate;
         thisObject.touchmovevibrate = object.touchmovevibrate;
         thisObject.touchendvibrate = object.touchendvibrate;
+        thisObject.startmaxms = object.startmaxms;
+        thisObject.movemaxms = object.movemaxms;
+        thisObject.endmaxms = object.endmaxms;
+        break;
+      case "draggable_orientationsensor":
+      case "draggable_accelerationsensor":
+        thisObject.maxms = object.maxms;
     }
     console.log("CREATED:" + JSON.stringify(thisObject));
     return thisObject;
@@ -1662,8 +1698,8 @@ $(function() {
   eventhandler = {
     draggable_joystick: justPrintOut,
     draggable_touchpad: justPrintOut,
-    deviceorientation: justPrintOut,
-    deviceacceleration: justPrintOut,
+    draggable_orientationsensor: justPrintOut,
+    draggable_accelerationsensor: justPrintOut,
     draggable_keylistener: justPrintOut,
     custommessage: justPrintOut,
     addVibratePattern: addVibratePattern_handler
@@ -1902,6 +1938,13 @@ $(function() {
         case "draggable_touchpad":
           if (newObject.touchstart) {
             console.log("Adding touchstart eventlistener");
+            if (preventEventPropagation['touchstart'] === void 0) {
+              preventEventPropagation['touchstart'] = {};
+            }
+            preventEventPropagation['touchstart'][newObject.type + newObject.id] = {
+              timeout: newObject.startmaxms,
+              lastsend: 0
+            };
             objir.addEventListener('touchstart', function(event) {
               var m, o, offset, self, touch, x, y, _ref, _ref1;
               if (event.targetTouches.length === 1) {
@@ -1929,6 +1972,13 @@ $(function() {
           }
           if (newObject.touchmove) {
             console.log("Adding touchmove eventlistener");
+            if (preventEventPropagation['touchmove'] === void 0) {
+              preventEventPropagation['touchmove'] = {};
+            }
+            preventEventPropagation['touchmove'][newObject.type + newObject.id] = {
+              timeout: newObject.movemaxms,
+              lastsend: 0
+            };
             objir.addEventListener('touchmove', function(event) {
               var m, o, offset, self, touch, x, y, _ref, _ref1;
               if (event.targetTouches.length === 1) {
@@ -1958,6 +2008,13 @@ $(function() {
           }
           if (newObject.touchend) {
             console.log("Adding touchend eventlistener");
+            if (preventEventPropagation['touchend'] === void 0) {
+              preventEventPropagation['touchend'] = {};
+            }
+            preventEventPropagation['touchend'][newObject.type + newObject.id] = {
+              timeout: newObject.endmaxms,
+              lastsend: 0
+            };
             objir.addEventListener('touchend', function(event) {
               var m, o, offset, self, touch, x, y, _ref, _ref1;
               if (event.targetTouches.length === 1) {
@@ -2017,6 +2074,10 @@ $(function() {
         case "draggable_orientationsensor":
           if (stk_config().parseGetparameter("embeded") !== "true") {
             if (window.DeviceOrientationEvent) {
+              preventEventPropagation['draggable_orientationsensor'] = {
+                timeout: newObject.maxms,
+                lastsend: 0
+              };
               window.addEventListener('deviceorientation', function(event) {
                 var alpha, beta, factor, gamma, m, obereKante;
                 alpha = event.alpha;
@@ -2046,7 +2107,7 @@ $(function() {
                                        '<br />decider: ' + decider;
                    */
                   m = {
-                    type: "deviceorientation",
+                    type: "draggable_orientationsensor",
                     a: alpha,
                     b: beta,
                     g: gamma,
@@ -2054,7 +2115,7 @@ $(function() {
                     up: up,
                     objName: objName
                   };
-                  return socketEmit('deviceorientation', m);
+                  return socketEmit('draggable_orientationsensor', m);
                 }
               }, false);
             }
@@ -2063,6 +2124,10 @@ $(function() {
         case "draggable_accelerationsensor":
           if (stk_config().parseGetparameter("embeded") !== "true") {
             if (window.DeviceMotionEvent) {
+              preventEventPropagation['draggable_accelerationsensor'] = {
+                timeout: newObject.maxms,
+                lastsend: 0
+              };
               window.addEventListener('devicemotion', function(event) {
                 var m, r, x, y, z;
                 x = event.accelerationIncludingGravity.x;
@@ -2083,7 +2148,7 @@ $(function() {
                   decider = 1;
                 }
                 m = {
-                  type: "deviceacceleration",
+                  type: "draggable_accelerationsensor",
                   x: event.accelerationIncludingGravity.x,
                   y: event.accelerationIncludingGravity.y,
                   z: event.accelerationIncludingGravity.z,
@@ -2094,7 +2159,7 @@ $(function() {
                   interval: event.interval,
                   objName: objName
                 };
-                return socketEmit('deviceacceleration', m);
+                return socketEmit('draggable_accelerationsensor', m);
               }, false);
             }
           }
@@ -2132,8 +2197,47 @@ $(function() {
   window.requestAnimationFrame(runAnimation);
 
   /* {separatestart:['embeded']} */
+  batterystate = {};
+  batterystate.charging = void 0;
+  batterystate.level = void 0;
+  batterystate.chargingtime = void 0;
+  batterystate.dischargingtime = void 0;
+  battery = null;
+  updateBatteryState = function() {
+    batterystate.charging = battery.charging;
+    batterystate.level = battery.level * 100;
+    batterystate.chargingtime = battery.chargingTime;
+    batterystate.dischargingtime = battery.dischargingTime;
+    console.log("updateBatteryState");
+    return true;
+  };
+  batterySuccess = function(bm) {
+    var _ref;
+    battery = bm;
+    battery.addEventListener('chargingchange', updateBatteryState);
+    battery.addEventListener('levelchange', updateBatteryState);
+    battery.addEventListener('chargingtimechange', updateBatteryState);
+    battery.addEventListener('dischargingtimechange', updateBatteryState);
+    console.log("Battery charging? " + ((_ref = battery.charging) != null ? _ref : {
+      "Yes": "No"
+    }));
+    console.log("Battery level: " + battery.level * 100 + "%");
+    console.log("Battery charging time: " + battery.chargingTime + " seconds");
+    console.log("Battery discharging time: " + battery.dischargingTime + " seconds");
+    updateBatteryState();
+    return true;
+  };
+  batteryFailure = function() {};
+  if ("getBattery" in navigator) {
+    console.log("getBattery is in navigator");
+    navigator.getBattery().then(batterySuccess, batteryFailure);
+  } else {
+    console.log("getBattery not in navigator");
+  };
   sendState = function() {
-    return socketEmit("state", {});
+    return socketEmit("state", {
+      battery: batterystate
+    });
   };
   if (stk_config().parseGetparameter("embeded") !== "true") {
     stk_common().timer(1000, sendState);

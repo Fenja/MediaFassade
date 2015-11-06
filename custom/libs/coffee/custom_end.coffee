@@ -20,7 +20,7 @@ customLoggerD=()->
   resize()
   stk.framework.timer 100, customLoggerT
   
-stk.framework.delay 500, customLoggerD
+#stk.framework.delay 500, customLoggerD
 
 ### Define your handler ###
 
@@ -34,14 +34,21 @@ draggable_joystick_handler=(msg)->
   directionJoystick(msg)
   console.log 'Do something with msg: '+JSON.stringify msg
   
-  # handler for events of draggable_positionsensor #
-draggable_positionsensor_handler=(msg)->
+# handler for events of draggable_orientationsensor #
+draggable_orientationsensor_handler=(msg)->
   console.log 'Do something with msg: '+JSON.stringify msg
+
+# handler for events of draggable_accelerationsensor #
+draggable_accelerationsensor_handler=(msg)->
+  directionAcceleration(msg)
+  console.log 'Do something with msg: '+JSON.stringify msg
+
   
 ### Register your handler ###
 stk.framework.register_handler 'draggable_joystick', draggable_joystick_handler
 stk.framework.register_handler 'draggable_keylistener', draggable_keylistener_handler
-stk.framework.register_handler 'draggable_positionsensor', draggable_positionsensor_handler
+stk.framework.register_handler 'draggable_orientationsensor', draggable_orientationsensor_handler
+stk.framework.register_handler 'draggable_accelerationsensor', draggable_accelerationsensor_handler
 
 ###
 Doing "onLoad"-Stuff
@@ -181,7 +188,7 @@ playerMap = {}
   
 players = []
 inactivePlayers = []
-unregisteredPlayer = [player2, player4, player5, player3, player6, player1]
+unregisteredPlayer = [player2, player1, player4, player5, player3, player6]
 playerWidth = parseInt(getComputedStyle(player1.dom).width)
 playerHeight = parseInt(getComputedStyle(player1.dom).height)
 basketTollerance = 20
@@ -277,8 +284,16 @@ resize=()->
     score.style.left = columnWidth + "px"
     score.style.top = (columnWidth * 2.25) + "px"
   objectWidth = columnWidth
-  playerWidth = parseInt(getComputedStyle(player1.dom).width)
-  playerHeight = parseInt(getComputedStyle(player1.dom).height)
+playerWidth = parseInt(getComputedStyle(player1.dom).width)
+playerHeight = parseInt(getComputedStyle(player1.dom).height)
+
+directionAcceleration=(msg, player)->
+  console.log msg.dev
+  player = getPlayer(msg.envelop.clientid)
+  if (player?)
+    if msg.dev.z>10
+      player.up = true
+  true
   
 directionJoystick=(msg, player)->
   id = msg.envelop.clientid
@@ -356,6 +371,7 @@ updatePlayer=(player)->
   playerLeft = parseInt(getComputedStyle(player.dom).left)
   basketLeft = parseInt(getComputedStyle(player.basketDom).left)
   
+updatePlayer=(player)->
   if ( player.left && player.side > 0 ) 
     player.side -= 10 * player.speed
     if (basketLeft <= -1 * basketTollerance)
