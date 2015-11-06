@@ -29,6 +29,14 @@ body {
   bottom:0;
   position:absolute;
 }
+#blend {
+  width: 100%;
+  height: 20%;
+  margin-top:0;
+  top:0;
+  position:absolute;
+  background-color: #0f0;
+}
 .player {
   left: -250px;
   position: absolute;
