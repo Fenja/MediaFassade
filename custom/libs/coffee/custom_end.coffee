@@ -71,7 +71,7 @@ viewportWidth = window.innerWidth
 
 fps = 50
 running = true
-tollerance = 5
+tollerance = -2
 
 gravity = 5
 heaven = viewportHeight
@@ -281,16 +281,16 @@ resize=()->
     object.dom.style.backgroundSize = columnWidth + "px " + columnWidth + "px"
     object.height = heaven
   for player in unregisteredPlayer
-    player.dom.style.width = (columnWidth * 2) + "px"
-    player.dom.style.height = (columnWidth * 4) + "px"
-    player.dom.style.backgroundSize = (columnWidth * 2) + "px " + (columnWidth * 4) + "px"
-    player.basketDom.style.width = (columnWidth * 2) + "px"
-    player.basketDom.style.height = (columnWidth * 4) + "px"
-    player.basketDom.style.backgroundSize = (columnWidth * 2) + "px " + (columnWidth * 4) + "px"
+    player.dom.style.width = ((columnWidth * 2) / 5 * 3) + "px"
+    player.dom.style.height = ((columnWidth * 4) / 5 * 3) + "px"
+    player.dom.style.backgroundSize = ((columnWidth * 2) / 5 * 3) + "px " + ((columnWidth * 4) / 5 * 3) + "px"
+    player.basketDom.style.width = ((columnWidth * 2) / 5 * 3) + "px"
+    player.basketDom.style.height = ((columnWidth * 4) / 5 * 3) + "px"
+    player.basketDom.style.backgroundSize = ((columnWidth * 2) / 5 * 3) + "px " + ((columnWidth * 4) / 5 * 3) + "px"
   scores = document.getElementsByClassName('highscore')
   for score in scores
-    score.style.left = columnWidth + "px"
-    score.style.top = (columnWidth * 2.25) + "px"
+    score.style.left = (columnWidth / 5 * 3) + "px"
+    score.style.top = ((columnWidth * 2) / 5 * 3) + "px"
   objectWidth = columnWidth
   playerWidth = parseInt(getComputedStyle(player1.dom).width)
   playerHeight = parseInt(getComputedStyle(player1.dom).height)
@@ -436,8 +436,7 @@ updateTime=(player, now)->
     deactivatePlayer(player)
     false
   else if (now - player.time) >= fadeLimit
-    player.dom.style.opacity = 0.7    
-#    player.basketDom.style.opacity = 0.7    
+    player.dom.style.opacity = 0.7   
     true
   else
     true
@@ -473,23 +472,25 @@ fillObjectList=()->
   if (queue.length > 0)
     fallCount += 1
     if ( fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2 )
-      object = queue.pop()
+      object = queue[0]
       object.side = getNewColumn() * columnWidth + columnWidth
       object.dom.style.left = object.side + "px"
       objectList.push object
+      index = queue.indexOf(object)
+      queue.splice(index,1)
       fallCount = 0
   true
       
 falls=(object)->
-  if object != undefined
-    object.height -= object.velo
-    if (object.height <= bottom)
-      objectDown(object)
-    object.dom.style.bottom = object.height + "px"
+#  if object != undefined
+  object.height -= object.velo
+  if (object.height <= bottom)
+    objectDown(object)
+  object.dom.style.bottom = object.height + "px"
   true
   
 getNewColumn=()->
-  Math.floor(Math.random() * 13)
+  Math.floor(Math.random() * columns)
   
 checkCollisions=()->
   for object in objectList
@@ -509,7 +510,7 @@ objectDown=(object)->
   object.dom.style.bottom = heaven + "px"
   queue.push object
   index = objectList.indexOf(object)
-  objectList = objectList.splice(index)
+  objectList.splice(index,1)
   calcSide(object)
   true
   

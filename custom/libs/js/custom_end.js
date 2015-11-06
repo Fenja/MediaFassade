@@ -87,7 +87,7 @@ fps = 50;
 
 running = true;
 
-tollerance = 5;
+tollerance = -2;
 
 gravity = 5;
 
@@ -332,18 +332,18 @@ resize = function() {
   }
   for (j = 0, len1 = unregisteredPlayer.length; j < len1; j++) {
     player = unregisteredPlayer[j];
-    player.dom.style.width = (columnWidth * 2) + "px";
-    player.dom.style.height = (columnWidth * 4) + "px";
-    player.dom.style.backgroundSize = (columnWidth * 2) + "px " + (columnWidth * 4) + "px";
-    player.basketDom.style.width = (columnWidth * 2) + "px";
-    player.basketDom.style.height = (columnWidth * 4) + "px";
-    player.basketDom.style.backgroundSize = (columnWidth * 2) + "px " + (columnWidth * 4) + "px";
+    player.dom.style.width = ((columnWidth * 2) / 5 * 3) + "px";
+    player.dom.style.height = ((columnWidth * 4) / 5 * 3) + "px";
+    player.dom.style.backgroundSize = ((columnWidth * 2) / 5 * 3) + "px " + ((columnWidth * 4) / 5 * 3) + "px";
+    player.basketDom.style.width = ((columnWidth * 2) / 5 * 3) + "px";
+    player.basketDom.style.height = ((columnWidth * 4) / 5 * 3) + "px";
+    player.basketDom.style.backgroundSize = ((columnWidth * 2) / 5 * 3) + "px " + ((columnWidth * 4) / 5 * 3) + "px";
   }
   scores = document.getElementsByClassName('highscore');
   for (k = 0, len2 = scores.length; k < len2; k++) {
     score = scores[k];
-    score.style.left = columnWidth + "px";
-    score.style.top = (columnWidth * 2.25) + "px";
+    score.style.left = (columnWidth / 5 * 3) + "px";
+    score.style.top = ((columnWidth * 2) / 5 * 3) + "px";
   }
   objectWidth = columnWidth;
   playerWidth = parseInt(getComputedStyle(player1.dom).width);
@@ -569,14 +569,16 @@ fallObjects = function() {
 };
 
 fillObjectList = function() {
-  var object;
+  var index, object;
   if (queue.length > 0) {
     fallCount += 1;
     if (fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2) {
-      object = queue.pop();
+      object = queue[0];
       object.side = getNewColumn() * columnWidth + columnWidth;
       object.dom.style.left = object.side + "px";
       objectList.push(object);
+      index = queue.indexOf(object);
+      queue.splice(index, 1);
       fallCount = 0;
     }
   }
@@ -584,18 +586,16 @@ fillObjectList = function() {
 };
 
 falls = function(object) {
-  if (object !== void 0) {
-    object.height -= object.velo;
-    if (object.height <= bottom) {
-      objectDown(object);
-    }
-    object.dom.style.bottom = object.height + "px";
+  object.height -= object.velo;
+  if (object.height <= bottom) {
+    objectDown(object);
   }
+  object.dom.style.bottom = object.height + "px";
   return true;
 };
 
 getNewColumn = function() {
-  return Math.floor(Math.random() * 13);
+  return Math.floor(Math.random() * columns);
 };
 
 checkCollisions = function() {
@@ -624,7 +624,7 @@ objectDown = function(object) {
   object.dom.style.bottom = heaven + "px";
   queue.push(object);
   index = objectList.indexOf(object);
-  objectList = objectList.splice(index);
+  objectList.splice(index, 1);
   calcSide(object);
   return true;
 };
