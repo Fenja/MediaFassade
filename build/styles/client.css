@@ -17,12 +17,17 @@ body {
   cursor: pointer;
 }
 #screen{
-  width: auto;
+  width: 100hh;
   height: 100vh;
-  background-image: url("../images/mf_bg.png");
-  background-repeat: no-repeat;
-  background-position: bottom;
-  position: relative;
+  background-color: #000;
+}
+#bgr {
+  width: 100%;
+  height: auto;
+  max-height:80%;
+  margin-bottom:0;
+  bottom:0;
+  position:absolute;
 }
 .player {
   left: -250px;
