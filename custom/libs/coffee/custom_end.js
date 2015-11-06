@@ -7,7 +7,7 @@ Define your functions here.
  */
 
 (function() {
-  var activatePlayer, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, deactivatePlayer, directionJoystick, directionKey, draggable_joystick_handler, draggable_keylistener_handler, draggable_positionsensor_handler, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getClientID, getNewColumn, getPlayer, gravity, heaven, inactivePlayers, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, objects, player1, player2, player3, player4, player5, player6, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, resize, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, viewportHeight, viewportWidth,
+  var activatePlayer, basketTollerance, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, deactivatePlayer, directionAcceleration, directionJoystick, directionKey, draggable_accelerationsensor_handler, draggable_joystick_handler, draggable_keylistener_handler, draggable_orientationsensor_handler, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getClientID, getNewColumn, getPlayer, gravity, heaven, inactivePlayers, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, objects, player1, player2, player3, player4, player5, player6, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, resize, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, viewportHeight, viewportWidth,
     indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   customLogger = function(s) {
@@ -43,7 +43,12 @@ Define your functions here.
     return console.log('Do something with msg: ' + JSON.stringify(msg));
   };
 
-  draggable_positionsensor_handler = function(msg) {
+  draggable_orientationsensor_handler = function(msg) {
+    return console.log('Do something with msg: ' + JSON.stringify(msg));
+  };
+
+  draggable_accelerationsensor_handler = function(msg) {
+    directionAcceleration(msg);
     return console.log('Do something with msg: ' + JSON.stringify(msg));
   };
 
@@ -54,7 +59,9 @@ Define your functions here.
 
   stk.framework.register_handler('draggable_keylistener', draggable_keylistener_handler);
 
-  stk.framework.register_handler('draggable_positionsensor', draggable_positionsensor_handler);
+  stk.framework.register_handler('draggable_orientationsensor', draggable_orientationsensor_handler);
+
+  stk.framework.register_handler('draggable_accelerationsensor', draggable_accelerationsensor_handler);
 
 
   /*
@@ -104,6 +111,7 @@ Define your functions here.
     side: 50,
     influenceTime: 0,
     dom: document.getElementById('player1'),
+    basketDom: document.getElementById('basket1'),
     score: 0,
     scoreDom: document.getElementById('score1'),
     time: 0
@@ -121,6 +129,7 @@ Define your functions here.
     side: 250,
     influenceTime: 0,
     dom: document.getElementById('player2'),
+    basketDom: document.getElementById('basket2'),
     score: 0,
     scoreDom: document.getElementById('score2'),
     time: 0
@@ -138,6 +147,7 @@ Define your functions here.
     side: 250,
     influenceTime: 0,
     dom: document.getElementById('player3'),
+    basketDom: document.getElementById('basket3'),
     score: 0,
     scoreDom: document.getElementById('score3'),
     time: 0
@@ -155,6 +165,7 @@ Define your functions here.
     side: 250,
     influenceTime: 0,
     dom: document.getElementById('player4'),
+    basketDom: document.getElementById('basket4'),
     score: 0,
     scoreDom: document.getElementById('score4'),
     time: 0
@@ -172,6 +183,7 @@ Define your functions here.
     side: 250,
     influenceTime: 0,
     dom: document.getElementById('player5'),
+    basketDom: document.getElementById('basket5'),
     score: 0,
     scoreDom: document.getElementById('score5'),
     time: 0
@@ -189,6 +201,7 @@ Define your functions here.
     side: 250,
     influenceTime: 0,
     dom: document.getElementById('player6'),
+    basketDom: document.getElementById('basket6'),
     score: 0,
     scoreDom: document.getElementById('score6'),
     time: 0
@@ -205,6 +218,8 @@ Define your functions here.
   playerWidth = parseInt(getComputedStyle(player1.dom).width);
 
   playerHeight = parseInt(getComputedStyle(player1.dom).height);
+
+  basketTollerance = 20;
 
   timeLimit = 60;
 
@@ -286,9 +301,12 @@ Define your functions here.
 
   getPlayer = function(id) {
     var ref;
-    console.log(playerMap[id]);
-    if ((playerMap[id] != null) && (ref = playerMap[id], indexOf.call(players, ref) >= 0)) {
-      return playerMap[id];
+    if (playerMap[id] != null) {
+      if (ref = playerMap[id], indexOf.call(players, ref) >= 0) {
+        return playerMap[id];
+      } else {
+        return void 0;
+      }
     } else {
       return registerPlayer(id);
     }
@@ -298,6 +316,7 @@ Define your functions here.
     var i, j, k, len, len1, len2, object, player, score, scores;
     console.log("resize");
     viewportHeight = window.innerHeight;
+    viewportWidth = window.innerWidth;
     heaven = viewportHeight;
     columnWidth = viewportWidth / (2 + columns);
     for (i = 0, len = objects.length; i < len; i++) {
@@ -305,20 +324,37 @@ Define your functions here.
       object.dom.style.width = columnWidth + "px";
       object.dom.style.height = columnWidth + "px";
       object.dom.style.backgroundSize = columnWidth + "px " + columnWidth + "px";
+      object.height = heaven;
     }
     for (j = 0, len1 = unregisteredPlayer.length; j < len1; j++) {
       player = unregisteredPlayer[j];
       player.dom.style.width = (columnWidth * 2) + "px";
       player.dom.style.height = (columnWidth * 4) + "px";
       player.dom.style.backgroundSize = (columnWidth * 2) + "px " + (columnWidth * 4) + "px";
+      player.basketDom.style.width = (columnWidth * 2) + "px";
+      player.basketDom.style.height = (columnWidth * 4) + "px";
+      player.basketDom.style.backgroundSize = (columnWidth * 2) + "px " + (columnWidth * 4) + "px";
     }
     scores = document.getElementsByClassName('highscore');
     for (k = 0, len2 = scores.length; k < len2; k++) {
       score = scores[k];
       score.style.left = columnWidth + "px";
-      score.style.top = (columnWidth * 1.25) + "px";
+      score.style.top = (columnWidth * 2.25) + "px";
     }
-    return objectWidth = columnWidth;
+    objectWidth = columnWidth;
+    playerWidth = parseInt(getComputedStyle(player1.dom).width);
+    return playerHeight = parseInt(getComputedStyle(player1.dom).height);
+  };
+
+  directionAcceleration = function(msg, player) {
+    console.log(msg.dev);
+    player = getPlayer(msg.envelop.clientid);
+    if ((player != null)) {
+      if (msg.dev.z > 10) {
+        player.up = true;
+      }
+    }
+    return true;
   };
 
   directionJoystick = function(msg, player) {
@@ -417,17 +453,34 @@ Define your functions here.
   };
 
   updatePlayer = function(player) {
+    var basketLeft, playerLeft;
+    playerLeft = parseInt(getComputedStyle(player.dom).left);
+    basketLeft = parseInt(getComputedStyle(player.basketDom).left);
     if (player.left && player.side > 0) {
       player.side -= 10 * player.speed;
+      if (basketLeft <= -1 * basketTollerance) {
+        player.dom.style.left = player.side + "px";
+      } else {
+        player.basketDom.style.left = (player.side - playerLeft) + "px";
+      }
     } else if (player.right && player.side + playerWidth < viewportWidth) {
       player.side += 10 * player.speed;
+      player.dom.style.left = player.side + "px";
+      if (basketLeft >= basketTollerance) {
+        player.dom.style.left = player.side + "px";
+      } else {
+        player.basketDom.style.left = (player.side - playerLeft) + "px";
+      }
     }
     if (player.jumps || player.falls) {
       jump(player);
+      player.dom.style.left = player.side + "px";
+      player.basketDom.style.left = "0px";
     } else if (player.up) {
       jump(player);
+      player.dom.style.left = player.side + "px";
+      player.basketDom.style.left = "0px";
     }
-    player.dom.style.left = player.side + "px";
     updateInfluence(player);
     return true;
   };
@@ -445,10 +498,10 @@ Define your functions here.
   updateTime = function(player, now) {
     if ((now - player.time) >= timeLimit) {
       deactivatePlayer(player);
-      return true;
+      return false;
     } else if ((now - player.time) >= fadeLimit) {
       player.dom.style.opacity = 0.7;
-      return false;
+      return true;
     } else {
       return true;
     }

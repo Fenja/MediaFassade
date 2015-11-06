@@ -20,7 +20,7 @@ customLoggerD=()->
   resize()
   stk.framework.timer 100, customLoggerT
   
-#stk.framework.delay 500, customLoggerD
+stk.framework.delay 500, customLoggerD
 
 ### Define your handler ###
 
@@ -284,8 +284,8 @@ resize=()->
     score.style.left = columnWidth + "px"
     score.style.top = (columnWidth * 2.25) + "px"
   objectWidth = columnWidth
-playerWidth = parseInt(getComputedStyle(player1.dom).width)
-playerHeight = parseInt(getComputedStyle(player1.dom).height)
+  playerWidth = parseInt(getComputedStyle(player1.dom).width)
+  playerHeight = parseInt(getComputedStyle(player1.dom).height)
 
 directionAcceleration=(msg, player)->
   console.log msg.dev
@@ -371,7 +371,6 @@ updatePlayer=(player)->
   playerLeft = parseInt(getComputedStyle(player.dom).left)
   basketLeft = parseInt(getComputedStyle(player.basketDom).left)
   
-updatePlayer=(player)->
   if ( player.left && player.side > 0 ) 
     player.side -= 10 * player.speed
     if (basketLeft <= -1 * basketTollerance)
