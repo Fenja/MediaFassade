@@ -5,7 +5,7 @@
 The compiled custom_body.js will be included at the end of the html body section after the include of socket.io and stk-framework.
 Define your functions here.
  */
-var activatePlayer, basketTollerance, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, deactivatePlayer, directionAcceleration, directionJoystick, directionKey, draggable_accelerationsensor_handler, draggable_joystick_handler, draggable_keylistener_handler, draggable_orientationsensor_handler, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getClientID, getNewColumn, getPlayer, gravity, heaven, inactivePlayers, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, objects, player1, player2, player3, player4, player5, player6, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, resize, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, viewportHeight, viewportWidth,
+var activatePlayer, basketTollerance, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, deactivatePlayer, directionAcceleration, directionJoystick, directionKey, draggable_accelerationsensor_handler, draggable_joystick_handler, draggable_keylistener_handler, draggable_orientationsensor_handler, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getClientID, getNewColumn, getPlayer, gravity, heaven, inactivePlayers, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, objects, player1, player2, player3, player4, player5, player6, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, resize, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, upsideDownDevice, viewportHeight, viewportWidth,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 customLogger = function(s) {
@@ -37,15 +37,16 @@ draggable_keylistener_handler = function(msg) {
 };
 
 draggable_joystick_handler = function(msg) {
-  var a;
   console.log('Do something with msg: ' + JSON.stringify(msg));
-  directionJoystick(msg);
-  return a = a;
+  return directionJoystick(msg);
 };
 
-draggable_orientationsensor_handler = function(msg) {};
+draggable_orientationsensor_handler = function(msg) {
+  return upsideDownDevice(msg);
+};
 
 draggable_accelerationsensor_handler = function(msg) {
+  console.log("move it", msg.dev);
   return directionAcceleration(msg);
 };
 
@@ -111,7 +112,8 @@ player1 = {
   basketDom: document.getElementById('basket1'),
   score: 0,
   scoreDom: document.getElementById('score1'),
-  time: 0
+  time: 0,
+  up: false
 };
 
 player2 = {
@@ -129,7 +131,8 @@ player2 = {
   basketDom: document.getElementById('basket2'),
   score: 0,
   scoreDom: document.getElementById('score2'),
-  time: 0
+  time: 0,
+  up: false
 };
 
 player3 = {
@@ -147,7 +150,8 @@ player3 = {
   basketDom: document.getElementById('basket3'),
   score: 0,
   scoreDom: document.getElementById('score3'),
-  time: 0
+  time: 0,
+  up: false
 };
 
 player4 = {
@@ -165,7 +169,8 @@ player4 = {
   basketDom: document.getElementById('basket4'),
   score: 0,
   scoreDom: document.getElementById('score4'),
-  time: 0
+  time: 0,
+  up: false
 };
 
 player5 = {
@@ -183,7 +188,8 @@ player5 = {
   basketDom: document.getElementById('basket5'),
   score: 0,
   scoreDom: document.getElementById('score5'),
-  time: 0
+  time: 0,
+  up: false
 };
 
 player6 = {
@@ -201,7 +207,8 @@ player6 = {
   basketDom: document.getElementById('basket6'),
   score: 0,
   scoreDom: document.getElementById('score6'),
-  time: 0
+  time: 0,
+  up: false
 };
 
 playerMap = {};
@@ -343,20 +350,41 @@ resize = function() {
   return playerHeight = parseInt(getComputedStyle(player1.dom).height);
 };
 
-directionAcceleration = function(msg, player) {
+directionAcceleration = function(msg) {
+  var player;
   player = getPlayer(msg.envelop.clientid);
   if (player !== void 0) {
     if (msg.dev.z > 10) {
       player.up = true;
     }
+    if (msg.dev.y > 10) {
+      player.right = true;
+    }
+    if (msg.dev.y < -10) {
+      player.left = true;
+    }
   }
   return true;
 };
 
-directionJoystick = function(msg, player) {
-  var id, type, x, y;
-  id = msg.envelop.clientid;
-  player = getPlayer(id);
+upsideDownDevice = function(msg) {
+  var id, isUp, player;
+  id = msg.envelop.clientId;
+  player = playerMap[id];
+  if (player !== void 0) {
+    isUp = msg.up;
+    if (!isUp && player.up) {
+      return player.up = false;
+    } else if (isUp && !player.up) {
+      player.up = true;
+      return activatePlayer(player);
+    }
+  }
+};
+
+directionJoystick = function(msg) {
+  var player, type, x, y;
+  player = getPlayer(msg.envelop.clientid);
   if (player !== void 0) {
     x = msg.x;
     y = msg.y;
@@ -372,8 +400,8 @@ directionJoystick = function(msg, player) {
   return true;
 };
 
-directionKey = function(msg, player) {
-  var code, i, id, keys, len;
+directionKey = function(msg) {
+  var code, i, id, keys, len, player;
   id = msg.envelop.clientid;
   player = getPlayer(id);
   console.log(player, id);
@@ -396,7 +424,7 @@ directionKey = function(msg, player) {
 };
 
 registerPlayer = function(id) {
-  var index, player;
+  var player;
   console.log("registerPlayer", unregisteredPlayer);
   if (unregisteredPlayer.length > 0) {
     player = unregisteredPlayer.pop();
@@ -405,10 +433,8 @@ registerPlayer = function(id) {
     playerMap[id] = player;
     console.log("playerMap", playerMap);
     player.dom.style.left = 10 + "px";
-    index = unregisteredPlayer.indexOf(player);
     return player;
   } else {
-    console.log("ICHBINUNDEFINED");
     return void 0;
   }
 };
@@ -543,16 +569,14 @@ fallObjects = function() {
 };
 
 fillObjectList = function() {
-  var index, object;
+  var object;
   if (queue.length > 0) {
     fallCount += 1;
     if (fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2) {
-      object = queue[0];
+      object = queue.pop();
       object.side = getNewColumn() * columnWidth + columnWidth;
       object.dom.style.left = object.side + "px";
       objectList.push(object);
-      index = queue.indexOf(object);
-      queue = queue.splice(index, 1);
       fallCount = 0;
     }
   }
@@ -600,7 +624,7 @@ objectDown = function(object) {
   object.dom.style.bottom = heaven + "px";
   queue.push(object);
   index = objectList.indexOf(object);
-  objectList = objectList.splice(index, 1);
+  objectList = objectList.splice(index);
   calcSide(object);
   return true;
 };

@@ -33,14 +33,15 @@ draggable_keylistener_handler=(msg)->
 draggable_joystick_handler=(msg)->
   console.log 'Do something with msg: '+JSON.stringify msg
   directionJoystick(msg)
-  a=a
   
 # handler for events of draggable_orientationsensor #
 draggable_orientationsensor_handler=(msg)->
   #console.log 'Do something with msg: '+JSON.stringify msg
+  upsideDownDevice(msg)
 
 # handler for events of draggable_accelerationsensor #
 draggable_accelerationsensor_handler=(msg)->
+  console.log "move it",msg.dev
   directionAcceleration(msg)
   #console.log 'Do something with msg: '+JSON.stringify msg
 
@@ -93,6 +94,7 @@ player1 = {
   score: 0
   scoreDom: document.getElementById('score1')
   time: 0
+  up: false
 }
 
 player2 = {
@@ -111,6 +113,7 @@ player2 = {
   score: 0
   scoreDom: document.getElementById('score2')
   time: 0
+  up: false
 }
 
 player3 = {
@@ -129,6 +132,7 @@ player3 = {
   score: 0
   scoreDom: document.getElementById('score3')
   time: 0
+  up: false
 }
 
 player4 = {
@@ -147,6 +151,7 @@ player4 = {
   score: 0
   scoreDom: document.getElementById('score4')
   time: 0
+  up: false
 }
 
 player5 = {
@@ -165,6 +170,7 @@ player5 = {
   score: 0
   scoreDom: document.getElementById('score5')
   time: 0
+  up: false
 }
 
 player6 = {
@@ -183,6 +189,7 @@ player6 = {
   score: 0
   scoreDom: document.getElementById('score6')
   time: 0
+  up: false
 }
 
 playerMap = {}  
@@ -288,16 +295,31 @@ resize=()->
   playerWidth = parseInt(getComputedStyle(player1.dom).width)
   playerHeight = parseInt(getComputedStyle(player1.dom).height)
 
-directionAcceleration=(msg, player)->  
+directionAcceleration=(msg)->  
   player = getPlayer(msg.envelop.clientid)
   if player!=undefined
     if msg.dev.z>10
       player.up = true
+    if msg.dev.y>10
+      player.right = true
+    if msg.dev.y<-10
+      player.left = true
   true
   
-directionJoystick=(msg, player)->
-  id = msg.envelop.clientid
-  player = getPlayer(id)
+upsideDownDevice=(msg)->
+  id = msg.envelop.clientId
+  player = playerMap[id]
+  if player!=undefined
+    isUp = msg.up
+    if !isUp && player.up
+      player.up = false
+    else if isUp && !player.up
+      player.up = true
+      activatePlayer(player)
+  
+  
+directionJoystick=(msg)->
+  player = getPlayer(msg.envelop.clientid)
   if player!=undefined
     x = msg.x
     y = msg.y
@@ -310,7 +332,7 @@ directionJoystick=(msg, player)->
       player.right = true
   true
   
-directionKey=(msg, player)->
+directionKey=(msg)->
   id = msg.envelop.clientid
 
   player = getPlayer(id)
@@ -336,10 +358,8 @@ registerPlayer=(id)->
     playerMap[id] = player
     console.log "playerMap",playerMap
     player.dom.style.left = 10 +"px"
-    index = unregisteredPlayer.indexOf(player)
     player
   else
-    console.log "ICHBINUNDEFINED"
     undefined
   
 activatePlayer=(player)->
@@ -445,7 +465,6 @@ updateObjects=()->
   true
   
 fallObjects=()->
-  #console.log "DAAAD",objectList
   for object in objectList
     falls(object)
   true
@@ -454,17 +473,14 @@ fillObjectList=()->
   if (queue.length > 0)
     fallCount += 1
     if ( fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2 )
-      object = queue[0]
+      object = queue.pop()
       object.side = getNewColumn() * columnWidth + columnWidth
       object.dom.style.left = object.side + "px"
       objectList.push object
-      index = queue.indexOf(object)
-      queue=queue.splice(index,1)
       fallCount = 0
   true
       
 falls=(object)->
-  #console.log("DAAAD" + object);
   if object != undefined
     object.height -= object.velo
     if (object.height <= bottom)
@@ -493,7 +509,7 @@ objectDown=(object)->
   object.dom.style.bottom = heaven + "px"
   queue.push object
   index = objectList.indexOf(object)
-  objectList=objectList.splice(index,1)
+  objectList = objectList.splice(index)
   calcSide(object)
   true
   
