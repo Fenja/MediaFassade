@@ -241,7 +241,7 @@ io.on('connection', (socket) ->
       console.log 'draggable_accelerationsensor', msg
   socket.on 'draggable_accelerationsensor', (msg) ->
     msg.dev=hooks['draggable_accelerationsensor'](msg)
-    ioEmit socket,'accelerationpitch', msg
+    ioEmit socket,'draggable_accelerationsensor', msg
     
   socket.on 'reset', (msg) ->
     ioEmit socket,'reset', msg

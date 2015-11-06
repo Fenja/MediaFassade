@@ -22,7 +22,7 @@ unSchedule=()->
         parent.postMessage(message,STKMediawallFramework.connection.parentURI)
       
 getState=()->
-  return STKMediawallFramework.connection.state
+  return STKMediawallFramework.state
 
 tick=()->
   console.log "tick"
