@@ -81,6 +81,7 @@ player1 = {
   side: 50 #px
   influenceTime: 0
   dom: document.getElementById('player1')
+  basketDom: document.getElementById('basket1')
   score: 0
   scoreDom: document.getElementById('score1')
   time: 0
@@ -98,6 +99,7 @@ player2 = {
   side: 250
   influenceTime: 0
   dom: document.getElementById('player2')
+  basketDom: document.getElementById('basket2')
   score: 0
   scoreDom: document.getElementById('score2')
   time: 0
@@ -115,6 +117,7 @@ player3 = {
   side: 250
   influenceTime: 0
   dom: document.getElementById('player3')
+  basketDom: document.getElementById('basket3')
   score: 0
   scoreDom: document.getElementById('score3')
   time: 0
@@ -132,6 +135,7 @@ player4 = {
   side: 250
   influenceTime: 0
   dom: document.getElementById('player4')
+  basketDom: document.getElementById('basket4')
   score: 0
   scoreDom: document.getElementById('score4')
   time: 0
@@ -149,6 +153,7 @@ player5 = {
   side: 250
   influenceTime: 0
   dom: document.getElementById('player5')
+  basketDom: document.getElementById('basket5')
   score: 0
   scoreDom: document.getElementById('score5')
   time: 0
@@ -166,6 +171,7 @@ player6 = {
   side: 250
   influenceTime: 0
   dom: document.getElementById('player6')
+  basketDom: document.getElementById('basket6')
   score: 0
   scoreDom: document.getElementById('score6')
   time: 0
@@ -175,9 +181,10 @@ playerMap = {}
   
 players = []
 inactivePlayers = []
-unregisteredPlayer = [player2, player1, player4, player5, player3, player6]
+unregisteredPlayer = [player2, player4, player5, player3, player6, player1]
 playerWidth = parseInt(getComputedStyle(player1.dom).width)
 playerHeight = parseInt(getComputedStyle(player1.dom).height)
+basketTollerance = 20
 timeLimit = 60
 fadeLimit = 55
 
@@ -239,30 +246,39 @@ powerSpeed = 2
 
 ### Own methods ###
 getPlayer=(id)->
-  console.log playerMap[id]
-  if (playerMap[id]? && playerMap[id] in players)
-    playerMap[id]
+  if playerMap[id]?
+    if playerMap[id] in players
+      playerMap[id]
+    else
+      undefined
   else
     registerPlayer(id)
     
 resize=()->
   console.log "resize"
   viewportHeight = window.innerHeight
+  viewportWidth = window.innerWidth
   heaven = viewportHeight
   columnWidth = viewportWidth / (2 + columns)
   for object in objects
     object.dom.style.width = columnWidth + "px"
     object.dom.style.height = columnWidth + "px"
     object.dom.style.backgroundSize = columnWidth + "px " + columnWidth + "px"
+    object.height = heaven
   for player in unregisteredPlayer
     player.dom.style.width = (columnWidth * 2) + "px"
     player.dom.style.height = (columnWidth * 4) + "px"
     player.dom.style.backgroundSize = (columnWidth * 2) + "px " + (columnWidth * 4) + "px"
+    player.basketDom.style.width = (columnWidth * 2) + "px"
+    player.basketDom.style.height = (columnWidth * 4) + "px"
+    player.basketDom.style.backgroundSize = (columnWidth * 2) + "px " + (columnWidth * 4) + "px"
   scores = document.getElementsByClassName('highscore')
   for score in scores
     score.style.left = columnWidth + "px"
     score.style.top = (columnWidth * 2.25) + "px"
   objectWidth = columnWidth
+  playerWidth = parseInt(getComputedStyle(player1.dom).width)
+  playerHeight = parseInt(getComputedStyle(player1.dom).height)
   
 directionJoystick=(msg, player)->
   id = msg.envelop.clientid
@@ -335,17 +351,36 @@ updatePlayers=()->
     if updateTime(player, now)
       updatePlayer(player)
   true
-  
+
 updatePlayer=(player)->
+  playerLeft = parseInt(getComputedStyle(player.dom).left)
+  basketLeft = parseInt(getComputedStyle(player.basketDom).left)
+  
   if ( player.left && player.side > 0 ) 
     player.side -= 10 * player.speed
+    if (basketLeft <= -1 * basketTollerance)
+      player.dom.style.left = player.side + "px"
+    else
+      player.basketDom.style.left = (player.side - playerLeft) + "px"
+    
   else if ( player.right && player.side + playerWidth < viewportWidth )
     player.side += 10*player.speed
+    player.dom.style.left = player.side + "px"
+    if (basketLeft >= basketTollerance)
+      player.dom.style.left = player.side + "px"
+    else
+      player.basketDom.style.left = (player.side - playerLeft) + "px"
+    
   if (player.jumps || player.falls)
     jump(player)
+    player.dom.style.left = player.side + "px"
+    player.basketDom.style.left = "0px"
   else if ( player.up )
     jump(player)
-  player.dom.style.left = player.side + "px"
+    player.dom.style.left = player.side + "px"
+    player.basketDom.style.left = "0px"
+    
+  
   updateInfluence(player)
   true
   
@@ -359,10 +394,11 @@ updateInfluence=(player)->
 updateTime=(player, now)->
   if (now - player.time) >= timeLimit
     deactivatePlayer(player)
-    true
+    false
   else if (now - player.time) >= fadeLimit
     player.dom.style.opacity = 0.7    
-    false
+#    player.basketDom.style.opacity = 0.7    
+    true
   else
     true
   

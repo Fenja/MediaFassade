@@ -37,6 +37,10 @@ body {
   bottom: 1000px; 
   z-index: 10;
 }
+.basket {
+  z-index: 12;
+  position: absolute;
+}
 
 #zero {
   background: url(../images/zero.svg);
@@ -70,40 +74,58 @@ body {
 }
 
 #player1 {
-  background: url(../images/chara1.svg);
+  background: url(../images/chara01.svg);
   background-size: 200px 400px;
   height: 400px;
   width: 200px;
+}
+#basket1 {
+  background: url(../images/chara01_basket.svg);
 }
 #player2 {
-  background: url(../images/chara2.svg);
+  background: url(../images/chara02.svg);
   background-size: 200px 400px;
   height: 400px;
   width: 200px;
+}
+#basket2 {
+  background: url(../images/chara02_basket.svg);
 }
 #player3 {
-  background: url(../images/chara3.svg);
+  background: url(../images/chara03.svg);
   background-size: 200px 400px;
   height: 400px;
   width: 200px;
+}
+#basket3 {
+  background: url(../images/chara03_basket.svg);
 }
 #player4 {
-  background: url(../images/chara4.svg);
+  background: url(../images/chara04.svg);
   background-size: 200px 400px;
   height: 400px;
   width: 200px;
+}
+#basket4 {
+  background: url(../images/chara04_basket.svg);
 }
 #player5 {
-  background: url(../images/chara5.svg);
+  background: url(../images/chara05.svg);
   background-size: 200px 400px;
   height: 400px;
   width: 200px;
 }
+#basket5 {
+  background: url(../images/chara05_basket.svg);
+}
 #player6 {
-  background: url(../images/chara6.svg);
+  background: url(../images/chara06.svg);
   background-size: 200px 400px;
   height: 400px;
   width: 200px;
+}
+#basket6 {
+  background: url(../images/chara06_basket.svg);
 }
 
 .highscore {
@@ -114,6 +136,13 @@ body {
   font-size: 20px;
   font-weight: 300;
   color: black;
+  z-index: 15;
+}
+#global-highscore {
+  text-align: center;
+  top: 1%;
+  color: white;
+  font-size: 27px;
 }
 .draggable {
   visibility: hidden;
