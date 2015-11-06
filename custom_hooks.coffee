@@ -5,10 +5,13 @@ module.exports = () ->
   getHooks: () ->
     {touchstart:(msg)->
       console.log 'custom_hook for touchstart', msg
+      a=a
     ,touchmove:(msg)->
       console.log 'custom_hook for touchmove', msg
+      a=a
     ,touchend:(msg)->
-      console.log 'custom_hook for touchend', msg
+      #console.log 'custom_hook for touchend', msg
+      a=a
     ,keyevent:(msg)->
       console.log 'custom_hook for keyevent', msg
     ,draggable_orientationsensor:(msg)->
@@ -93,7 +96,7 @@ module.exports = () ->
           #console.log 'custom_hook for draggable_accelerationsensor,y:', lastys,sum
         ret[r]=sum 
          
-      console.log 'custom_hook for draggable_accelerationsensor ',clientid,ret
+      #console.log 'custom_hook for draggable_accelerationsensor ',clientid,ret
       
       return ret
       

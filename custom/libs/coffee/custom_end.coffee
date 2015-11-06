@@ -26,22 +26,23 @@ stk.framework.delay 500, customLoggerD
 
 # handler for events of draggable_keylistener #
 draggable_keylistener_handler=(msg)->
-  directionKey(msg)
   console.log 'Do something with msg: '+JSON.stringify msg
+  directionKey(msg)
 
 # handler for events of draggable_joystick #
 draggable_joystick_handler=(msg)->
-  directionJoystick(msg)
   console.log 'Do something with msg: '+JSON.stringify msg
+  directionJoystick(msg)
+  a=a
   
 # handler for events of draggable_orientationsensor #
 draggable_orientationsensor_handler=(msg)->
-  console.log 'Do something with msg: '+JSON.stringify msg
+  #console.log 'Do something with msg: '+JSON.stringify msg
 
 # handler for events of draggable_accelerationsensor #
 draggable_accelerationsensor_handler=(msg)->
   directionAcceleration(msg)
-  console.log 'Do something with msg: '+JSON.stringify msg
+  #console.log 'Do something with msg: '+JSON.stringify msg
 
   
 ### Register your handler ###
@@ -253,7 +254,7 @@ powerSpeed = 2
 
 ### Own methods ###
 getPlayer=(id)->
-  if playerMap[id]?
+  if playerMap[id]!=undefined
     if playerMap[id] in players
       playerMap[id]
     else
@@ -287,10 +288,9 @@ resize=()->
   playerWidth = parseInt(getComputedStyle(player1.dom).width)
   playerHeight = parseInt(getComputedStyle(player1.dom).height)
 
-directionAcceleration=(msg, player)->
-  console.log msg.dev
+directionAcceleration=(msg, player)->  
   player = getPlayer(msg.envelop.clientid)
-  if (player?)
+  if player!=undefined
     if msg.dev.z>10
       player.up = true
   true
@@ -298,7 +298,7 @@ directionAcceleration=(msg, player)->
 directionJoystick=(msg, player)->
   id = msg.envelop.clientid
   player = getPlayer(id)
-  if (player?)
+  if player!=undefined
     x = msg.x
     y = msg.y
     type = msg.type
@@ -312,8 +312,10 @@ directionJoystick=(msg, player)->
   
 directionKey=(msg, player)->
   id = msg.envelop.clientid
+
   player = getPlayer(id)
-  if (player?)
+  console.log player,id 
+  if player!=undefined
     keys = msg.keys
     for code in keys
       if (code == 37)
@@ -325,22 +327,25 @@ directionKey=(msg, player)->
   true
   
 registerPlayer=(id)->
+  console.log "registerPlayer",unregisteredPlayer
   if (unregisteredPlayer.length > 0)
     player = unregisteredPlayer.pop()
     inactivePlayers.push(player)
     activatePlayer(player)
     
     playerMap[id] = player
-    
+    console.log "playerMap",playerMap
     player.dom.style.left = 10 +"px"
     index = unregisteredPlayer.indexOf(player)
-    unregisteredPlayer.splice(index,1)
-  true
+    player
+  else
+    console.log "ICHBINUNDEFINED"
+    undefined
   
 activatePlayer=(player)->
   players.push(player)
   index = inactivePlayers.indexOf(player)
-  inactivePlayers.splice(index)
+  inactivePlayers=inactivePlayers.splice(index)
   player.time = new Date().getTime() /1000
   player.score = 0
   player.dom.style.opacity = 1.0
@@ -350,7 +355,7 @@ activatePlayer=(player)->
 deactivatePlayer=(player)->
   inactivePlayers.push(player)
   index = players.indexOf(player)
-  players.splice(index)
+  players=players.splice(index)
   player.dom.style.opacity = 0.3
   player.dom.style.zIndex = 2
   true
@@ -440,6 +445,7 @@ updateObjects=()->
   true
   
 fallObjects=()->
+  #console.log "DAAAD",objectList
   for object in objectList
     falls(object)
   true
@@ -453,15 +459,17 @@ fillObjectList=()->
       object.dom.style.left = object.side + "px"
       objectList.push object
       index = queue.indexOf(object)
-      queue.splice(index,1)
+      queue=queue.splice(index,1)
       fallCount = 0
   true
       
 falls=(object)->
-  object.height -= object.velo
-  if (object.height <= bottom)
-    objectDown(object)
-  object.dom.style.bottom = object.height + "px"
+  #console.log("DAAAD" + object);
+  if object != undefined
+    object.height -= object.velo
+    if (object.height <= bottom)
+      objectDown(object)
+    object.dom.style.bottom = object.height + "px"
   true
   
 getNewColumn=()->
@@ -485,7 +493,7 @@ objectDown=(object)->
   object.dom.style.bottom = heaven + "px"
   queue.push object
   index = objectList.indexOf(object)
-  objectList.splice(index,1)
+  objectList=objectList.splice(index,1)
   calcSide(object)
   true
   
