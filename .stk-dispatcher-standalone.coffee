@@ -24,7 +24,7 @@ process.argv.forEach((val, index, array)->
 console.log "You may set following arguments, separate key and value by space"
 console.log "port PORTNUMBER                            listen on port"
 console.log "hooks PathToJavaScriptOrCoffeScriptFile    file with custom hooks for touchstart,touchmove,touchend,keyevent,"
-console.log "                                           draggable_orientationsensor,draggable_accelerationsensor"
+console.log "                                           draggable_orientationsensor,draggable_accelerationsensor,state"
 
 app = require('express')()
 compress = require('compression')
@@ -233,24 +233,27 @@ io.on('connection', (socket) ->
     hooks['draggable_orientationsensor']=(msg)->
       console.log 'draggable_orientationsensor', msg
   socket.on 'draggable_orientationsensor', (msg) ->
+    msg.isup=hooks['draggable_orientationsensor'](msg)    
     ioEmit socket,'draggable_orientationsensor', msg
-    hooks['draggable_orientationsensor'](msg)
     
   if hooks['draggable_accelerationsensor']==undefined
     hooks['draggable_accelerationsensor']=(msg)->
       console.log 'draggable_accelerationsensor', msg
   socket.on 'draggable_accelerationsensor', (msg) ->
-    ioEmit socket,'draggable_accelerationsensor', msg
-    hooks['draggable_accelerationsensor'](msg)
+    msg.dev=hooks['draggable_accelerationsensor'](msg)
+    ioEmit socket,'accelerationpitch', msg
     
   socket.on 'reset', (msg) ->
     ioEmit socket,'reset', msg
     console.log 'reset', msg
     
+  if hooks['state']==undefined
+    hooks['state']=(msg)->
+      console.log 'state', msg
   socket.on 'state', (msg) ->
     ioEmit socket,'state', msg
-    console.log 'state', msg
-    
+    hooks['state'](msg)
+  
   socket.on 'getkey', (msg) ->
     k=getKey(4)
     ioEmit socket,'key', {key:k}

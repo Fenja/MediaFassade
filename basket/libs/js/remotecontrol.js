@@ -1,5 +1,5 @@
 var cachedModules=[];
-cachedModules[2421]={exports:{}};
+cachedModules[9056]={exports:{}};
 (function(module,exports) {var socket;
 
 socket = io();
@@ -14,8 +14,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[2421],cachedModules[2421].exports);
-cachedModules[4803]={exports:{}};
+}).call(this,cachedModules[9056],cachedModules[9056].exports);
+cachedModules[2245]={exports:{}};
 (function(module,exports) {var clientID, configuration, headers, onError, req;
 
 headers = "";
@@ -158,8 +158,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[4803],cachedModules[4803].exports);
-cachedModules[286]={exports:{}};
+}).call(this,cachedModules[2245],cachedModules[2245].exports);
+cachedModules[1048]={exports:{}};
 (function(module,exports) {/*
  * JavaScript MD5 1.0.1
  * https://github.com/blueimp/JavaScript-MD5
@@ -434,15 +434,15 @@ cachedModules[286]={exports:{}};
         $.md5 = md5;
     }
 }(this));
-}).call(this,cachedModules[286],cachedModules[286].exports);
-cachedModules[9684]={exports:{}};
+}).call(this,cachedModules[1048],cachedModules[1048].exports);
+cachedModules[7857]={exports:{}};
 (function(module,exports) {var callback, dialogLogin, formLogin, loginUser, stk_config, stk_socket;
 
-cachedModules[286].exports;
+cachedModules[1048].exports;
 
-stk_config = cachedModules[4803].exports;
+stk_config = cachedModules[2245].exports;
 
-stk_socket = cachedModules[2421].exports;
+stk_socket = cachedModules[9056].exports;
 
 callback = function(ret) {
   if (ret.state) {
@@ -495,8 +495,8 @@ module.exports = function() {
     prepare: prepare
   };
 };
-}).call(this,cachedModules[9684],cachedModules[9684].exports);
-cachedModules[4321]={exports:{}};
+}).call(this,cachedModules[7857],cachedModules[7857].exports);
+cachedModules[2415]={exports:{}};
 (function(module,exports) {module.exports = function() {
   return {
     delay: function(ms, fn) {
@@ -524,8 +524,8 @@ cachedModules[4321]={exports:{}};
     }
   };
 };
-}).call(this,cachedModules[4321],cachedModules[4321].exports);
-cachedModules[728]={exports:{}};
+}).call(this,cachedModules[2415],cachedModules[2415].exports);
+cachedModules[6779]={exports:{}};
 (function(module,exports) {var addVibratePattern, removeVibratePattern, stopVibratePattern, vibrate, vibrateEnd, vibratePattern, vibrateTimeouts, vibrating,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -750,8 +750,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[728],cachedModules[728].exports);
-cachedModules[2740]={exports:{}};
+}).call(this,cachedModules[6779],cachedModules[6779].exports);
+cachedModules[3247]={exports:{}};
 (function(module,exports) {var fadeSound, getDuration, getState, muteSound, pauseSound, playSound, prepare, removeSound, seekSound, setRate, soundObjects, soundTimeouts, startSound, stopSound, unmuteSound, volumeSound;
 
 soundObjects = {};
@@ -1207,8 +1207,8 @@ module.exports = function() {
     }
   };
 };
-}).call(this,cachedModules[2740],cachedModules[2740].exports);
-cachedModules[3718]={exports:{}};
+}).call(this,cachedModules[3247],cachedModules[3247].exports);
+cachedModules[7590]={exports:{}};
 (function(module,exports) {module.exports = function() {
   return {
     requireFullscreen: function(callback) {
@@ -1293,7 +1293,7 @@ cachedModules[3718]={exports:{}};
     }
   };
 };
-}).call(this,cachedModules[3718],cachedModules[3718].exports);var stk;
+}).call(this,cachedModules[7590],cachedModules[7590].exports);var stk;
 
 stk = {};
 
@@ -1312,13 +1312,13 @@ $(function() {
   up = 0;
   decider = 0;
   is_dragging = false;
-  stk_socket = cachedModules[2421].exports;
+  stk_socket = cachedModules[9056].exports;
   socket = stk_socket().getSocket();
-  stk_config = cachedModules[4803].exports;
-  stk_login = cachedModules[9684].exports;
-  stk_common = cachedModules[4321].exports;
-  stk_vibrate = cachedModules[728].exports;
-  stk_audio = cachedModules[2740].exports;
+  stk_config = cachedModules[2245].exports;
+  stk_login = cachedModules[7857].exports;
+  stk_common = cachedModules[2415].exports;
+  stk_vibrate = cachedModules[6779].exports;
+  stk_audio = cachedModules[3247].exports;
   ff = stk_config().parseGetparameter("formfactor");
   fff = 1;
   fetchFFF = function() {
@@ -1328,7 +1328,7 @@ $(function() {
       return fff = screen.height / screen.width;
     }
   };
-  stk_fullscreen = cachedModules[3718].exports;
+  stk_fullscreen = cachedModules[7590].exports;
   stk_fullscreen().requireFullscreen(fetchFFF);
   envelop = {
     state: "undefined"

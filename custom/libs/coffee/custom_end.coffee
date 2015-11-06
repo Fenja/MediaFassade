@@ -20,7 +20,7 @@ customLoggerD=()->
   resize()
   stk.framework.timer 100, customLoggerT
   
-stk.framework.delay 500, customLoggerD
+#stk.framework.delay 500, customLoggerD
 
 ### Define your handler ###
 
@@ -34,14 +34,20 @@ draggable_joystick_handler=(msg)->
   directionJoystick(msg)
   console.log 'Do something with msg: '+JSON.stringify msg
   
-  # handler for events of draggable_positionsensor #
-draggable_positionsensor_handler=(msg)->
+# handler for events of draggable_orientationsensor #
+draggable_orientationsensor_handler=(msg)->
   console.log 'Do something with msg: '+JSON.stringify msg
+
+# handler for events of draggable_accelerationsensor #
+draggable_accelerationsensor_handler=(msg)->
+  console.log 'Do something with msg: '+JSON.stringify msg
+
   
 ### Register your handler ###
 stk.framework.register_handler 'draggable_joystick', draggable_joystick_handler
 stk.framework.register_handler 'draggable_keylistener', draggable_keylistener_handler
-stk.framework.register_handler 'draggable_positionsensor', draggable_positionsensor_handler
+stk.framework.register_handler 'draggable_orientationsensor', draggable_orientationsensor_handler
+stk.framework.register_handler 'draggable_accelerationsensor', draggable_accelerationsensor_handler
 
 ###
 Doing "onLoad"-Stuff
