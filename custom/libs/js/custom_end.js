@@ -287,7 +287,7 @@ playerHeight = parseInt(player1.dom.css('height'));
 
 basketTollerance = 20;
 
-timeLimit = 10;
+timeLimit = 120;
 
 fadeLimit = 55;
 
@@ -346,7 +346,7 @@ queue = [object0, object1, object2, objectBomb, objectPower];
 
 fallCount = 0;
 
-fallRound = 30;
+fallRound = 10;
 
 columns = 12;
 
@@ -563,19 +563,19 @@ updatePlayer = function(player) {
   basketLeft = parseInt(player.basketDom.css('left'));
   if (player.isActive) {
     if (player.left && player.side > 0) {
-      player.side -= 10 * player.speed.leftright;
+      player.side -= 5 * player.speed.leftright;
       if (basketLeft <= -1 * basketTollerance) {
         player.dom.css('left', player.side + "px");
       } else {
-        player.basketDom.css('left', (player.side - playerLeft) + "px");
+        player.basketDom.css('left', parseInt((player.side - playerLeft) / 2) + "px");
       }
     } else if (player.right && player.side + playerWidth < viewportWidth) {
-      player.side += 10 * player.speed.leftright;
+      player.side += 5 * player.speed.leftright;
       player.dom.css('left', player.side + "px");
       if (basketLeft >= basketTollerance) {
         player.dom.css('left', player.side + "px");
       } else {
-        player.basketDom.css('left', (player.side - playerLeft) + "px");
+        player.basketDom.css('left', parseInt((player.side - playerLeft) / 2) + "px");
       }
     }
     if (player.jumps || player.falls) {
@@ -716,9 +716,9 @@ checkCollision = function(object) {
     if (object !== void 0 && player.isActive) {
       playerPos = player.basketimageDom.offset();
       playerPos.top = parseInt(playerPos.top, 10);
-      playerPos.left = parseInt(parseInt(playerPos.left, 10) / 10 * 9);
+      playerPos.left = parseInt(parseInt(playerPos.left, 10));
       playerPos.right = playerPos.left + parseInt(player.basketimageDom.css('width'), 10);
-      playerPos.right = parseInt(playerPos.right / 10 * 11);
+      playerPos.right = parseInt(playerPos.right);
       playerPos.bottom = playerPos.top + parseInt(player.basketimageDom.css('height'), 10);
       objPos = object.dom.offset();
       objPos.top = parseInt(objPos.top, 10);
@@ -728,6 +728,9 @@ checkCollision = function(object) {
       objPos.middle = parseInt((objPos.right - objPos.left) / 2 + objPos.left, 10);
       lrtest = objPos.middle >= playerPos.left && objPos.middle <= playerPos.right;
       udtest = objPos.bottom >= playerPos.top && objPos.bottom <= playerPos.bottom;
+      if (object.name === 'bomb') {
+        console.log(JSON.stringify(playerPos), JSON.stringify(objPos), lrtest, udtest);
+      }
       if (lrtest && udtest) {
         switch (object.name) {
           case 'bomb':

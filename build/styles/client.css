@@ -67,44 +67,45 @@ body {
   top:52%;
   height: auto;
   width: 100%;
+  font-size: 12px;
 }
 
 #zero {
   background: url(../images/zero.svg);
-  background-size: 100px 100px;
-  height: 100px;
-  width: 100px;
+  background-size: 30px 30px;
+  height: 30px;
+  width: 30px;
 }
 #one {
   background: url(../images/one.svg);
-  background-size: 100px 100px;
-  height: 100px;
-  width: 100px;
+  background-size: 30px 30px;
+  height: 30px;
+  width: 30px;
 }
 #two {
   background: url(../images/two.svg);
-  background-size: 100px 100px;
-  height: 100px;
-  width: 100px;
+  background-size: 30px 30px;
+  height: 30px;
+  width: 30px;
 }
 #bomb {
   background: url(../images/bomb.svg);
-  background-size: 100px 100px;
-  height: 100px;
-  width: 100px;
+  background-size: 30px 30px;
+  height: 30px;
+  width: 30px;
 }
 #power {
   background: url(../images/star.svg);
-  background-size: 100px 100px;
-  height: 100px;
-  width: 100px;
+  background-size: 30px 30px;
+  height: 30px;
+  width: 30px;
 }
 
 .highscore {
   position: relative;
   top: 225px;
   left: 100px;
-  font-size: 20px;
+  font-size: 12px;
   font-weight: 300;
   color: black;
   z-index: 15;

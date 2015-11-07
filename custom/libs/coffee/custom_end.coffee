@@ -242,7 +242,7 @@ unregisteredPlayer = [player2, player1, player4, player5, player3, player6]
 playerWidth = parseInt(player1.dom.css('width'))
 playerHeight = parseInt(player1.dom.css('height'))
 basketTollerance = 20
-timeLimit = 10
+timeLimit = 120
 fadeLimit = 55
 
 object0 = 
@@ -292,7 +292,7 @@ objectList = []
 queue = [object0, object1, object2, objectBomb, objectPower]
 
 fallCount = 0
-fallRound = 30
+fallRound = 10
 columns = 12
 columnWidth = viewportWidth / (2 + columns)
 lastColumn = 0
@@ -461,19 +461,19 @@ updatePlayer=(player)->
   basketLeft = parseInt(player.basketDom.css('left'))
   if player.isActive
     if ( player.left && player.side > 0 ) 
-      player.side -= 10 * player.speed.leftright
+      player.side -= 5 * player.speed.leftright
       if (basketLeft <= -1 * basketTollerance)
         player.dom.css('left', player.side + "px")        
       else
-        player.basketDom.css('left', (player.side - playerLeft) + "px")
+        player.basketDom.css('left', parseInt((player.side - playerLeft)/2) + "px")
         
     else if ( player.right && player.side + playerWidth < viewportWidth )
-      player.side += 10*player.speed.leftright
+      player.side += 5 *player.speed.leftright
       player.dom.css('left', player.side + "px")
       if (basketLeft >= basketTollerance)
         player.dom.css('left', player.side + "px")
       else
-        player.basketDom.css('left', (player.side - playerLeft) + "px")
+        player.basketDom.css('left', parseInt((player.side - playerLeft)/2) + "px")
     
     if (player.jumps || player.falls)
       jump(player)
@@ -583,9 +583,9 @@ checkCollision=(object)->
       #console.log JSON.stringify(player.basketimageDom)
       playerPos = player.basketimageDom.offset()
       playerPos.top=parseInt(playerPos.top,10)
-      playerPos.left=parseInt(parseInt(playerPos.left,10)/10*9)
+      playerPos.left=parseInt(parseInt(playerPos.left,10))
       playerPos.right=playerPos.left+parseInt(player.basketimageDom.css('width'),10)
-      playerPos.right=parseInt(playerPos.right/10*11)
+      playerPos.right=parseInt(playerPos.right)
       playerPos.bottom=playerPos.top+parseInt(player.basketimageDom.css('height'),10)
       
       objPos = object.dom.offset()
@@ -595,9 +595,12 @@ checkCollision=(object)->
       objPos.bottom=objPos.top+parseInt(player.dom.css('height'),10)
       objPos.middle=parseInt((objPos.right-objPos.left)/2+objPos.left,10)
       
-      #console.log JSON.stringify(playerPos)
+      
       lrtest=objPos.middle>=playerPos.left && objPos.middle<=playerPos.right
       udtest=objPos.bottom>=playerPos.top && objPos.bottom<=playerPos.bottom 
+      
+      if object.name == 'bomb'
+        console.log JSON.stringify(playerPos),JSON.stringify(objPos),lrtest,udtest
       
       if lrtest && udtest        
         switch object.name
