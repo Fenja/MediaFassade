@@ -5,11 +5,11 @@
 The compiled custom_body.js will be included at the end of the html body section after the include of socket.io and stk-framework.
 Define your functions here.
  */
-var activatePlayer, basketTollerance, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, deactivatePlayer, directionAcceleration, directionJoystick, directionKey, draggable_accelerationsensor_handler, draggable_joystick_handler, draggable_keylistener_handler, draggable_orientationsensor_handler, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getClientID, getNewColumn, getPlayer, gravity, heaven, inactivePlayers, influencePlayer, jump, jumpHeight, lastColumn, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, objects, player1, player2, player3, player4, player5, player6, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, resize, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, upsideDownDevice, viewportHeight, viewportWidth,
+var activatePlayer, basketTollerance, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, customLogger, customLoggerD, customLoggerT, custom_message_handler, deactivatePlayer, directionAcceleration, directionJoystick, directionKey, directionOrientation, draggable_accelerationsensor_handler, draggable_joystick_handler, draggable_keylistener_handler, draggable_orientationsensor_handler, draggable_touchpad_handler, fadeLimit, fallCount, fallObjects, fallRound, falls, fillObjectList, fps, getClientID, getNewColumn, getPlayer, gravity, heaven, inactivePlayers, influencePlayer, jump, jumpHeight, lastColumn, leftrightDefault, object0, object1, object2, objectBomb, objectDown, objectList, objectPower, objectWidth, objects, player1, player2, player3, player4, player5, player6, playerHeight, playerMap, playerWidth, players, powerSpeed, powerTime, queue, readyAndGo, registerPlayer, running, timeLimit, tollerance, unregisteredPlayer, update, updateInfluence, updateObjects, updatePlayer, updatePlayers, updateTime, updownDefault, upsideDownDevice, viewportHeight, viewportWidth,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 customLogger = function(s) {
-  return console.log(s);
+  return console.log("customLogger", s);
 };
 
 customLoggerT = function() {
@@ -22,7 +22,6 @@ customLoggerT = function() {
 customLoggerD = function() {
 
   /*customLogger "Delay" */
-  resize();
   return stk.framework.timer(100, customLoggerT);
 };
 
@@ -30,6 +29,10 @@ stk.framework.delay(500, customLoggerD);
 
 
 /* Define your handler */
+
+custom_message_handler = function(msg) {
+  return console.log('Do something with msg: ' + JSON.stringify(msg));
+};
 
 draggable_keylistener_handler = function(msg) {
   console.log('Do something with msg: ' + JSON.stringify(msg));
@@ -42,16 +45,27 @@ draggable_joystick_handler = function(msg) {
 };
 
 draggable_orientationsensor_handler = function(msg) {
-  return upsideDownDevice(msg);
+  upsideDownDevice(msg);
+  return directionOrientation(msg);
 };
 
 draggable_accelerationsensor_handler = function(msg) {
-  console.log("move it", msg.dev);
   return directionAcceleration(msg);
+};
+
+draggable_touchpad_handler = function(msg) {
+  var id, player;
+  id = msg.envelop.clientid;
+  player = playerMap[id];
+  if (player !== void 0) {
+    return activatePlayer(player);
+  }
 };
 
 
 /* Register your handler */
+
+stk.framework.register_handler('custommessage', custom_message_handler);
 
 stk.framework.register_handler('draggable_joystick', draggable_joystick_handler);
 
@@ -60,6 +74,8 @@ stk.framework.register_handler('draggable_keylistener', draggable_keylistener_ha
 stk.framework.register_handler('draggable_orientationsensor', draggable_orientationsensor_handler);
 
 stk.framework.register_handler('draggable_accelerationsensor', draggable_accelerationsensor_handler);
+
+stk.framework.register_handler('draggable_touchpad', draggable_touchpad_handler);
 
 
 /*
@@ -91,11 +107,15 @@ tollerance = -2;
 
 gravity = 5;
 
-heaven = viewportHeight;
+heaven = parseInt($('#blend').css('height'), 10) * 5;
 
 bottom = 0;
 
 jumpHeight = 300;
+
+updownDefault = 3;
+
+leftrightDefault = 0.8;
 
 player1 = {
   name: "player1",
@@ -104,16 +124,23 @@ player1 = {
   right: false,
   jumps: false,
   falls: false,
-  speed: 1,
+  speed: {
+    updown: updownDefault,
+    leftright: leftrightDefault
+  },
   height: bottom,
   side: 50,
   influenceTime: 0,
-  dom: document.getElementById('player1'),
-  basketDom: document.getElementById('basket1'),
+  dom: $('#player1'),
+  basketDom: $('#basket1'),
+  basketimageDom: $('#basketimage1'),
   score: 0,
-  scoreDom: document.getElementById('score1'),
+  scoreDom: $('#score1'),
   time: 0,
-  up: false
+  isActive: false,
+  basketTurnedOver: new Date().getTime() / 1000,
+  waitForBasket: false,
+  timeout: $('#timeout1')
 };
 
 player2 = {
@@ -123,16 +150,23 @@ player2 = {
   right: false,
   jumps: false,
   falls: false,
-  speed: 1,
+  speed: {
+    updown: updownDefault,
+    leftright: leftrightDefault
+  },
   height: bottom,
   side: 250,
   influenceTime: 0,
-  dom: document.getElementById('player2'),
-  basketDom: document.getElementById('basket2'),
+  dom: $('#player2'),
+  basketDom: $('#basket2'),
+  basketimageDom: $('#basketimage2'),
   score: 0,
-  scoreDom: document.getElementById('score2'),
+  scoreDom: $('#score2'),
   time: 0,
-  up: false
+  isActive: false,
+  basketTurnedOver: new Date().getTime() / 1000,
+  waitForBasket: false,
+  timeout: $('#timeout2')
 };
 
 player3 = {
@@ -142,16 +176,23 @@ player3 = {
   right: false,
   jumps: false,
   falls: false,
-  speed: 1,
+  speed: {
+    updown: updownDefault,
+    leftright: leftrightDefault
+  },
   height: bottom,
   side: 250,
   influenceTime: 0,
-  dom: document.getElementById('player3'),
-  basketDom: document.getElementById('basket3'),
+  dom: $('#player3'),
+  basketDom: $('#basket3'),
+  basketimageDom: $('#basketimage3'),
   score: 0,
-  scoreDom: document.getElementById('score3'),
+  scoreDom: $('#score3'),
   time: 0,
-  up: false
+  isActive: false,
+  basketTurnedOver: new Date().getTime() / 1000,
+  waitForBasket: false,
+  timeout: $('#timeout3')
 };
 
 player4 = {
@@ -161,16 +202,23 @@ player4 = {
   right: false,
   jumps: false,
   falls: false,
-  speed: 1,
+  speed: {
+    updown: updownDefault,
+    leftright: leftrightDefault
+  },
   height: bottom,
   side: 250,
   influenceTime: 0,
-  dom: document.getElementById('player4'),
-  basketDom: document.getElementById('basket4'),
+  dom: $('#player4'),
+  basketDom: $('#basket4'),
+  basketimageDom: $('#basketimage4'),
   score: 0,
-  scoreDom: document.getElementById('score4'),
+  scoreDom: $('#score4'),
   time: 0,
-  up: false
+  isActive: false,
+  basketTurnedOver: new Date().getTime() / 1000,
+  waitForBasket: false,
+  timeout: $('#timeout4')
 };
 
 player5 = {
@@ -180,16 +228,23 @@ player5 = {
   right: false,
   jumps: false,
   falls: false,
-  speed: 1,
+  speed: {
+    updown: updownDefault,
+    leftright: leftrightDefault
+  },
   height: bottom,
   side: 250,
   influenceTime: 0,
-  dom: document.getElementById('player5'),
-  basketDom: document.getElementById('basket5'),
+  dom: $('#player5'),
+  basketDom: $('#basket5'),
+  basketimageDom: $('#basketimage5'),
   score: 0,
-  scoreDom: document.getElementById('score5'),
+  scoreDom: $('#score5'),
   time: 0,
-  up: false
+  isActive: false,
+  basketTurnedOver: new Date().getTime() / 1000,
+  waitForBasket: false,
+  timeout: $('#timeout5')
 };
 
 player6 = {
@@ -199,16 +254,23 @@ player6 = {
   right: false,
   jumps: false,
   falls: false,
-  speed: 1,
+  speed: {
+    updown: updownDefault,
+    leftright: leftrightDefault
+  },
   height: bottom,
   side: 250,
   influenceTime: 0,
-  dom: document.getElementById('player6'),
-  basketDom: document.getElementById('basket6'),
+  dom: $('#player6'),
+  basketDom: $('#basket6'),
+  basketimageDom: $('#basketimage6'),
   score: 0,
-  scoreDom: document.getElementById('score6'),
+  scoreDom: $('#score6'),
   time: 0,
-  up: false
+  isActive: false,
+  basketTurnedOver: new Date().getTime() / 1000,
+  waitForBasket: false,
+  timeout: $('#timeout6')
 };
 
 playerMap = {};
@@ -219,13 +281,13 @@ inactivePlayers = [];
 
 unregisteredPlayer = [player2, player1, player4, player5, player3, player6];
 
-playerWidth = parseInt(getComputedStyle(player1.dom).width);
+playerWidth = parseInt(player1.dom.css('width'));
 
-playerHeight = parseInt(getComputedStyle(player1.dom).height);
+playerHeight = parseInt(player1.dom.css('height'));
 
 basketTollerance = 20;
 
-timeLimit = 60;
+timeLimit = 10;
 
 fadeLimit = 55;
 
@@ -235,7 +297,7 @@ object0 = {
   height: heaven,
   velo: 5,
   side: 10,
-  dom: document.getElementById('zero')
+  dom: $('#zero')
 };
 
 object1 = {
@@ -244,7 +306,7 @@ object1 = {
   height: heaven,
   velo: 5,
   side: 40,
-  dom: document.getElementById('one')
+  dom: $('#one')
 };
 
 object2 = {
@@ -253,28 +315,28 @@ object2 = {
   height: heaven,
   velo: gravity,
   side: 40,
-  dom: document.getElementById('two')
+  dom: $('#two')
 };
 
 objectBomb = {
-  value: 0,
+  value: -1,
   name: 'bomb',
   height: heaven,
   velo: gravity,
   side: 40,
-  dom: document.getElementById('bomb')
+  dom: $('#bomb')
 };
 
 objectPower = {
-  value: 0,
+  value: 1,
   name: 'power',
   height: heaven,
   velo: gravity,
   side: 40,
-  dom: document.getElementById('power')
+  dom: $('#power')
 };
 
-objectWidth = parseInt(getComputedStyle(object1.dom).width);
+objectWidth = parseInt(object1.dom.css('width'));
 
 objects = [object0, object1, object2, objectBomb, objectPower];
 
@@ -316,51 +378,28 @@ getPlayer = function(id) {
   }
 };
 
-resize = function() {
-  var i, j, k, len, len1, len2, object, player, score, scores;
-  console.log("resize");
-  viewportHeight = window.innerHeight;
-  viewportWidth = window.innerWidth;
-  heaven = viewportHeight;
-  columnWidth = viewportWidth / (2 + columns);
-  for (i = 0, len = objects.length; i < len; i++) {
-    object = objects[i];
-    object.dom.style.width = columnWidth + "px";
-    object.dom.style.height = columnWidth + "px";
-    object.dom.style.backgroundSize = columnWidth + "px " + columnWidth + "px";
-    object.height = heaven;
-  }
-  for (j = 0, len1 = unregisteredPlayer.length; j < len1; j++) {
-    player = unregisteredPlayer[j];
-    player.dom.style.width = ((columnWidth * 2) / 5 * 3) + "px";
-    player.dom.style.height = ((columnWidth * 4) / 5 * 3) + "px";
-    player.dom.style.backgroundSize = ((columnWidth * 2) / 5 * 3) + "px " + ((columnWidth * 4) / 5 * 3) + "px";
-    player.basketDom.style.width = ((columnWidth * 2) / 5 * 3) + "px";
-    player.basketDom.style.height = ((columnWidth * 4) / 5 * 3) + "px";
-    player.basketDom.style.backgroundSize = ((columnWidth * 2) / 5 * 3) + "px " + ((columnWidth * 4) / 5 * 3) + "px";
-  }
-  scores = document.getElementsByClassName('highscore');
-  for (k = 0, len2 = scores.length; k < len2; k++) {
-    score = scores[k];
-    score.style.left = (columnWidth / 5 * 3) + "px";
-    score.style.top = ((columnWidth * 2) / 5 * 3) + "px";
-  }
-  objectWidth = columnWidth;
-  playerWidth = parseInt(getComputedStyle(player1.dom).width);
-  return playerHeight = parseInt(getComputedStyle(player1.dom).height);
-};
-
 directionAcceleration = function(msg) {
   var player;
   player = getPlayer(msg.envelop.clientid);
   if (player !== void 0) {
     if (msg.dev.z > 10) {
-      player.up = true;
+      player.jumps = true;
     }
-    if (msg.dev.y > 10) {
+  }
+  return true;
+};
+
+directionOrientation = function(msg) {
+  var player;
+  player = getPlayer(msg.envelop.clientid);
+  if (player !== void 0 && player.isActive) {
+    if (Math.abs(msg.b) > 10) {
+      player.speed.leftright = Math.abs(Math.max(50, msg.b)) / 10;
+    }
+    if (msg.b > 10) {
       player.right = true;
     }
-    if (msg.dev.y < -10) {
+    if (msg.b < -10) {
       player.left = true;
     }
   }
@@ -368,17 +407,42 @@ directionAcceleration = function(msg) {
 };
 
 upsideDownDevice = function(msg) {
-  var id, isUp, player;
-  id = msg.envelop.clientId;
+  var countdown, id, now, player;
+  id = msg.envelop.clientid;
   player = playerMap[id];
   if (player !== void 0) {
-    isUp = msg.up;
-    if (!isUp && player.up) {
-      return player.up = false;
-    } else if (isUp && !player.up) {
-      player.up = true;
-      return activatePlayer(player);
+    if (player.waitForBasket) {
+      if (!player.isActive && !msg.isup) {
+        player.basketTurnedOver = new Date().getTime() / 1000 + 10;
+        player.waitForBasket = false;
+        return console.log("BASKET TURNED OVER @ ", player.basketTurnedOver);
+      }
+    } else {
+      now = new Date().getTime() / 1000;
+      if (!player.isActive && !msg.isup) {
+        console.log("BASKET TURNED OVER waiting ", player.basketTurnedOver, id, "wait", now, player.basketTurnedOver);
+        countdown = Math.max(Math.floor(player.basketTurnedOver - now), 0);
+        player.dom.css('opacity', 0.8);
+        if (countdown < 5) {
+          player.timeout.html(countdown + " Korb umdrehen !");
+        } else {
+          player.timeout.html(countdown);
+        }
+      }
+      if (!player.isActive && msg.isup && player.basketTurnedOver <= now) {
+        console.log("TURN ON PLAYER ", id);
+        player.timeout.html("###");
+        activatePlayer(player);
+      }
+      if (!player.isActive && msg.isup && player.basketTurnedOver > now) {
+        console.log("TURN ON PLAYER ", id, "wait", player.basketTurnedOver - now);
+        countdown = Math.max(Math.floor(player.basketTurnedOver - now), 0);
+        player.dom.css('opacity', 0.8);
+        return player.timeout.html(countdown);
+      }
     }
+  } else {
+    return console.log("player " + id + "undefined", playerMap);
   }
 };
 
@@ -432,7 +496,7 @@ registerPlayer = function(id) {
     activatePlayer(player);
     playerMap[id] = player;
     console.log("playerMap", playerMap);
-    player.dom.style.left = 10 + "px";
+    player.dom.css('left', 10 + "px");
     return player;
   } else {
     return void 0;
@@ -446,18 +510,32 @@ activatePlayer = function(player) {
   inactivePlayers = inactivePlayers.splice(index);
   player.time = new Date().getTime() / 1000;
   player.score = 0;
-  player.dom.style.opacity = 1.0;
-  player.dom.style.zIndex = 5;
+  player.dom.css('opacity', 1.0);
+  player.dom.css('zIndex', 5);
+  player.isActive = true;
+  player.basketTurnedOver = new Date().getTime() / 1000;
   return true;
 };
 
 deactivatePlayer = function(player) {
   var index;
-  inactivePlayers.push(player);
-  index = players.indexOf(player);
-  players = players.splice(index);
-  player.dom.style.opacity = 0.3;
-  player.dom.style.zIndex = 2;
+  if (player.isActive) {
+    inactivePlayers.push(player);
+    index = players.indexOf(player);
+    players = players.splice(index);
+    player.dom.css('opacity', 0.3);
+    player.dom.css('zIndex', 2);
+    player.isActive = false;
+    player.waitForBasket = true;
+    player.timeout.html("10");
+    player.height = bottom;
+    player.dom.css('bottom', player.height + "px");
+    console.log("deactivatePlayer", JSON.stringify(player));
+  }
+
+  /*else
+    console.log "player is not active",JSON.stringify(player)
+   */
   return true;
 };
 
@@ -481,34 +559,40 @@ updatePlayers = function() {
 
 updatePlayer = function(player) {
   var basketLeft, playerLeft;
-  playerLeft = parseInt(getComputedStyle(player.dom).left);
-  basketLeft = parseInt(getComputedStyle(player.basketDom).left);
-  if (player.left && player.side > 0) {
-    player.side -= 10 * player.speed;
-    if (basketLeft <= -1 * basketTollerance) {
-      player.dom.style.left = player.side + "px";
-    } else {
-      player.basketDom.style.left = (player.side - playerLeft) + "px";
+  playerLeft = parseInt(player.dom.css('left'));
+  basketLeft = parseInt(player.basketDom.css('left'));
+  if (player.isActive) {
+    if (player.left && player.side > 0) {
+      player.side -= 10 * player.speed.leftright;
+      if (basketLeft <= -1 * basketTollerance) {
+        player.dom.css('left', player.side + "px");
+      } else {
+        player.basketDom.css('left', (player.side - playerLeft) + "px");
+      }
+    } else if (player.right && player.side + playerWidth < viewportWidth) {
+      player.side += 10 * player.speed.leftright;
+      player.dom.css('left', player.side + "px");
+      if (basketLeft >= basketTollerance) {
+        player.dom.css('left', player.side + "px");
+      } else {
+        player.basketDom.css('left', (player.side - playerLeft) + "px");
+      }
     }
-  } else if (player.right && player.side + playerWidth < viewportWidth) {
-    player.side += 10 * player.speed;
-    player.dom.style.left = player.side + "px";
-    if (basketLeft >= basketTollerance) {
-      player.dom.style.left = player.side + "px";
-    } else {
-      player.basketDom.style.left = (player.side - playerLeft) + "px";
+    if (player.jumps || player.falls) {
+      jump(player);
+      player.dom.css('left', player.side + "px");
+      player.basketDom.css('left', "0px");
+    } else if (player.up) {
+      jump(player);
+      player.dom.css('left', player.side + "px");
+      player.basketDom.css('left', "0px");
     }
-  }
-  if (player.jumps || player.falls) {
+    updateInfluence(player);
+  } else if (player.jumps || player.falls) {
     jump(player);
-    player.dom.style.left = player.side + "px";
-    player.basketDom.style.left = "0px";
-  } else if (player.up) {
-    jump(player);
-    player.dom.style.left = player.side + "px";
-    player.basketDom.style.left = "0px";
+    player.basketDom.css('left', player.side + "px");
+    player.basketDom.css('left', "0px");
   }
-  updateInfluence(player);
   return true;
 };
 
@@ -516,20 +600,36 @@ updateInfluence = function(player) {
   if (player.influence > 0) {
     player.influence -= 1;
     if (player.influence === 0) {
-      player.speed = 1;
+      player.speed = {
+        updown: updownDefault,
+        leftright: leftrightDefault
+      };
     }
   }
   return true;
 };
 
 updateTime = function(player, now) {
+  var timeleft;
   if ((now - player.time) >= timeLimit) {
     deactivatePlayer(player);
     return false;
   } else if ((now - player.time) >= fadeLimit) {
-    player.dom.style.opacity = 0.7;
+    player.dom.css('opacity', 0.7);
     return true;
   } else {
+    timeleft = Math.max(0, timeLimit - Math.floor(now - player.time));
+    if (timeleft < 21) {
+      player.timeout.html("Noch " + timeleft + "s");
+    }
+    if (timeleft < 6 && timeleft > 0) {
+      player.dom.not(':animated').effect('pulsate', {
+        times: 4
+      }, 500, function() {});
+      player.timeout.html("Noch " + timeleft + "s");
+    } else {
+      player.timeout.html("");
+    }
     return true;
   }
 };
@@ -542,14 +642,14 @@ jump = function(player) {
     player.falls = true;
   }
   if (player.jumps) {
-    player.height += 10 * player.speed;
+    player.height += 10 * player.speed.updown;
   } else if (player.falls) {
-    player.height -= 10 * player.speed;
+    player.height -= 10 * player.speed.updown;
     if (player.height <= bottom) {
       player.falls = false;
     }
   }
-  player.dom.style.bottom = player.height + "px";
+  player.dom.css('bottom', player.height + "px");
   return true;
 };
 
@@ -572,10 +672,10 @@ fillObjectList = function() {
   var index, object;
   if (queue.length > 0) {
     fallCount += 1;
-    if (fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2) {
+    if (fallCount >= fallRound) {
       object = queue[0];
       object.side = getNewColumn() * columnWidth + columnWidth;
-      object.dom.style.left = object.side + "px";
+      object.dom.css('left', object.side + "px");
       objectList.push(object);
       index = queue.indexOf(object);
       queue.splice(index, 1);
@@ -586,11 +686,13 @@ fillObjectList = function() {
 };
 
 falls = function(object) {
-  object.height -= object.velo;
-  if (object.height <= bottom) {
-    objectDown(object);
+  if (object !== void 0) {
+    object.height -= object.velo;
+    if (object.height <= bottom) {
+      objectDown(object);
+    }
+    object.dom.css('bottom', object.height + "px");
   }
-  object.dom.style.bottom = object.height + "px";
   return true;
 };
 
@@ -608,11 +710,38 @@ checkCollisions = function() {
 };
 
 checkCollision = function(object) {
-  var i, len, player;
+  var i, len, lrtest, objPos, player, playerPos, udtest;
   for (i = 0, len = players.length; i < len; i++) {
     player = players[i];
-    if ((player.height + playerHeight) >= (object.height + tollerance) && player.side + tollerance <= object.side && (player.side + playerWidth) >= (object.side + objectWidth + tollerance)) {
-      collect(player, object);
+    if (object !== void 0 && player.isActive) {
+      playerPos = player.basketimageDom.offset();
+      playerPos.top = parseInt(playerPos.top, 10);
+      playerPos.left = parseInt(parseInt(playerPos.left, 10) / 10 * 9);
+      playerPos.right = playerPos.left + parseInt(player.basketimageDom.css('width'), 10);
+      playerPos.right = parseInt(playerPos.right / 10 * 11);
+      playerPos.bottom = playerPos.top + parseInt(player.basketimageDom.css('height'), 10);
+      objPos = object.dom.offset();
+      objPos.top = parseInt(objPos.top, 10);
+      objPos.left = parseInt(objPos.left, 10);
+      objPos.right = objPos.left + parseInt(player.dom.css('width'), 10);
+      objPos.bottom = objPos.top + parseInt(player.dom.css('height'), 10);
+      objPos.middle = parseInt((objPos.right - objPos.left) / 2 + objPos.left, 10);
+      lrtest = objPos.middle >= playerPos.left && objPos.middle <= playerPos.right;
+      udtest = objPos.bottom >= playerPos.top && objPos.bottom <= playerPos.bottom;
+      if (lrtest && udtest) {
+        switch (object.name) {
+          case 'bomb':
+            player.dom.not(':animated').effect('shake', {
+              times: 4
+            }, 500, function() {});
+            break;
+          case 'power':
+            player.dom.not(':animated').effect('highlight', {
+              times: 4
+            }, 500, function() {});
+        }
+        collect(player, object);
+      }
     }
   }
   return true;
@@ -621,7 +750,7 @@ checkCollision = function(object) {
 objectDown = function(object) {
   var index;
   object.height = heaven;
-  object.dom.style.bottom = heaven + "px";
+  object.dom.css('bottom', heaven + "px");
   queue.push(object);
   index = objectList.indexOf(object);
   objectList.splice(index, 1);
@@ -630,13 +759,14 @@ objectDown = function(object) {
 };
 
 calcSide = function(object) {
-  object.dom.style.left = object.side + "px";
+  object.dom.css('left', object.side + "px");
   return true;
 };
 
 collect = function(player, object) {
+  console.log("Collected Object");
   player.score += object.value;
-  player.scoreDom.innerHTML = player.score;
+  player.scoreDom.html(player.score);
   influencePlayer(player, object);
   objectDown(object);
   return true;
@@ -645,7 +775,10 @@ collect = function(player, object) {
 influencePlayer = function(player, object) {
   if (object.name === 'bomb') {
     player.influence = bombTime;
-    player.speed = bombSpeed;
+    player.speed = {
+      updown: bombSpeed,
+      leftright: bombSpeed
+    };
     stk.framework.sendMessage('custommessage', {
       type: 'addVibratePattern',
       sendTo: [getClientID(player)],
@@ -657,7 +790,10 @@ influencePlayer = function(player, object) {
     });
   } else if (object === 'power') {
     player.influence = powerTime;
-    player.speed = powerSpeed;
+    player.speed = {
+      updown: powerSpeed,
+      leftright: powerSpeed
+    };
   }
   return true;
 };
