@@ -37,68 +37,38 @@ body {
   position:absolute;
   background-color: #0f0;
 }
+
 .player {
   left: 250px;
   position: absolute;
   bottom: 0px;
   opacity: 0.3;
   z-index: 2;
-  width: 9vw;
-  height: 35vh;
+  width: 10%;
+  height: auto;
   background-color: transparent;
 }
-.playerimage= {
-  position:relative;
-  left:0;
-  top:0;
-  height: 100%;
-  width:100%;
+.player img {
+  width: 100%;
+  position: absolute;
+  bottom: 0px;
 }
+.basket {
+  z-index: 12;
+}
+
 .element {
   left: 0px;
   position: absolute;
   bottom: 1000px; 
   z-index: 10;
-}
-.basket {
-  z-index: 12;
-  position: absolute;
-  left:0;
-  top:52%;
+  width: 4%;
   height: auto;
+}
+.element img {
   width: 100%;
-  font-size: 12px;
-}
-
-#zero {
-  background: url(../images/zero.svg);
-  background-size: 30px 30px;
-  height: 30px;
-  width: 30px;
-}
-#one {
-  background: url(../images/one.svg);
-  background-size: 30px 30px;
-  height: 30px;
-  width: 30px;
-}
-#two {
-  background: url(../images/two.svg);
-  background-size: 30px 30px;
-  height: 30px;
-  width: 30px;
-}
-#bomb {
-  background: url(../images/bomb.svg);
-  background-size: 30px 30px;
-  height: 30px;
-  width: 30px;
-}
-#power {
-  background: url(../images/star.svg);
-  background-size: 30px 30px;
-  height: 30px;
-  width: 30px;
+  position: absolute;
+  bottom: 0px;
 }
 
 .highscore {
@@ -116,46 +86,7 @@ body {
   color: white;
   font-size: 27px;
 }
-.draggable {
-  visibility: hidden;
-  
-  position: absolute;
-  left: 80px;
-  top: 80px;
-  width: 60px;
-  height: 60px;
-  border: dotted 1px blue;
-  margin: 0;
-  overflow: hidden;
-  scrolling: no;
-  z-index: 42;
-}
-.joystick,
-.joystickbase {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-}
-.joystick {
-  z-index: 8;
-}
-.joystickbase {
-  z-index: 4;
-}
-#divjoystick {
-  position: absolute;
-  left: -80px;
-  top: -80px;
-  width: 60px;
-  height: 60px;
-  border: solid 1px blue;
-  margin: 0;
-  overflow: hidden;
-  scrolling: no;
-  z-index: 42;
-}
+
 #runner {
   position: absolute;
   left: 0px;

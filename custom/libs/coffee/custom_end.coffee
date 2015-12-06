@@ -27,45 +27,30 @@ stk.framework.delay 500, customLoggerD
 # handler for custom messages #
 custom_message_handler=(msg)->
   console.log 'Do something with msg: '+JSON.stringify msg
-  
-# handler for events of draggable_keylistener #
-draggable_keylistener_handler=(msg)->
-  console.log 'Do something with msg: '+JSON.stringify msg
-  directionKey(msg)
 
-# handler for events of draggable_joystick #
-draggable_joystick_handler=(msg)->
-  console.log 'Do something with msg: '+JSON.stringify msg
-  directionJoystick(msg)
-  
 # handler for events of draggable_orientationsensor #
 draggable_orientationsensor_handler=(msg)->
-  #console.log msg.isup
-  upsideDownDevice(msg)
-  
-  directionOrientation(msg)
 
 # handler for events of draggable_accelerationsensor #
 draggable_accelerationsensor_handler=(msg)->
-  #console.log "move it",msg.dev
-  directionAcceleration(msg)
-  #console.log 'Do something with msg: '+JSON.stringify msg
+  true
   
 # handler for events of draggable_touchpad #
 draggable_touchpad_handler=(msg)->
-  id = msg.envelop.clientid
-  player = playerMap[id]
-  if player!=undefined
-    activatePlayer(player)
+  true
+  
+# handler for events of draggable_keylistener #
+draggable_keylistener_handler=(msg)->
+#  console.log 'Do something with msg: '+JSON.stringify msg
+  directionKey(msg)
 
   
 ### Register your handler ###
 stk.framework.register_handler 'custommessage', custom_message_handler
-stk.framework.register_handler 'draggable_joystick', draggable_joystick_handler
-stk.framework.register_handler 'draggable_keylistener', draggable_keylistener_handler
 stk.framework.register_handler 'draggable_orientationsensor', draggable_orientationsensor_handler
 stk.framework.register_handler 'draggable_accelerationsensor', draggable_accelerationsensor_handler
 stk.framework.register_handler 'draggable_touchpad', draggable_touchpad_handler
+stk.framework.register_handler 'draggable_keylistener', draggable_keylistener_handler
 
 ###
 Doing "onLoad"-Stuff
@@ -81,6 +66,42 @@ stk.framework.delay 1200, readyAndGo
 
 ### own code ###
 
+
+heaven = 1000# parseInt( $('#screen').css('height'), 10) * 5
+
+### objects ###
+class Element
+  constructor: (defaultParameters = {}) ->
+    @id = defaultParameters.id
+    @value = defaultParameters.value or 0
+    @name = defaultParameters.name or ''
+    @height = defaultParameters.height or heaven
+    @velo = 5
+    @side = defaultParameters.side or 10
+    @dom = defaultParameters.dom or document.getElementById(defaultParameters.id)
+    
+class Player
+  constructor: (defaultParameters = {}) ->
+    @name = defaultParameters.name or 'player'
+    @up = false
+    @left = false
+    @right = false
+    @jumps = false
+    @falls = false
+    @height = defaultParameters.height or bottom
+    @speed =  {updown:updownDefault,leftright:leftrightDefault}
+    @side = defaultParameters.side or 50
+    @influenceTime = 0
+    @dom = defaultParameters.dom
+    @basketDom = defaultParameters.basketDom
+    @score = 0
+    @scoreDom = defaultParameters.scoreDom
+    @time = 0
+    @isActive = false
+    @basketTurnedOver = new Date().getTime() /1000
+    @waitForBasket = false 
+    @timeout = defaultParameters.timeout
+
 viewportHeight = window.innerHeight
 viewportWidth = window.innerWidth
 
@@ -89,210 +110,33 @@ running = true
 tollerance = -2
 
 gravity = 5
-heaven = parseInt($('#blend').css('height'),10)*5
 bottom = 0
 jumpHeight = 300
 
 updownDefault=3
 leftrightDefault=0.8
 
-player1 = {
-  name: "player1"
-  up: false
-  left: false
-  right: false
-  jumps: false
-  falls: false
-  speed: {updown:updownDefault,leftright:leftrightDefault}
-  height: bottom
-  side: 50 #px
-  influenceTime: 0
+player1 = new Player(
+  name: 'player1'
+  side: 100
   dom: $('#player1')
   basketDom: $('#basket1')
-  basketimageDom: $('#basketimage1')
-  score: 0
   scoreDom: $('#score1')
-  time: 0
-  isActive:false
-  basketTurnedOver:new Date().getTime() /1000
-  waitForBasket:false
   timeout: $('#timeout1')
-}
-
-player2 = {
-  name: "player2"
-  up: false
-  left: false
-  right: false
-  jumps: false
-  falls: false
-  speed: {updown:updownDefault,leftright:leftrightDefault}
-  height: bottom
-  side: 250
-  influenceTime: 0
-  dom: $('#player2')
-  basketDom: $('#basket2')
-  basketimageDom: $('#basketimage2')
-  score: 0
-  scoreDom: $('#score2')
-  time: 0
-  isActive:false
-  basketTurnedOver:new Date().getTime() /1000
-  waitForBasket:false
-  timeout: $('#timeout2')
-}
-
-player3 = {
-  name: "player3"
-  up: false
-  left: false
-  right: false
-  jumps: false
-  falls: false
-  speed: {updown:updownDefault,leftright:leftrightDefault}
-  height: bottom
-  side: 250
-  influenceTime: 0
-  dom: $('#player3')
-  basketDom: $('#basket3')
-  basketimageDom: $('#basketimage3')
-  score: 0
-  scoreDom: $('#score3')
-  time: 0
-  isActive:false
-  basketTurnedOver:new Date().getTime() /1000
-  waitForBasket:false
-  timeout: $('#timeout3')
-}
-
-player4 = {
-  name: "player4"
-  up: false
-  left: false
-  right: false
-  jumps: false
-  falls: false
-  speed: {updown:updownDefault,leftright:leftrightDefault}
-  height: bottom
-  side: 250
-  influenceTime: 0
-  dom: $('#player4')
-  basketDom: $('#basket4')
-  basketimageDom: $('#basketimage4')
-  score: 0
-  scoreDom: $('#score4')
-  time: 0
-  isActive:false
-  basketTurnedOver:new Date().getTime() /1000
-  waitForBasket:false
-  timeout: $('#timeout4')
-}
-
-player5 = {
-  name: "player5"
-  up: false
-  left: false
-  right: false
-  jumps: false
-  falls: false
-  speed: {updown:updownDefault,leftright:leftrightDefault}
-  height: bottom
-  side: 250
-  influenceTime: 0
-  dom: $('#player5')
-  basketDom: $('#basket5')
-  basketimageDom: $('#basketimage5')
-  score: 0
-  scoreDom: $('#score5')
-  time: 0
-  isActive:false
-  basketTurnedOver:new Date().getTime() /1000
-  waitForBasket:false
-  timeout: $('#timeout5')
-}
-
-player6 = {
-  name: "player6"
-  up: false
-  left: false
-  right: false
-  jumps: false
-  falls: false
-  speed: {updown:updownDefault,leftright:leftrightDefault}
-  height: bottom
-  side: 250
-  influenceTime: 0
-  dom: $('#player6')
-  basketDom: $('#basket6')
-  basketimageDom: $('#basketimage6')
-  score: 0
-  scoreDom: $('#score6')
-  time: 0
-  isActive:false
-  basketTurnedOver:new Date().getTime() /1000
-  waitForBasket:false
-  timeout: $('#timeout6')
-}
+)
 
 playerMap = {}  
-  
 players = []
 inactivePlayers = []
-unregisteredPlayer = [player2, player1, player4, player5, player3, player6]
+unregisteredPlayer = [player1]
 playerWidth = parseInt(player1.dom.css('width'))
 playerHeight = parseInt(player1.dom.css('height'))
 basketTollerance = 20
 timeLimit = 120
 fadeLimit = 55
 
-object0 = 
-  value: 0
-  name: 'zero'
-  height: heaven
-  velo: 5
-  side: 10
-  dom: $('#zero')
-
-object1 = 
-  value: 1
-  name: 'one'
-  height: heaven
-  velo: 5
-  side: 40
-  dom: $('#one')
-
-object2 = 
-  value: 2
-  name: 'two'
-  height: heaven
-  velo: gravity
-  side: 40
-  dom: $('#two')
-  
-objectBomb =
-  value: -1
-  name: 'bomb'
-  height: heaven
-  velo: gravity
-  side: 40
-  dom: $('#bomb')
-
-objectPower = 
-  value: 1
-  name: 'power'
-  height: heaven
-  velo: gravity
-  side: 40
-  dom: $('#power')
-
-objectWidth = parseInt(object1.dom.css('width'))
-
-objects = [object0, object1, object2, objectBomb, objectPower]
-objectList = []
-queue = [object0, object1, object2, objectBomb, objectPower]
-
 fallCount = 0
-fallRound = 10
+fallRound = 20
 columns = 12
 columnWidth = viewportWidth / (2 + columns)
 lastColumn = 0
@@ -311,6 +155,9 @@ getPlayer=(id)->
   else
     registerPlayer(id)
     
+    
+## Controller methods ##
+
 directionAcceleration=(msg)->  
   player = getPlayer(msg.envelop.clientid)
   if player!=undefined
@@ -322,8 +169,8 @@ directionAcceleration=(msg)->
 directionOrientation=(msg)->  
   player = getPlayer(msg.envelop.clientid)
   if player!=undefined && player.isActive
-    if Math.abs(msg.b)>10
-      player.speed.leftright=Math.abs(Math.max(50,msg.b))/10
+#    if Math.abs(msg.b)>10
+#      player.speed.leftright=Math.abs(Math.max(50,msg.b))/10
     if msg.b>10
       player.right = true
     if msg.b<-10
@@ -366,8 +213,6 @@ upsideDownDevice=(msg)->
         player.dom.css('opacity', 0.8)
         player.timeout.html(countdown)
       
-      
-      
   else
     console.log "player "+id+"undefined",playerMap
   
@@ -389,7 +234,7 @@ directionKey=(msg)->
   id = msg.envelop.clientid
 
   player = getPlayer(id)
-  console.log player,id 
+#  console.log player,id 
   if player!=undefined
     keys = msg.keys
     for code in keys
@@ -401,6 +246,9 @@ directionKey=(msg)->
         player.right = true
   true
   
+  
+## Player Utils ##
+
 registerPlayer=(id)->
   console.log "registerPlayer",unregisteredPlayer
   if (unregisteredPlayer.length > 0)
@@ -444,9 +292,67 @@ deactivatePlayer=(player)->
     console.log "player is not active",JSON.stringify(player)###
   true
 
+
+## Element Utils ##
+
+elementList = []
+elementRandomList = ['bomb', 'power', 'one', 'one', 'two', 'two', 'zero', 'zero', 'one', 'one', 'two', 'two', 'zero', 'zero']
+elementIDCount = {
+  'bomb': 0,
+  'power': 0,
+  'zero': 0,
+  'one': 0,
+  'two': 0
+  }
+  
+values = {
+  'bomb': -2,
+  'power': 3,
+  'zero': 0,
+  'one': 1,
+  'two': 2
+  }
+
+createNewElement=(element)->
+  div = document.createElement('div')
+  elementWithID = element + getElementIDCount(element)
+  div.id = elementWithID
+  div.className = 'element'
+  div.innerHTML = '<img src="images/' + element + '.svg">'
+  document.getElementById('element-div').appendChild(div)
+  
+  newElement = new Element(
+    id: elementWithID
+    name: element
+    side: getNewColumn() * columnWidth + columnWidth
+    height: heaven
+    dom: $('#' + elementWithID)
+    value: getValue(element)
+  )
+  newElement.dom.css('left', newElement.side + "px")
+  elementList.push newElement
+  
+getValue=(element)->
+  values[element]
+
+getElementIDCount=(element)->
+  id = elementIDCount[element]
+  elementIDCount[element] = id + 1 % 10
+  id
+
+destroyElement=(element)->
+  console.log "destroy " + element.id
+  deadElem = document.getElementById(element.id)
+  deadElem.parentNode.removeChild(deadElem)
+
+
+## Game Logic ##
+
+## updates ##
+
 update=()->
   updatePlayers()
-  updateObjects()
+  updateElements()
   checkCollisions()
 
 updatePlayers=()->
@@ -460,16 +366,15 @@ updatePlayer=(player)->
   playerLeft = parseInt(player.dom.css('left'))
   basketLeft = parseInt(player.basketDom.css('left'))
   if player.isActive
-    if ( player.left && player.side > 0 ) 
+    if ( player.left && player.side > 0 )
       player.side -= 5 * player.speed.leftright
       if (basketLeft <= -1 * basketTollerance)
         player.dom.css('left', player.side + "px")        
       else
         player.basketDom.css('left', parseInt((player.side - playerLeft)/2) + "px")
         
-    else if ( player.right && player.side + playerWidth < viewportWidth )
-      player.side += 5 *player.speed.leftright
-      player.dom.css('left', player.side + "px")
+    if ( player.right && player.side + playerWidth < viewportWidth )
+      player.side += 5 * player.speed.leftright
       if (basketLeft >= basketTollerance)
         player.dom.css('left', player.side + "px")
       else
@@ -486,13 +391,6 @@ updatePlayer=(player)->
       
     updateInfluence(player)
     
-      
-  else if (player.jumps || player.falls)
-    jump(player)
-    player.basketDom.css('left', player.side + "px")
-    player.basketDom.css('left', "0px")
-  
-  
   true
   
 updateInfluence=(player)->
@@ -520,7 +418,17 @@ updateTime=(player, now)->
       player.timeout.html("")
     true
   
+updateElements=()->
+  fallElements()
+  fillElementList()
+  true
+  
+  
+## Player Functions ##
+
 jump=(player)->
+  console.log "jump activity"
+  console.log "player height: " + player.height
   if (player.height <= bottom)
     player.jumps = true
   else if (player.height >= jumpHeight + bottom)
@@ -528,36 +436,30 @@ jump=(player)->
     player.falls = true
 
   if (player.jumps)
-    player.height += 10 * player.speed.updown
+    player.height += 5 * player.speed.updown
   else if (player.falls)
-    player.height -= 10 * player.speed.updown
+    player.height -= 5 * player.speed.updown
     if (player.height <= bottom)
       player.falls = false   
       
   player.dom.css('bottom', player.height + "px")
   true
   
-updateObjects=()->
-  fallObjects()
-  fillObjectList()
-  true
-  
-fallObjects=()->
-  for object in objectList
-    falls(object)
+## Element Functions ##
+
+fallElements=()->
+  for element in elementList
+    falls(element)
   true
       
-fillObjectList=()->
-  if (queue.length > 0)
-    fallCount += 1
-    #if ( fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2 )
-    if ( fallCount >= fallRound )
-      object = queue[0]
-      object.side = getNewColumn() * columnWidth + columnWidth
-      object.dom.css('left', object.side + "px")
-      objectList.push object
-      index = queue.indexOf(object)
-      queue.splice(index,1)
+fillElementList=()->
+  fallCount += 1
+  if ( fallCount >= fallRound && Math.floor(Math.random() * 3) >= 2 )
+#  if ( fallCount >= fallRound )
+    elementName = elementRandomList[ Math.floor( Math.random() * elementRandomList.length ) - 1 ]
+    if elementName != undefined
+      element = createNewElement(elementName)
+      elementList.push(element)
       fallCount = 0
   true
       
@@ -565,30 +467,34 @@ falls=(object)->
   if object != undefined
     object.height -= object.velo
     if (object.height <= bottom)
-      objectDown(object)
-    object.dom.css('bottom',object.height + "px")
+      elementDown(object)
+    if object.dom != undefined
+      object.dom.css('bottom', object.height + "px")
   true
   
 getNewColumn=()->
   Math.floor(Math.random() * columns)
   
+## Collision  
+
 checkCollisions=()->
-  for object in objectList
+  for object in elementList
     checkCollision(object)
   true
   
 checkCollision=(object)->
   for player in players
-    if(object!=undefined && player.isActive)
-      #console.log JSON.stringify(player.basketimageDom)
-      playerPos = player.basketimageDom.offset()
+    if(object != undefined && player.isActive && object.dom != undefined)
+      #console.log JSON.stringify(player.basketDom)
+      playerPos = player.basketDom.offset
+#      console.log "playerPos: " + playerPos
       playerPos.top=parseInt(playerPos.top,10)
       playerPos.left=parseInt(parseInt(playerPos.left,10))
-      playerPos.right=playerPos.left+parseInt(player.basketimageDom.css('width'),10)
+      playerPos.right=playerPos.left+parseInt(player.basketDom.css('width'),10)
       playerPos.right=parseInt(playerPos.right)
-      playerPos.bottom=playerPos.top+parseInt(player.basketimageDom.css('height'),10)
+      playerPos.bottom=playerPos.top+parseInt(player.basketDom.css('height'),10)
       
-      objPos = object.dom.offset()
+      objPos = object.dom.offset
       objPos.top=parseInt(objPos.top,10)
       objPos.left=parseInt(objPos.left,10)
       objPos.right=objPos.left+parseInt(player.dom.css('width'),10)
@@ -599,8 +505,8 @@ checkCollision=(object)->
       lrtest=objPos.middle>=playerPos.left && objPos.middle<=playerPos.right
       udtest=objPos.bottom>=playerPos.top && objPos.bottom<=playerPos.bottom 
       
-      if object.name == 'bomb'
-        console.log JSON.stringify(playerPos),JSON.stringify(objPos),lrtest,udtest
+#      if object.name == 'bomb'
+#        console.log JSON.stringify(playerPos),JSON.stringify(objPos),lrtest,udtest
       
       if lrtest && udtest        
         switch object.name
@@ -613,13 +519,11 @@ checkCollision=(object)->
        
   true
   
-objectDown=(object)->
-  object.height = heaven
-  object.dom.css('bottom', heaven + "px")
-  queue.push object
-  index = objectList.indexOf(object)
-  objectList.splice(index,1)
-  calcSide(object)
+elementDown=(object)->
+  console.log "element down: " + object.id
+  index = elementList.indexOf(object)
+  elementList.splice(index,1)
+  destroyElement(object)
   true
   
 calcSide=(object)->
@@ -631,7 +535,7 @@ collect=(player, object)->
   player.score += object.value
   player.scoreDom.html(player.score)
   influencePlayer(player, object)
-  objectDown(object)
+  elementDown(object)
   true
   
 influencePlayer=(player, object)->
@@ -655,60 +559,3 @@ getClientID=(player)->
   for id in playerMap
     if playerMap[id] == player
       id
-  
-  ###
-stk.framework
-
-stk.framework.timer [TIME_IN_MS as int, FUNCTION_NAME]
-every TIME_IN_MS milli seconds repeat FUNCTION_NAME 
-
-stk.framework.delay TIME_IN_MS, FUNCTION_NAME
-after TIME_IN_MS milli seconds execute FUNCTION_NAME once
-
-stk.framework.isVibrationSupported
-returns [true | false]
-
-stk.framework.addVibratePattern pattern
-pattern={id:STRING,timestamp:[timestamp|0],list:[PAUSE_MS,VIBRATE_MS,PAUSE_MS,VIBRATE_MS,...,PAUSE_MS,VIBRATE_MS]}
-id: identifier of a pattern
-timstamp: starttime as local timestamp.
-          if the timestamp lays in the past list will be truncated by the difference of timestamp to local time
-          if the timestamp till the time of the last ms of the last VIBRATE_MS lays bevore the local time the pattern will be dropped
-          if timestamp == 0 the pattern will be started immediately
-          if a new pattern starts while another pattern runs, the runnig pattern will be played and the part of new pattern that lasts longer than the playing pattern will be played subsequent to end of the running pattern. No pattern mixing occurs 
-Example
-pattern={id:"whge",timestamp:new Date().getTime()+2200,list:[500,1000,200,300]}
-
-stk.framework.removeVibratePattern id
-removes a pattern from scheduling
-if the pattern is playing it will be stopped
-succeeding pattern will be left unchanged, notably beforehand truncated patten will NOT be brought to their original state, there will be a pause in the amount of time the removed pattern would have been played
-
-###
-
-#stk.framework.addVibratePattern {id:"start1",timestamp:new Date().getTime()+200,list:[0,100,50,100]}
-
-#stk.framework.addVibratePattern {id:"start2",timestamp:new Date().getTime()+3000,list:[0,12345]}
-
-###
-you may get your own cliendID via stk.framework.getClientID()
-###
-#console.log "My clientID:", stk.framework.getClientID()
-
-###
-With the 'custommessage' type  you can send your custom messages to all clients in your group
-The 'custommessage' type is also capable to send messages to one ore more specific clients
-If you provide an empty list to the sendTo attribute (or omit the sendTo attribute) your message will be broadcasted to any client in your group.
-Otherwise, if you declare one or more client ids in the sendTo list, your message will be send only to the listed clients.
-
-###
-#stk.framework.sendMessage('custommessage',{type:'custommessage',sendTo:[stk.framework.getClientID()],txt:"This message goes only to myself "+stk.framework.getClientID()})
-#
-#stk.framework.sendMessage('custommessage',{type:'addVibratePattern',sendTo:[stk.framework.getClientID()],pattern:{id:"viacustommessage",timestamp:new Date().getTime()+2000,list:[0,2000,500,2000]}})
-
-###
-Doing "onLoad"-Stuff
-If you want a function be called after the last script (it is this script - custom_end.coffee/custom_end.js) is loaded, add your code here.
-If it should be executed after the "loading..." animation ends, add a delay call of 1200 ms
-
-###
