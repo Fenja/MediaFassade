@@ -17,7 +17,6 @@ customLoggerT=()->
   
 customLoggerD=()->
   ###customLogger "Delay"###
-  #resize()
   stk.framework.timer 100, customLoggerT
   
 stk.framework.delay 500, customLoggerD
@@ -87,7 +86,7 @@ class Player
     @left = false
     @right = false
     @jumps = false
-    @falls = false
+    @falls = true
     @height = defaultParameters.height or bottom
     @speed =  {updown:updownDefault,leftright:leftrightDefault}
     @side = defaultParameters.side or 50
@@ -231,9 +230,7 @@ directionJoystick=(msg)->
   true
   
 directionKey=(msg)->
-  id = msg.envelop.clientid
-
-  player = getPlayer(id)
+  player = getPlayer(msg.envelop.clientid)
 #  console.log player,id 
   if player!=undefined
     keys = msg.keys
@@ -250,7 +247,7 @@ directionKey=(msg)->
 ## Player Utils ##
 
 registerPlayer=(id)->
-  console.log "registerPlayer",unregisteredPlayer
+  console.log "registerPlayer", unregisteredPlayer
   if (unregisteredPlayer.length > 0)
     player = unregisteredPlayer.pop()
     inactivePlayers.push(player)
@@ -341,7 +338,6 @@ getElementIDCount=(element)->
   id
 
 destroyElement=(element)->
-  console.log "destroy " + element.id
   deadElem = document.getElementById(element.id)
   deadElem.parentNode.removeChild(deadElem)
 
@@ -427,8 +423,6 @@ updateElements=()->
 ## Player Functions ##
 
 jump=(player)->
-  console.log "jump activity"
-  console.log "player height: " + player.height
   if (player.height <= bottom)
     player.jumps = true
   else if (player.height >= jumpHeight + bottom)
@@ -485,28 +479,17 @@ checkCollisions=()->
 checkCollision=(object)->
   for player in players
     if(object != undefined && player.isActive && object.dom != undefined)
-      #console.log JSON.stringify(player.basketDom)
-      playerPos = player.basketDom.offset
-#      console.log "playerPos: " + playerPos
-      playerPos.top=parseInt(playerPos.top,10)
-      playerPos.left=parseInt(parseInt(playerPos.left,10))
-      playerPos.right=playerPos.left+parseInt(player.basketDom.css('width'),10)
-      playerPos.right=parseInt(playerPos.right)
-      playerPos.bottom=playerPos.top+parseInt(player.basketDom.css('height'),10)
+      basket = player.basketDom
+      elem = object.dom
+      basketLeft = parseInt(basket.css('left')) + parseInt(player.dom.css('left'))
+      basketBottom = parseInt(player.dom.css('bottom'))
+      basketDomHeight = parseInt(basket.css('height'))
+      elemLeft = parseInt(elem.css('left'))
+      elemBottom = parseInt(elem.css('bottom'))
       
-      objPos = object.dom.offset
-      objPos.top=parseInt(objPos.top,10)
-      objPos.left=parseInt(objPos.left,10)
-      objPos.right=objPos.left+parseInt(player.dom.css('width'),10)
-      objPos.bottom=objPos.top+parseInt(player.dom.css('height'),10)
-      objPos.middle=parseInt((objPos.right-objPos.left)/2+objPos.left,10)
-      
-      
-      lrtest=objPos.middle>=playerPos.left && objPos.middle<=playerPos.right
-      udtest=objPos.bottom>=playerPos.top && objPos.bottom<=playerPos.bottom 
-      
-#      if object.name == 'bomb'
-#        console.log JSON.stringify(playerPos),JSON.stringify(objPos),lrtest,udtest
+      lrtest= elemLeft >= basketLeft && elemLeft + parseInt(elem.css('width')) <= basketLeft + parseInt(basket.css('width'))
+      udtest = elemBottom >= (basketBottom + basketDomHeight / 3) && elemBottom <= (basketBottom + basketDomHeight / 2)
+#      console.log lrtest + " " + udtest
       
       if lrtest && udtest        
         switch object.name

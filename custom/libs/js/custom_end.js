@@ -112,7 +112,7 @@ Player = (function() {
     this.left = false;
     this.right = false;
     this.jumps = false;
-    this.falls = false;
+    this.falls = true;
     this.height = defaultParameters.height || bottom;
     this.speed = {
       updown: updownDefault,
@@ -300,9 +300,8 @@ directionJoystick = function(msg) {
 };
 
 directionKey = function(msg) {
-  var code, i, id, keys, len, player;
-  id = msg.envelop.clientid;
-  player = getPlayer(id);
+  var code, i, keys, len, player;
+  player = getPlayer(msg.envelop.clientid);
   if (player !== void 0) {
     keys = msg.keys;
     for (i = 0, len = keys.length; i < len; i++) {
@@ -426,7 +425,6 @@ getElementIDCount = function(element) {
 
 destroyElement = function(element) {
   var deadElem;
-  console.log("destroy " + element.id);
   deadElem = document.getElementById(element.id);
   return deadElem.parentNode.removeChild(deadElem);
 };
@@ -529,8 +527,6 @@ updateElements = function() {
 };
 
 jump = function(player) {
-  console.log("jump activity");
-  console.log("player height: " + player.height);
   if (player.height <= bottom) {
     player.jumps = true;
   } else if (player.height >= jumpHeight + bottom) {
@@ -599,24 +595,19 @@ checkCollisions = function() {
 };
 
 checkCollision = function(object) {
-  var i, len, lrtest, objPos, player, playerPos, udtest;
+  var basket, basketBottom, basketDomHeight, basketLeft, elem, elemBottom, elemLeft, i, len, lrtest, player, udtest;
   for (i = 0, len = players.length; i < len; i++) {
     player = players[i];
     if (object !== void 0 && player.isActive && object.dom !== void 0) {
-      playerPos = player.basketDom.offset;
-      playerPos.top = parseInt(playerPos.top, 10);
-      playerPos.left = parseInt(parseInt(playerPos.left, 10));
-      playerPos.right = playerPos.left + parseInt(player.basketDom.css('width'), 10);
-      playerPos.right = parseInt(playerPos.right);
-      playerPos.bottom = playerPos.top + parseInt(player.basketDom.css('height'), 10);
-      objPos = object.dom.offset;
-      objPos.top = parseInt(objPos.top, 10);
-      objPos.left = parseInt(objPos.left, 10);
-      objPos.right = objPos.left + parseInt(player.dom.css('width'), 10);
-      objPos.bottom = objPos.top + parseInt(player.dom.css('height'), 10);
-      objPos.middle = parseInt((objPos.right - objPos.left) / 2 + objPos.left, 10);
-      lrtest = objPos.middle >= playerPos.left && objPos.middle <= playerPos.right;
-      udtest = objPos.bottom >= playerPos.top && objPos.bottom <= playerPos.bottom;
+      basket = player.basketDom;
+      elem = object.dom;
+      basketLeft = parseInt(basket.css('left')) + parseInt(player.dom.css('left'));
+      basketBottom = parseInt(player.dom.css('bottom'));
+      basketDomHeight = parseInt(basket.css('height'));
+      elemLeft = parseInt(elem.css('left'));
+      elemBottom = parseInt(elem.css('bottom'));
+      lrtest = elemLeft >= basketLeft && elemLeft + parseInt(elem.css('width')) <= basketLeft + parseInt(basket.css('width'));
+      udtest = elemBottom >= (basketBottom + basketDomHeight / 3) && elemBottom <= (basketBottom + basketDomHeight / 2);
       if (lrtest && udtest) {
         switch (object.name) {
           case 'bomb':
