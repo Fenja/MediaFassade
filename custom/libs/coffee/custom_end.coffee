@@ -21,6 +21,7 @@ customLoggerD=()->
   
 stk.framework.delay 500, customLoggerD
 
+
 ### Define your handler ###
 
 # handler for custom messages #
@@ -64,10 +65,29 @@ readyAndGo=()->
   initPlayer()
 stk.framework.delay 1200, readyAndGo
 
+gameCountDown = 30
+
+countDown=()->
+  if gameCountDown >= 0
+    console.log gameCountDown
+    gameCountDown -= 1
+  else
+    gameOver
+
+startCountDown=()->
+  stk.framework.timer 1000, countDown
+
+stk.framework.delay 3000 * 60, startCountDown
+
+gameOver=()->
+    console.log "GameOver"
+    location.href = "scores.html"
+    
 ### own code ###
 
 
 heaven = 1000# parseInt( $('#screen').css('height'), 10) * 5
+bottom = 0
 
 ### objects ###
 class Element
@@ -87,7 +107,7 @@ class Player
     @left = false
     @right = false
     @jumps = false
-    @falls = true
+    @falls = false
     @height = defaultParameters.height or bottom
     @speed =  {updown:updownDefault,leftright:leftrightDefault}
     @side = defaultParameters.side or 50
@@ -97,10 +117,7 @@ class Player
     @score = 0
     @scoreDom = defaultParameters.scoreDom
     @time = 0
-    @isActive = false
-    @basketTurnedOver = new Date().getTime() /1000
-    @waitForBasket = false 
-    @timeout = defaultParameters.timeout
+    @isActive = true
 
 viewportHeight = window.innerHeight
 viewportWidth = window.innerWidth
@@ -110,27 +127,16 @@ running = true
 tollerance = -2
 
 gravity = 5
-bottom = 0
+
 jumpHeight = 300
 
 updownDefault=3
 leftrightDefault=0.8
 
-player1 = new Player(
-  name: 'player1'
-  side: 100
-  dom: $('#player1')
-  basketDom: $('#basket1')
-  scoreDom: $('#score1')
-  timeout: $('#timeout1')
-)
-
 playerMap = {}  
 players = []
-inactivePlayers = []
-unregisteredPlayer = [player1]
-playerWidth = parseInt(player1.dom.css('width'))
-playerHeight = parseInt(player1.dom.css('height'))
+playerWidth = 10
+playerHeight = 10
 basketTollerance = 20
 timeLimit = 120
 fadeLimit = 55
@@ -152,8 +158,8 @@ getPlayer=(id)->
       playerMap[id]
     else
       undefined
-  else
-    registerPlayer(id)
+#  else
+#    registerPlayer(id)
     
     
 ## Controller methods ##
@@ -253,60 +259,35 @@ mockupClientIDs = {
 playerStrings = ['player1', 'player2']
 
 initPlayer=()->
-  console.log "init player"
 #  console.log stk.framework.getData(true)
 #  data = stk.framework.getData(true)
+  playerObject
   for player in playerStrings
-    console.log player + ": " + mockupClientIDs[player]
+    clientID = mockupClientIDs[player]
+    console.log player + ": " + clientID
     playerid = player.slice(-1)
     div = document.createElement('div')
     div.id = player
     div.className = 'player'
-    div.innerHTML = '<img src="images/chara0' + playerid + '.svg"><img id="basket' + playerid + ' class="basket" src="images/chara0' + playerid + '_basket.svg">'
+    div.innerHTML = '<img id="' + player + '" src="images/chara0' + playerid + '.svg"><img id="basket' + playerid + '" class="basket" src="images/chara0' + playerid + '_basket.svg">'
     document.getElementById('player-div').appendChild(div)
     
-#registerPlayer=(id)->
-#  console.log "registerPlayer", unregisteredPlayer
-#  if (unregisteredPlayer.length > 0)
-#    player = unregisteredPlayer.pop()
-#    inactivePlayers.push(player)
-#    activatePlayer(player)
-#    
-#    playerMap[id] = player
-#    console.log "playerMap",playerMap
-#    player.dom.css('left', 10 +"px")
-#    player
-#  else
-#    undefined
-#    
-#activatePlayer=(player)->
-#  players.push(player)
-#  index = inactivePlayers.indexOf(player)
-#  inactivePlayers=inactivePlayers.splice(index)
-#  player.time = new Date().getTime() /1000
-#  player.score = 0
-#  player.dom.css('opacity', 1.0)
-#  player.dom.css('zIndex', 5)
-#  player.isActive=true
-#  player.basketTurnedOver=new Date().getTime() /1000 
-#  true
-#  
-#deactivatePlayer=(player)->
-#  if player.isActive
-#    inactivePlayers.push(player)
-#    index = players.indexOf(player)
-#    players=players.splice(index)
-#    player.dom.css('opacity', 0.3)
-#    player.dom.css('zIndex', 2)
-#    player.isActive=false
-#    player.waitForBasket=true
-#    player.timeout.html("10")
-#    player.height=bottom
-#    player.dom.css('bottom', player.height + "px")
-#    console.log "deactivatePlayer",JSON.stringify(player)    
-#  ###else
-#    console.log "player is not active",JSON.stringify(player)###
-#  true
+    playerObject = new Player(
+      name: player
+      side: 100
+      dom: $('#' + player)
+      basketDom: $('#basket' + playerid)
+      scoreDom: $('#score' + playerid)
+      timeout: $('#timeout1')
+    )
+
+    playerMap[clientID] = playerObject
+    players.push(playerObject)
+    
+  playerWidth = parseInt(playerObject.dom.css('width'))
+  playerHeight = parseInt(playerObject.dom.css('height'))
+    
+  true
 
 
 ## Element Utils ##
@@ -373,38 +354,37 @@ update=()->
 updatePlayers=()->
   now = new Date().getTime() /1000
   for player in players
-    if updateTime(player, now)
-      updatePlayer(player)
+#    if updateTime(player, now)
+   updatePlayer(player)
   true
 
 updatePlayer=(player)->
   playerLeft = parseInt(player.dom.css('left'))
   basketLeft = parseInt(player.basketDom.css('left'))
-  if player.isActive
-    if ( player.left && player.side > 0 )
-      player.side -= 5 * player.speed.leftright
-      if (basketLeft <= -1 * basketTollerance)
-        player.dom.css('left', player.side + "px")        
-      else
-        player.basketDom.css('left', parseInt((player.side - playerLeft)/2) + "px")
-        
-    if ( player.right && player.side + playerWidth < viewportWidth )
-      player.side += 5 * player.speed.leftright
-      if (basketLeft >= basketTollerance)
-        player.dom.css('left', player.side + "px")
-      else
-        player.basketDom.css('left', parseInt((player.side - playerLeft)/2) + "px")
-    
-    if (player.jumps || player.falls)
-      jump(player)
+  if ( player.left && player.side > 0 )
+    player.side -= 5 * player.speed.leftright
+    if (basketLeft <= -1 * basketTollerance)
+      player.dom.css('left', player.side + "px")        
+    else
+      player.basketDom.css('left', parseInt((player.side - playerLeft)/2) + "px")
+
+  if ( player.right && player.side + playerWidth < viewportWidth )
+    player.side += 5 * player.speed.leftright
+    if (basketLeft >= basketTollerance)
       player.dom.css('left', player.side + "px")
-      player.basketDom.css('left', "0px")
-    else if ( player.up )
-      jump(player)
-      player.dom.css('left', player.side + "px")
-      player.basketDom.css('left', "0px")
+    else
+      player.basketDom.css('left', parseInt((player.side - playerLeft)/2) + "px")
+
+  if (player.jumps || player.falls)
+    jump(player)
+    player.dom.css('left', player.side + "px")
+    player.basketDom.css('left', "0px")
+  else if ( player.up )
+    jump(player)
+    player.dom.css('left', player.side + "px")
+    player.basketDom.css('left', "0px")
       
-    updateInfluence(player)
+  updateInfluence(player)
     
   true
   
@@ -414,24 +394,6 @@ updateInfluence=(player)->
     if player.influence == 0
       player.speed = {updown:updownDefault,leftright:leftrightDefault}
   true
-  
-updateTime=(player, now)->  
-  if (now - player.time) >= timeLimit
-    deactivatePlayer(player)
-    false
-  else if (now - player.time) >= fadeLimit
-    player.dom.css('opacity', 0.7)
-    true
-  else
-    timeleft=Math.max(0,timeLimit-Math.floor(now-player.time))
-    if timeleft<21
-      player.timeout.html("Noch "+timeleft+"s")
-    if timeleft<6 && timeleft>0
-      player.dom.not(':animated').effect('pulsate', {times:4}, 500, ()-> )
-      player.timeout.html("Noch "+timeleft+"s")    
-    else
-      player.timeout.html("")
-    true
   
 updateElements=()->
   fallElements()
