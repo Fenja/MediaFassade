@@ -1,424 +1,140 @@
 <!DOCTYPE html>
 <html lang="de">
-
-<head>
-  <title>Remotecontrol</title>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="57x57" href="media/favicon/apple-icon-57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60" href="media/favicon/apple-icon-60x60.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="media/favicon/apple-icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="media/favicon/apple-icon-76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="media/favicon/apple-icon-114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="media/favicon/apple-icon-120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="media/favicon/apple-icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="media/favicon/apple-icon-152x152.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="media/favicon/apple-icon-180x180.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="media/favicon/android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="media/favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="media/favicon/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="media/favicon/favicon-16x16.png">
-  <link rel="manifest" href="media/favicon/manifest.json">
-  <meta name="msapplication-TileColor" content="#ffffff">
-  <meta name="msapplication-TileImage" content="media/favicon/favicon/ms-icon-144x144.png">
-  <meta name="theme-color" content="#ffffff">
-  <link rel="shortcut icon" href="media/favicon/favicon.ico" type="image/x-icon">
-  <link rel="icon" href="media/favicon/favicon.ico" type="image/x-icon">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" type="text/css" href="styles/client.css">
-  <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.css">
-  <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css">
-  <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css">
-  <script src="../external/libs/js/jquery/jquery-2.1.4.min.js"></script>
-  <script src="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
-  <script src="../external/libs/js/doccookies.js"></script>
-  <script src="../external/libs/js/howler.js/howler.min.js"></script>
-  <script>
-    var objectsToInject = {
-      "draggable_joystick": {
-        "lastID": 0,
-        "objects": [{
-          "type": "draggable_joystick",
-          "id": 0,
-          "x": 0.4425956738768719,
-          "y": 0.008875739644970414,
-          "h": 0.5,
-          "w": 0.5,
-          "scale": 1.9800000000000009,
-          "constraint": true,
-          "zindex": 66,
-          "opacity": 1,
-          "touchstart": true,
-          "touchmove": true,
-          "touchend": false,
-          "touchstartvibrate": true,
-          "touchmovevibrate": false,
-          "touchendvibrate": false,
-          "startmaxms": 1,
-          "movemaxms": 300,
-          "endmaxms": 3
-        }]
-      },
-      "draggable_orientationsensor": {
-        "lastID": 0,
-        "objects": [{
-          "type": "draggable_orientationsensor",
-          "id": 0,
-          "x": 0,
-          "y": 0.05,
-          "h": 0.1,
-          "w": 0.1,
-          "scale": 1,
-          "constraint": false,
-          "zindex": 64,
-          "opacity": 1,
-          "maxms": 33
-        }]
-      },
-      "draggable_accelerationsensor": {
-        "lastID": 0,
-        "objects": [{
-          "type": "draggable_accelerationsensor",
-          "id": 0,
-          "x": 0,
-          "y": 0.2,
-          "h": 0.1,
-          "w": 0.1,
-          "scale": 1,
-          "constraint": false,
-          "zindex": 62,
-          "opacity": 1,
-          "maxms": 20
-        }]
-      },
-      "draggable_keylistener": {
-        "lastID": 0,
-        "objects": [{
-          "type": "draggable_keylistener",
-          "id": 0,
-          "x": 0,
-          "y": 0.3224852071005917,
-          "h": 0.1,
-          "w": 0.1,
-          "scale": 1,
-          "constraint": false,
-          "zindex": 66,
-          "opacity": 1
-        }]
-      },
-      "draggable_touchpad": {
-        "lastID": 0,
-        "objects": [{
-          "type": "draggable_touchpad",
-          "id": 0,
-          "x": 0.5,
-          "y": 0,
-          "h": 0.5,
-          "w": 0.5,
-          "scale": 1,
-          "constraint": false,
-          "zindex": 66,
-          "opacity": 1,
-          "touchstart": true,
-          "touchmove": true,
-          "touchend": false,
-          "touchstartvibrate": true,
-          "touchmovevibrate": true,
-          "touchendvibrate": false,
-          "startmaxms": 0,
-          "movemaxms": 0,
-          "endmaxms": 0
-        }]
-      }
-    };
-  </script>
-  <script>
-    gravatarUser = {};
-    gravatarUserData = function (p) {
-      gravatarUser = p;
-      return console.log(JSON.stringify(gravatarUser));
-    };
-  </script>
-  <style>
-    label,
-    input {
-      display: block;
-    }
-    
-    input.text {
-      margin-bottom: 12px;
-      width: 95%;
-      padding: .4em;
-    }
-    
-    fieldset {
-      padding: 0;
-      border: 0;
-      margin-top: 25px;
-    }
-    
-    .ui-dialog .ui-state-error {
-      padding: .3em;
-    }
-    
-    .validateTips {
-      border: 1px solid transparent;
-      padding: 0.3em;
-    }
-    
-    #login {
-      z-index: 100;
-    }
-  </style>
-</head>
-
-<body>
-  <div id="loading" name="loading" style="position:absolute;left:0;top:0;width:100%;height:100%;z-index:12345;background-color:#002;margin:0;padding: 0;" class="loading">
-    <table style="left:0;top:0;width:100%;height:100%;">
-      <tr>
-        <td align="center">
-          <div id="loadingtxt" name="loadingtxt" align="left" style="width:100%;height:100%;left:40%;top:45%;color:#fff;font:24pt Helvetica, Arial;">Loading</div>
-        </td>
-      </tr>
-    </table>
+  <head>
+    <title>Remotecontrol</title>
+    <meta charset="UTF-8">
+    <link rel="apple-touch-icon" sizes="57x57" href="media/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="media/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="media/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="media/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="media/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="media/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="media/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="media/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="media/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="media/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="media/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="media/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="media/favicon/favicon-16x16.png">
+    <link rel="manifest" href="media/favicon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="media/favicon/favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="shortcut icon" href="media/favicon/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="media/favicon/favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="styles/client.css">
+    <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css">
+    <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css">
+    <script src="../external/libs/js/jquery/jquery-2.1.4.min.js"></script>
+    <script src="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
+    <script src="../external/libs/js/doccookies.js"></script>
+    <script src="../external/libs/js/howler.js/howler.min.js"></script>
     <script>
-      function loading() {
-        var l = 0;
-
-        function step() {
-          l++;
-          if (l > 5) {
-            l = 0;
+      var objectsToInject={"draggable_orientationsensor":{"lastID":0,"objects":[{"type":"draggable_orientationsensor","id":0,"x":0.3684240665869578,"y":0.39026760587505266,"h":0.1,"w":0.1,"scale":1,"constraint":false,"zindex":66,"opacity":1,"maxms":2}]},"draggable_background":{"lastID":0,"objects":[{"type":"draggable_background","id":0,"x":0.11210659140147151,"y":0.5624999719507554,"h":1,"w":1,"scale":1,"constraint":false,"zindex":64,"opacity":1,"url":"media/images/bgr.png"}]},"draggable_accelerationsensor":{"lastID":0,"objects":[{"type":"draggable_accelerationsensor","id":0,"x":0.43784422915719046,"y":0.7925541307673108,"h":0.1,"w":0.1,"scale":1,"constraint":false,"zindex":66,"opacity":1,"maxms":0}]},"draggable_keylistener":{"lastID":0,"objects":[{"type":"draggable_keylistener","id":0,"x":0.34146342663948787,"y":0.7925541307673108,"h":0.1,"w":0.1,"scale":1,"constraint":false,"zindex":66,"opacity":1}]}};
+      var key='h24d';
+      
+        
+    </script>
+  </head>
+  <body>
+    <div id="loading" name="loading" style="position:absolute;left:0;top:0;width:100%;height:100%;z-index:12345;background-color:#002;margin:0;padding: 0;" class="loading">
+      <table style="left:0;top:0;width:100%;height:100%;">
+        <tr>
+          <td align="center">
+            <div id="loadingtxt" name="loadingtxt" align="left" style="width:100%;height:100%;left:40%;top:45%;color:#fff;font:24pt Helvetica, Arial;">Loading</div>
+          </td>
+        </tr>
+      </table>
+      <script>
+        function loading(){
+          var l=0;
+          function step(){
+            l++;if (l>5){l=0;}
+            var s="Loading ";
+            if(l==0){s+='*&nbsp;';}
+            if(l==1){s+='&nbsp;*&nbsp;';}
+            if(l==2){s+='&nbsp;&nbsp;*';}
+            if(l==3){s+='&nbsp;&nbsp;<sub>*</sub>';}
+            if(l==4){s+='&nbsp;<sub>*</sub>&nbsp;';}
+            if(l==5){s+='<sub>*</sub>&nbsp;&nbsp;';}
+            var e=document.getElementById('loadingtxt').innerHTML=s;
           }
-          var s = "Loading ";
-          if (l == 0) {
-            s += '*&nbsp;';
-          }
-          if (l == 1) {
-            s += '&nbsp;*&nbsp;';
-          }
-          if (l == 2) {
-            s += '&nbsp;&nbsp;*';
-          }
-          if (l == 3) {
-            s += '&nbsp;&nbsp;<sub>*</sub>';
-          }
-          if (l == 4) {
-            s += '&nbsp;<sub>*</sub>&nbsp;';
-          }
-          if (l == 5) {
-            s += '<sub>*</sub>&nbsp;&nbsp;';
-          }
-          var e = document.getElementById('loadingtxt').innerHTML = s;
+          loadingTimer=setInterval(step, 200);
         }
-        loadingTimer = setInterval(step, 200);
-      }
-
-      function loaded() {
-        clearTimeout(loadingTimer);
-        $("#loadingtxt").fadeOut("slow", function () {
-          $("#loading").fadeOut("slow", function () {
-            $("#loading").remove();
+        function loaded(){
+          clearTimeout(loadingTimer);
+          $( "#loadingtxt" ).fadeOut( "slow", function() {
+            $( "#loading" ).fadeOut( "slow", function() {
+              $( "#loading" ).remove();
+            });
+          });      
+        }
+        var loadingTimer;
+        loading();
+      </script>
+    </div>
+    <div class="bodycontainer">
+      <div id="emptymarker"></div>
+      <script>
+        $(function() {
+          opt={socketserver:window.location.protocol+'//'+window.location.host};
+          console.log ("Fetching from Socketserver: " + opt.socketserver)
+          
+          console.log ("- window.location.host: " + window.location.host)
+          console.log ("- window.location.hostname: " + window.location.hostname)
+          console.log ("- window.location.port: " + window.location.port)
+          console.log ("- window.location.protocol: " + window.location.protocol)
+          
+          console.log ("loadscript: " + opt.socketserver+'/socket.io/socket.io.js')
+          $.getScript(opt.socketserver+'/socket.io/socket.io.js')
+            .done(function( script, textStatus ) {
+              //console.log( textStatus );
+              var s='libs/js/remotecontrol.js';
+              //console.log(s);
+              
+              console.log ("loadscript: " + s)
+          
+              $.getScript(s)
+                .done(function( script, textStatus ) {
+                  var s2='';
+                  
+                  if(s2==""){
+                    loaded();
+                  }else{
+                    console.log ("loadscript: " + s2)
+                    $.getScript(s2)
+                      .done(function( script, textStatus ) {
+                        loaded();
+                      })
+                      .fail(function( jqxhr, settings, exception ) {
+                        opendialog("Fehler","Triggered ajaxError 3. handler for <i><a href=\""+s2+"\""+s2+"<br /><br />"+exception+"</a></i>",false );
+                        console.log(exception);
+                        console.log("scriptname:"+scriptname);
+                        console.log("s:"+s);
+                        console.log("s2:"+s2);
+                    });
+                    
+                  }
+                })
+                .fail(function( jqxhr, settings, exception ) {
+                  opendialog("Fehler","Triggered ajaxError 2. handler for <i><a href=\""+s+"\""+s+"<br /><br />"+exception+"</a></i>",false );
+                  console.log(exception);
+                  console.log("scriptname:"+scriptname);
+                  console.log("s:"+s);
+                  console.log("s2:"+s2);
+              });
+            })
+            .fail(function( jqxhr, settings, exception ) {
+              opendialog("Fehler","Triggered ajaxError 1. handler for <i><a href=\""+script+"\""+script+"<br /><br />"+exception+"</a></i>",false );
+              console.log(exception);
+              console.log("scriptname:"+scriptname);
+              console.log("s:"+s);
+              console.log("s2:"+s2);
           });
         });
-      }
-      var loadingTimer;
-      loading();
-    </script>
-  </div>
-  <div class="bodycontainer">
-    <button name="fullscreen" id="fullscreen" class="beforebgr fullscreen">Fullscreen</button>
-    <div id="divjoystick" class="draggable draggable ui-widget-content">
-      <div id="joystickbase" class="joystickbase">
-        <svg width="100%" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="40" stroke="black" stroke-width="0.1" fill="url(#grad1)"></circle>
-          <circle cx="50" cy="50" r="30" stroke="none" stroke-width="0.1" fill="url(#grad2)"></circle>
-          <circle cx="50" cy="50" r="29.5" stroke="none" stroke-width="0.1" fill="url(#grad3)"></circle>
-          <defs>
-            <linearGradient id="grad1" x1="50%" y1="0%" x2="50%" y2="50%">
-              <stop offset="0%" style="stop-color:#868688;stop-opacity:1"></stop>
-              <stop offset="100%" style="stop-color:#ebebeb;stop-opacity:1"></stop>
-            </linearGradient>
-            <linearGradient id="grad2" x1="50%" y1="0%" x2="50%" y2="100%">
-              <stop offset="0%" style="stop-color:#3a3839;stop-opacity:1"></stop>
-              <stop offset="100%" style="stop-color:#9e9d9d;stop-opacity:1"></stop>
-            </linearGradient>
-            <linearGradient id="grad3" x1="50%" y1="0%" x2="50%" y2="50%">
-              <stop offset="0%" style="stop-color:#b0b0b0;stop-opacity:1"></stop>
-              <stop offset="100%" style="stop-color:#9e9d9d;stop-opacity:1"></stop>
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
-      <div id="joystick" class="joystick">
-        <svg width="100%" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="20" stroke="none" stroke-width="0.1" fill="url(#grad4)"></circle>
-          <circle cx="50" cy="50" r="20" stroke="none" stroke-width="0.1" fill="url(#grad5)" fill-opacity="0.6" transform="rotate(15, 50, 50)"></circle>
-          <circle cx="50" cy="50" r="20" stroke="none" stroke-width="0.1" fill="url(#grad5)" fill-opacity="0.6" transform="rotate(-15, 50, 50)"></circle>
-          <circle cx="50" cy="50" r="20" stroke="none" fill="url(#grad6)" fill-opacity="0.9"></circle>
-          <circle cx="50" cy="50" r="20" stroke="none" fill="url(#grad7)" fill-opacity="0.3"></circle>
-          <circle cx="50" cy="50" r="16" stroke="none" fill="url(#grad8)" fill-opacity="0.2"></circle>
-          <circle cx="50" cy="50" r="9" stroke="black" stroke-width="0.2" fill="url(#grad8)" fill-opacity="0.8"></circle>
-          <polygon points="50,34 53,38 47,38" style="fill:url(#grad1);stroke:black;stroke-width:0.1;stroke-opacity:0.6"></polygon>
-          <polygon points="66,50 62,53 62,47" style="fill:url(#grad1);stroke:black;stroke-width:0.1;stroke-opacity:0.6"></polygon>
-          <polygon points="50,66 53,62 47,62" style="fill:url(#grad1);stroke:black;stroke-width:0.1;stroke-opacity:0.6"></polygon>
-          <polygon points="34,50 38,53 38,47" style="fill:url(#grad1);stroke:black;stroke-width:0.1;stroke-opacity:0.6"></polygon>
-          <defs>
-            <linearGradient id="grad4" x1="50%" y1="0%" x2="50%" y2="150%">
-              <stop offset="0%" style="stop-color:#f9f9f9;stop-opacity:1"></stop>
-              <stop offset="100%" style="stop-color:#565455;stop-opacity:1"></stop>
-            </linearGradient>
-            <linearGradient id="grad5" x1="50%" y1="0%" x2="50%" y2="150%">
-              <stop offset="0%" style="stop-color:#fcfcfc;stop-opacity:1"></stop>
-              <stop offset="100%" style="stop-color:#aaa;stop-opacity:1"></stop>
-            </linearGradient>
-            <linearGradient id="grad6" x1="50%" y1="50%" x2="50%" y2="50%">
-              <stop offset="0%" style="stop-color:#fcfcfc;stop-opacity:0"></stop>
-              <stop offset="100%" style="stop-color:#aaa;stop-opacity:1"></stop>
-            </linearGradient>
-            <radialGradient id="grad6" cx="50%" cy="40%" r="60%" fx="50%" fy="50%">
-              <stop offset="0%" style="stop-color:#fcfcfc;stop-opacity:0.8"></stop>
-              <stop offset="100%" style="stop-color:#aaa;stop-opacity:0"></stop>
-            </radialGradient>
-            <radialGradient id="grad7" cx="50%" cy="40%" r="70%" fx="50%" fy="50%">
-              <stop offset="0%" style="stop-color:rgba(255,255,255,0.5);stop-opacity:0"></stop>
-              <stop offset="100%" style="stop-color:#000;stop-opacity:1"></stop>
-            </radialGradient>
-            <radialGradient id="grad8" cx="50%" cy="40%" r="70%" fx="50%" fy="50%">
-              <stop offset="0%" style="stop-color:rgba(255,255,255,1);stop-opacity:1"></stop>
-              <stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:0"></stop>
-            </radialGradient>
-          </defs>
-          <filter id="drop-shadow">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="2.2"></feGaussianBlur>
-            <feOffset dx="12" dy="12" result="offsetblur"></feOffset>
-            <feFlood flood-color="rgba(0,0,0,0.5)"></feFlood>
-            <feComposite in2="offsetblur" operator="in"></feComposite>
-            <feMerge>
-              <feMergeNode></feMergeNode>
-              <feMergeNode in="SourceGraphic"></feMergeNode>
-            </feMerge>
-          </filter>
-        </svg>
-      </div>
+      </script>
     </div>
-    <div id="emptymarker"></div>
-    <button id="login">Login</button>
-    <div id="login-form" title="Login" style="z-index:11111">
-      <form>
-        <fieldset>
-          <label for="name">Name</label>
-          <input type="text" name="name" id="name" value="Sascha Kluth" class="text ui-widget-content ui-corner-all">
-          <label for="email">Email</label>
-          <input type="text" name="email" id="email" value="Sascha.Kluth@haw-hamburg.de" class="text ui-widget-content ui-corner-all">
-          <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
-        </fieldset>
-      </form>
-    </div>
-    <script>
-      function opendialog(title, content, closeable) {
-        if (closeable == null) {
-          closeable = true
-        };
-
-        d = $('<div/>').attr({
-          id: 'dialog-message',
-          title: title
-        }).append($('<p/>').html(content));
-
-        $('body').append(d);
-        if (closeable) {
-          d.dialog({
-            autoOpen: true,
-            modal: true,
-            width: 'auto',
-            open: function (event, ui) {
-              $('.ui-dialog').css('z-index', 12347);
-              $('.ui-widget-overlay').css('z-index', 12346);
-            },
-            buttons: {
-              Ok: function () {
-                $(this).dialog("close").dialog("destroy");
-                $('#dialog-message').remove();
-              }
-            }
-          });
-        } else {
-          d.dialog({
-            autoOpen: true,
-            modal: true,
-            width: 'auto',
-            open: function (event, ui) {
-              $('.ui-dialog').css('z-index', 12347);
-              $('.ui-widget-overlay').css('z-index', 12346);
-              $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
-            }
-          });
-        }
-
-        $('#dialog-message').css("z-index", "11111 !important");
-      }
-    </script>
-    <script>
-      $(function () {
-        opt = {
-          socketserver: window.location.protocol + '//' + window.location.host
-        };
-        console.log("Fetching from Socketserver: " + opt.socketserver)
-
-        console.log("- window.location.host: " + window.location.host)
-        console.log("- window.location.hostname: " + window.location.hostname)
-        console.log("- window.location.port: " + window.location.port)
-        console.log("- window.location.protocol: " + window.location.protocol)
-
-        console.log("loadscript: " + opt.socketserver + '/socket.io/socket.io.js')
-        $.getScript(opt.socketserver + '/socket.io/socket.io.js')
-          .done(function (script, textStatus) {
-            //console.log( textStatus );
-            var s = 'libs/js/remotecontrol.js';
-            //console.log(s);
-
-            console.log("loadscript: " + s)
-
-            $.getScript(s)
-              .done(function (script, textStatus) {
-                var s2 = '';
-
-                if (s2 == "") {
-                  loaded();
-                } else {
-                  console.log("loadscript: " + s2)
-                  $.getScript(s2)
-                    .done(function (script, textStatus) {
-                      loaded();
-                    })
-                    .fail(function (jqxhr, settings, exception) {
-                      opendialog("Fehler", "Triggered ajaxError 3. handler for <i><a href=\"" + s2 + "\"" + s2 + "<br /><br />" + exception + "</a></i>", false);
-                      console.log(exception);
-                      console.log("scriptname:" + scriptname);
-                      console.log("s:" + s);
-                      console.log("s2:" + s2);
-                    });
-
-                }
-              })
-              .fail(function (jqxhr, settings, exception) {
-                opendialog("Fehler", "Triggered ajaxError 2. handler for <i><a href=\"" + s + "\"" + s + "<br /><br />" + exception + "</a></i>", false);
-                console.log(exception);
-                console.log("scriptname:" + scriptname);
-                console.log("s:" + s);
-                console.log("s2:" + s2);
-              });
-          })
-          .fail(function (jqxhr, settings, exception) {
-            opendialog("Fehler", "Triggered ajaxError 1. handler for <i><a href=\"" + script + "\"" + script + "<br /><br />" + exception + "</a></i>", false);
-            console.log(exception);
-            console.log("scriptname:" + scriptname);
-            console.log("s:" + s);
-            console.log("s2:" + s2);
-          });
-      });
-    </script>
-  </div>
-</body>
-
+  </body>
 </html>

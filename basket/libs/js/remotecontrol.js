@@ -1655,7 +1655,7 @@ $(function() {
   socket.on("do_audio", function(msg) {
     console.log("do_audio", msg);
     if (stk_config().parseGetparameter("embeded") !== "true") {
-      stk_audio().start(msg.parameter.id, msg.parameter.timestamp - getTimestampdifference());
+//      stk_audio().start(msg.parameter.id, msg.parameter.timestamp - getTimestampdifference());
       return console.log("do_audio with", msg.parameter.id, msg.parameter.timestamp - getTimestampdifference(), new Date().getTime());
     }
   });
@@ -1750,7 +1750,7 @@ $(function() {
       timestampdifference = timestampdifference.slice(1);
       timestampdifference.push(msg.envelop.timestampdifference);
     }
-    return console.log("getTimestampdifference:" + getTimestampdifference());
+    return true;//console.log("getTimestampdifference:" + getTimestampdifference());
   });
 
   

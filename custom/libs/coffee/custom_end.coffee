@@ -61,6 +61,7 @@ If it should be executed after the "loading..." animation ends, add a delay call
 console.log "ready"
 readyAndGo=()->
   console.log "go"
+  initPlayer()
 stk.framework.delay 1200, readyAndGo
 
 ### own code ###
@@ -168,8 +169,6 @@ directionAcceleration=(msg)->
 directionOrientation=(msg)->  
   player = getPlayer(msg.envelop.clientid)
   if player!=undefined && player.isActive
-#    if Math.abs(msg.b)>10
-#      player.speed.leftright=Math.abs(Math.max(50,msg.b))/10
     if msg.b>10
       player.right = true
     if msg.b<-10
@@ -246,48 +245,68 @@ directionKey=(msg)->
   
 ## Player Utils ##
 
-registerPlayer=(id)->
-  console.log "registerPlayer", unregisteredPlayer
-  if (unregisteredPlayer.length > 0)
-    player = unregisteredPlayer.pop()
-    inactivePlayers.push(player)
-    activatePlayer(player)
+mockupClientIDs = {
+    'player1' : 'xsctfyrh',
+    'player2' :  'd4sewseg'
+}
+
+playerStrings = ['player1', 'player2']
+
+initPlayer=()->
+  console.log "init player"
+#  console.log stk.framework.getData(true)
+#  data = stk.framework.getData(true)
+  for player in playerStrings
+    console.log player + ": " + mockupClientIDs[player]
+    playerid = player.slice(-1)
+    div = document.createElement('div')
+    div.id = player
+    div.className = 'player'
+    div.innerHTML = '<img src="images/chara0' + playerid + '.svg"><img id="basket' + playerid + ' class="basket" src="images/chara0' + playerid + '_basket.svg">'
+    document.getElementById('player-div').appendChild(div)
     
-    playerMap[id] = player
-    console.log "playerMap",playerMap
-    player.dom.css('left', 10 +"px")
-    player
-  else
-    undefined
-    
-activatePlayer=(player)->
-  players.push(player)
-  index = inactivePlayers.indexOf(player)
-  inactivePlayers=inactivePlayers.splice(index)
-  player.time = new Date().getTime() /1000
-  player.score = 0
-  player.dom.css('opacity', 1.0)
-  player.dom.css('zIndex', 5)
-  player.isActive=true
-  player.basketTurnedOver=new Date().getTime() /1000 
-  true
-  
-deactivatePlayer=(player)->
-  if player.isActive
-    inactivePlayers.push(player)
-    index = players.indexOf(player)
-    players=players.splice(index)
-    player.dom.css('opacity', 0.3)
-    player.dom.css('zIndex', 2)
-    player.isActive=false
-    player.waitForBasket=true
-    player.timeout.html("10")
-    player.height=bottom
-    player.dom.css('bottom', player.height + "px")
-    console.log "deactivatePlayer",JSON.stringify(player)    
-  ###else
-    console.log "player is not active",JSON.stringify(player)###
-  true
+#registerPlayer=(id)->
+#  console.log "registerPlayer", unregisteredPlayer
+#  if (unregisteredPlayer.length > 0)
+#    player = unregisteredPlayer.pop()
+#    inactivePlayers.push(player)
+#    activatePlayer(player)
+#    
+#    playerMap[id] = player
+#    console.log "playerMap",playerMap
+#    player.dom.css('left', 10 +"px")
+#    player
+#  else
+#    undefined
+#    
+#activatePlayer=(player)->
+#  players.push(player)
+#  index = inactivePlayers.indexOf(player)
+#  inactivePlayers=inactivePlayers.splice(index)
+#  player.time = new Date().getTime() /1000
+#  player.score = 0
+#  player.dom.css('opacity', 1.0)
+#  player.dom.css('zIndex', 5)
+#  player.isActive=true
+#  player.basketTurnedOver=new Date().getTime() /1000 
+#  true
+#  
+#deactivatePlayer=(player)->
+#  if player.isActive
+#    inactivePlayers.push(player)
+#    index = players.indexOf(player)
+#    players=players.splice(index)
+#    player.dom.css('opacity', 0.3)
+#    player.dom.css('zIndex', 2)
+#    player.isActive=false
+#    player.waitForBasket=true
+#    player.timeout.html("10")
+#    player.height=bottom
+#    player.dom.css('bottom', player.height + "px")
+#    console.log "deactivatePlayer",JSON.stringify(player)    
+#  ###else
+#    console.log "player is not active",JSON.stringify(player)###
+#  true
 
 
 ## Element Utils ##

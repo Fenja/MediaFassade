@@ -1,71 +1,22 @@
 <!DOCTYPE html>
 <html lang="de">
   <head>
-    <title>View</title>
-    <meta charset="UTF-8">
-    <link rel="apple-touch-icon" sizes="57x57" href="media/favicon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="media/favicon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="media/favicon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="media/favicon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="media/favicon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="media/favicon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="media/favicon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="media/favicon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="media/favicon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="media/favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="media/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="media/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="media/favicon/favicon-16x16.png">
-    <link rel="manifest" href="media/favicon/manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="media/favicon/favicon/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="shortcut icon" href="media/favicon/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="media/favicon/favicon.ico" type="image/x-icon">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Neues Spiel</title>
     <link rel="stylesheet" type="text/css" href="styles/client.css">
-    <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.css">
-    <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css">
-    <link rel="stylesheet" type="text/css" href="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css">
-    <script src="../external/libs/js/jquery/jquery-2.1.4.min.js"></script>
+     <script src="../external/libs/js/jquery/jquery-2.1.4.min.js"></script>
     <script src="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
     <script src="../external/libs/js/doccookies.js"></script>
     <script src="../external/libs/js/howler.js/howler.min.js"></script>
     <script src="../includes/framework.js"></script>
     <script>
-      var objectsToInject={"draggable_joystick":{"lastID":0,"objects":[{"type":"draggable_joystick","id":0,"x":0.611974833610649,"y":0.41420118343195267,"h":0.5,"w":0.5,"scale":1,"constraint":true,"zindex":66,"opacity":1}]},"draggable_keylistener":{"lastID":0,"objects":[{"type":"draggable_keylistener","id":0,"x":0.27602433444259566,"y":0.4970414201183432,"h":0.1,"w":0.1,"scale":1,"constraint":false,"zindex":66,"opacity":1}]}};
-      var key='kdtr';
+      var objectsToInject={"draggable_touchpad":{"lastID":0,"objects":[{"type":"draggable_touchpad","id":0,"x":0.469,"y":0.4115126562900231,"h":0.5,"w":0.5,"scale":1.07,"constraint":false,"zindex":66,"opacity":1,"touchstart":true,"touchmove":true,"touchend":true,"touchstartvibrate":true,"touchmovevibrate":true,"touchendvibrate":true,"startmaxms":0,"movemaxms":0,"endmaxms":0}]}};
+      var key='h24d';
       $.getScript(location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '')+'/socket.io/socket.io.js');
         
     </script>
-    <script>
-      gravatarUser={};
-      gravatarUserData = function(p) {
-        gravatarUser=p;
-        return console.log(JSON.stringify(gravatarUser));
-      };
-    </script>
-    <style>
-      label, input { display:block; }
-      input.text { margin-bottom:12px; width:95%; padding: .4em; }
-      fieldset { padding:0; border:0; margin-top:25px; }
-      .ui-dialog .ui-state-error { padding: .3em; }
-      .validateTips { border: 1px solid transparent; padding: 0.3em; }
-      #login {z-index:100;}
-      
-    </style>
-    <script src="../custom/libs/js/custom_head.js"></script>
   </head>
   <body>
-    <div id="loading" name="loading" style="position:absolute;left:0;top:0;width:100%;height:100%;z-index:12345;background-color:#002;margin:0;padding: 0;" class="loading">
-      <table style="left:0;top:0;width:100%;height:100%;">
-        <tr>
-          <td align="center">
-            <div id="loadingtxt" name="loadingtxt" align="left" style="width:100%;height:100%;left:40%;top:45%;color:#fff;font:24pt Helvetica, Arial;">Loading</div>
-          </td>
-        </tr>
-      </table>
-      <script>
+   <script>
         function loading(){
           var l=0;
           function step(){
@@ -77,7 +28,7 @@
             if(l==3){s+='&nbsp;&nbsp;<sub>*</sub>';}
             if(l==4){s+='&nbsp;<sub>*</sub>&nbsp;';}
             if(l==5){s+='<sub>*</sub>&nbsp;&nbsp;';}
-            var e=document.getElementById('loadingtxt').innerHTML=s;
+//            var e=document.getElementById('loadingtxt').innerHTML=s;
           }
           loadingTimer=setInterval(step, 200);
         }
@@ -92,11 +43,6 @@
         var loadingTimer;
         loading();
       </script>
-    </div>
-    
-    <div id="screen">
-      <img id="bgr" src="images/mf_bg.png"/>
-      <script src="../custom/libs/js/custom_body.js"></script>
       <script>
         function opendialog(title,content,closeable){
           if(closeable==null){closeable=true};
@@ -152,15 +98,15 @@
           console.log ("loadscript: " + opt.socketserver+'/socket.io/socket.io.js')
           $.getScript(opt.socketserver+'/socket.io/socket.io.js')
             .done(function( script, textStatus ) {
-              //console.log( textStatus );
+              console.log( textStatus );
               var s='libs/js/view.js';
-              //console.log(s);
+              console.log(s);
               
               console.log ("loadscript: " + s)
           
               $.getScript(s)
                 .done(function( script, textStatus ) {
-                  var s2='../custom/libs/js/custom_end.js';
+                  var s2='../custom/libs/js/custom_join.js';
                   
                   if(s2==""){
                     loaded();
@@ -197,36 +143,33 @@
           });
         });
       </script>
-      
-      <div id="element-div"></div>
-      <div id="player-div"></div>
-      
-      <!--<div id="player1" class="player">  
-        <img src="images/chara01.svg">
-        <img id="basket1" class="basket" src="images/chara01_basket.svg">
-      </div>
-      <div id="player2" class="player">
-        <img src="images/chara02.svg">
-        <img id="basket2" class="basket" src="images/chara02_basket.svg">
-      </div>
-      <div id="player3" class="player"> 
-        <img src="images/chara03.svg">
-        <img id="basket3" class="basket" src="images/chara03_basket.svg">
-      </div>
-      <div id="player4" class="player">  
-        <img src="images/chara04.svg">
-        <img id="basket4" class="basket" src="images/chara04_basket.svg">
-      </div>
-      <div id="player5" class="player">  
-        <img src="images/chara05.svg">
-        <img id="basket5" class="basket" src="images/chara06_basket.svg">
-      </div>
-      <div id="player6" class="player"> 
-        <img src="images/chara06.svg">
-        <img id="basket6" class="basket" src="images/chara06_basket.svg">
-      </div>-->
-      
-      </div><!--screen-->
+  <div class="content">
+    <h1>Join Now</h1>
+    <p>Spiel begint in <span id="countdown">30</span> Sekunden</p>
+   <div id="player1" class="player" style="left: 12%">  
+      <img src="images/chara01.svg">
+      <img id="basket1" class="basket" src="images/chara01_basket.svg">
     </div>
+    <div id="player2" class="player" style="left: 24%">
+      <img src="images/chara02.svg">
+      <img id="basket2" class="basket" src="images/chara02_basket.svg">
+    </div>
+    <div id="player3" class="player" style="left: 36%"> 
+      <img src="images/chara03.svg">
+      <img id="basket3" class="basket" src="images/chara03_basket.svg">
+    </div>
+    <div id="player4" class="player" style="left: 48%">  
+      <img src="images/chara04.svg">
+      <img id="basket4" class="basket" src="images/chara04_basket.svg">
+    </div>
+    <div id="player5" class="player" style="left: 60%">  
+      <img src="images/chara05.svg">
+      <img id="basket5" class="basket" src="images/chara06_basket.svg">
+    </div>
+    <div id="player6" class="player" style="left: 72%"> 
+      <img src="images/chara06.svg">
+      <img id="basket6" class="basket" src="images/chara06_basket.svg">
+    </div>
+  </div>
   </body>
 </html>

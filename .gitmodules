@@ -1,8 +1,0 @@
-[submodule "Howler"]
-	path = external/libs/js/howler.js
-	url = git@github.com:goldfire/howler.js.git
-
-
-[submodule "JSQRCode"]
-        path = external/libs/js/jsqrcode
-        url = git@github.com:LazarSoft/jsqrcode.git

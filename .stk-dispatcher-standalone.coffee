@@ -4,6 +4,12 @@ fs = require('fs')
 
 port=3000
 hooks={}
+config=
+  gitlab:
+    api: 'http://virtualdev/api/v3'
+    privateToken: 'tdgQk8SfPXnLssJLyUrx'
+  port: 3000
+  hooks: './'
 
 console.log "Arguments:"
 process.argv.forEach((val, index, array)->
@@ -19,12 +25,45 @@ process.argv.forEach((val, index, array)->
         else
           console.log 'No custom hooks @ '+array[index+1]+' available'
         console.log 'hooks:',hooks
-      )      
+      )
+    when "gitlab"
+      try
+        config.gitlab = JSON.parse(array[index+1])
+      catch err
+        console.log 'There has been an error parsing '+array[index+1]
+        console.log err
+    when "config"
+      data = fs.readFileSync(array[index+1])
+      config = undefined
+      console.log "Reading config from "+array[index+1]
+      try
+        config = JSON.parse(data)
+        if config.port
+          port=config.port
+        if config.hooks
+          fs.access(config.hooks, fs.R_OK, (err)->
+            if not err
+              custom_hooks=require(config.hooks)()
+              hooks=custom_hooks.getHooks()
+            else
+              console.log 'No custom hooks @ '+array[index+1]+' available'
+            console.log 'hooks:',hooks
+          )
+      catch err
+        console.log 'There has been an error parsing '+array[index+1]
+        console.log err
 )
+
 console.log "You may set following arguments, separate key and value by space"
 console.log "port PORTNUMBER                            listen on port"
 console.log "hooks PathToJavaScriptOrCoffeScriptFile    file with custom hooks for touchstart,touchmove,touchend,keyevent,"
 console.log "                                           draggable_orientationsensor,draggable_accelerationsensor,state"
+console.log "config CONFIGFILE                          read configuration from file"
+console.log ""
+console.log "If you have the same arguments stored in your configfile it depends on the order if the comandline argument"
+console.log "overrules his counterpart in the config file or visa verse"
+
+console.log "config: " + JSON.stringify config
 
 app = require('express')()
 compress = require('compression')
@@ -241,7 +280,11 @@ io.on('connection', (socket) ->
       console.log 'draggable_accelerationsensor', msg
   socket.on 'draggable_accelerationsensor', (msg) ->
     msg.dev=hooks['draggable_accelerationsensor'](msg)
-    ioEmit socket,'draggable_accelerationsensor', msg
+    ioEmit socket,'accelerationpitch', msg
+  
+  socket.on 'do_audio', (msg) ->
+    ioEmit socket,'do_audio', msg
+    console.log 'do_audio', msg
     
   socket.on 'reset', (msg) ->
     ioEmit socket,'reset', msg
@@ -249,7 +292,7 @@ io.on('connection', (socket) ->
     
   if hooks['state']==undefined
     hooks['state']=(msg)->
-      console.log 'state', msg
+#      console.log 'state', msg
   socket.on 'state', (msg) ->
     ioEmit socket,'state', msg
     hooks['state'](msg)
