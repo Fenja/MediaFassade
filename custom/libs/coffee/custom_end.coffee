@@ -63,25 +63,26 @@ console.log "ready"
 readyAndGo=()->
   console.log "go"
   initPlayer()
+    
 stk.framework.delay 1200, readyAndGo
 
 gameCountDown = 30
+
+gameOver=()->
+  console.log "GameOver"
+  location.href = "scores.html"
 
 countDown=()->
   if gameCountDown >= 0
     console.log gameCountDown
     gameCountDown -= 1
   else
-    gameOver
+    gameOver()
 
 startCountDown=()->
   stk.framework.timer 1000, countDown
 
 stk.framework.delay 3000 * 60, startCountDown
-
-gameOver=()->
-    console.log "GameOver"
-    location.href = "scores.html"
     
 ### own code ###
 
@@ -117,7 +118,7 @@ class Player
     @score = 0
     @scoreDom = defaultParameters.scoreDom
     @time = 0
-    @isActive = true
+#    @isActive = true
 
 viewportHeight = window.innerHeight
 viewportWidth = window.innerWidth
@@ -174,51 +175,51 @@ directionAcceleration=(msg)->
 
 directionOrientation=(msg)->  
   player = getPlayer(msg.envelop.clientid)
-  if player!=undefined && player.isActive
+  if player!=undefined
     if msg.b>10
       player.right = true
     if msg.b<-10
       player.left = true
   true
 
-upsideDownDevice=(msg)->
-  id = msg.envelop.clientid
-  
-  player = playerMap[id]
-  if player!=undefined 
-    
-    if player.waitForBasket
-    
-      if !player.isActive && !msg.isup
-        player.basketTurnedOver=new Date().getTime() /1000+10
-        player.waitForBasket=false
-        console.log "BASKET TURNED OVER @ ",player.basketTurnedOver
-        
-        
-    else
-      now=new Date().getTime() /1000
-      
-      if !player.isActive && !msg.isup
-        console.log "BASKET TURNED OVER waiting ",player.basketTurnedOver,id,"wait",now,player.basketTurnedOver
-        countdown=Math.max(Math.floor(player.basketTurnedOver-now),0)
-        player.dom.css('opacity', 0.8)
-        if countdown<5
-          player.timeout.html(countdown+" Korb umdrehen !")
-        else
-          player.timeout.html(countdown)
-    
-      if !player.isActive && msg.isup && player.basketTurnedOver<=now
-        console.log "TURN ON PLAYER ",id
-        player.timeout.html("###")
-        activatePlayer(player)
-      if !player.isActive && msg.isup && player.basketTurnedOver>now
-        console.log "TURN ON PLAYER ",id,"wait",player.basketTurnedOver-now
-        countdown=Math.max(Math.floor(player.basketTurnedOver-now),0)
-        player.dom.css('opacity', 0.8)
-        player.timeout.html(countdown)
-      
-  else
-    console.log "player "+id+"undefined",playerMap
+#upsideDownDevice=(msg)->
+#  id = msg.envelop.clientid
+#  
+#  player = playerMap[id]
+#  if player!=undefined 
+#    
+#    if player.waitForBasket
+#    
+#      if !player.isActive && !msg.isup
+#        player.basketTurnedOver=new Date().getTime() /1000+10
+#        player.waitForBasket=false
+#        console.log "BASKET TURNED OVER @ ",player.basketTurnedOver
+#        
+#        
+#    else
+#      now=new Date().getTime() /1000
+#      
+#      if !player.isActive && !msg.isup
+#        console.log "BASKET TURNED OVER waiting ",player.basketTurnedOver,id,"wait",now,player.basketTurnedOver
+#        countdown=Math.max(Math.floor(player.basketTurnedOver-now),0)
+#        player.dom.css('opacity', 0.8)
+#        if countdown<5
+#          player.timeout.html(countdown+" Korb umdrehen !")
+#        else
+#          player.timeout.html(countdown)
+#    
+#      if !player.isActive && msg.isup && player.basketTurnedOver<=now
+#        console.log "TURN ON PLAYER ",id
+#        player.timeout.html("###")
+#        activatePlayer(player)
+#      if !player.isActive && msg.isup && player.basketTurnedOver>now
+#        console.log "TURN ON PLAYER ",id,"wait",player.basketTurnedOver-now
+#        countdown=Math.max(Math.floor(player.basketTurnedOver-now),0)
+#        player.dom.css('opacity', 0.8)
+#        player.timeout.html(countdown)
+#      
+#  else
+#    console.log "player "+id+"undefined",playerMap
   
 directionJoystick=(msg)->
   player = getPlayer(msg.envelop.clientid)
@@ -417,7 +418,7 @@ jump=(player)->
     if (player.height <= bottom)
       player.falls = false   
       
-  player.dom.css('bottom', player.height + "px")
+  player.dom.css('bottom', player.height + "%")
   true
   
 ## Element Functions ##
@@ -459,7 +460,7 @@ checkCollisions=()->
   
 checkCollision=(object)->
   for player in players
-    if(object != undefined && player.isActive && object.dom != undefined)
+    if(object != undefined && object.dom != undefined)
       basket = player.basketDom
       elem = object.dom
       basketLeft = parseInt(basket.css('left')) + parseInt(player.dom.css('left'))
@@ -484,7 +485,7 @@ checkCollision=(object)->
   true
   
 elementDown=(object)->
-  console.log "element down: " + object.id
+#  console.log "element down: " + object.id
   index = elementList.indexOf(object)
   elementList.splice(index,1)
   destroyElement(object)

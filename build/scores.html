@@ -1,11 +1,155 @@
 <!DOCTYPE html>
 <html lang="de">
   <head>
-    <title>Remotecontrol</title>
+    <title>Neues Spiel</title>
+    <link rel="stylesheet" type="text/css" href="styles/client.css">
+     <script src="../external/libs/js/jquery/jquery-2.1.4.min.js"></script>
+    <script src="../external/libs/js/jquery/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
+    <script src="../external/libs/js/doccookies.js"></script>
+    <script src="../external/libs/js/howler.js/howler.min.js"></script>
+    <script src="../includes/framework.js"></script>
+    <script>
+      var objectsToInject={"draggable_touchpad":{"lastID":0,"objects":[{"type":"draggable_touchpad","id":0,"x":0.469,"y":0.4115126562900231,"h":0.5,"w":0.5,"scale":1.07,"constraint":false,"zindex":66,"opacity":1,"touchstart":true,"touchmove":true,"touchend":true,"touchstartvibrate":true,"touchmovevibrate":true,"touchendvibrate":true,"startmaxms":0,"movemaxms":0,"endmaxms":0}]}};
+      var key='h24d';
+      $.getScript(location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '')+'/socket.io/socket.io.js');
+        
+    </script>
   </head>
   <body>
+   <script>
+        function loading(){
+          var l=0;
+          function step(){
+            l++;if (l>5){l=0;}
+            var s="Loading ";
+            if(l==0){s+='*&nbsp;';}
+            if(l==1){s+='&nbsp;*&nbsp;';}
+            if(l==2){s+='&nbsp;&nbsp;*';}
+            if(l==3){s+='&nbsp;&nbsp;<sub>*</sub>';}
+            if(l==4){s+='&nbsp;<sub>*</sub>&nbsp;';}
+            if(l==5){s+='<sub>*</sub>&nbsp;&nbsp;';}
+//            var e=document.getElementById('loadingtxt').innerHTML=s;
+          }
+          loadingTimer=setInterval(step, 200);
+        }
+        function loaded(){
+          clearTimeout(loadingTimer);
+          $( "#loadingtxt" ).fadeOut( "slow", function() {
+            $( "#loading" ).fadeOut( "slow", function() {
+              $( "#loading" ).remove();
+            });
+          });      
+        }
+        var loadingTimer;
+        loading();
+      </script>
+      <script>
+        function opendialog(title,content,closeable){
+          if(closeable==null){closeable=true};
+        
+          d = $('<div/>').attr({
+            id: 'dialog-message',
+            title: title
+          }).append($('<p/>').html(content));
+        
+          $('body').append(d);
+          if(closeable){
+            d.dialog({
+              autoOpen:true,
+              modal: true,
+              width:'auto',
+              open: function (event, ui) {
+                     $('.ui-dialog').css('z-index',12347);
+                     $('.ui-widget-overlay').css('z-index',12346);
+                    },
+              buttons: {
+                Ok: function() {
+                  $( this ).dialog( "close" ).dialog( "destroy" );
+                  $('#dialog-message').remove();
+                }
+              }
+            });
+          }else{
+            d.dialog({
+              autoOpen:true,
+              modal: true,
+              width:'auto',
+              open: function (event, ui) {
+                     $('.ui-dialog').css('z-index',12347);
+                     $('.ui-widget-overlay').css('z-index',12346);
+                     $(".ui-dialog-titlebar-close", ui.dialog | ui).hide(); 
+                    }
+            });
+          }
+        
+          $('#dialog-message').css("z-index","11111 !important");
+        }
+      </script>
+      <script>
+        $(function() {
+          opt={socketserver:window.location.protocol+'//'+window.location.host};
+          console.log ("Fetching from Socketserver: " + opt.socketserver)
+          
+          console.log ("- window.location.host: " + window.location.host)
+          console.log ("- window.location.hostname: " + window.location.hostname)
+          console.log ("- window.location.port: " + window.location.port)
+          console.log ("- window.location.protocol: " + window.location.protocol)
+          
+          console.log ("loadscript: " + opt.socketserver+'/socket.io/socket.io.js')
+          $.getScript(opt.socketserver+'/socket.io/socket.io.js')
+            .done(function( script, textStatus ) {
+              console.log( textStatus );
+              var s='libs/js/view.js';
+              console.log(s);
+              
+              console.log ("loadscript: " + s)
+          
+              $.getScript(s)
+                .done(function( script, textStatus ) {
+                    loaded();
+                  })
+                .fail(function( jqxhr, settings, exception ) {
+                  opendialog("Fehler","Triggered ajaxError 2. handler for <i><a href=\""+s+"\""+s+"<br /><br />"+exception+"</a></i>",false );
+                  console.log(exception);
+                  console.log("scriptname:"+scriptname);
+                  console.log("s:"+s);
+                  console.log("s2:"+s2);
+              });
+            })
+            .fail(function( jqxhr, settings, exception ) {
+              opendialog("Fehler","Triggered ajaxError 1. handler for <i><a href=\""+script+"\""+script+"<br /><br />"+exception+"</a></i>",false );
+              console.log(exception);
+              console.log("scriptname:"+scriptname);
+              console.log("s:"+s);
+              console.log("s2:"+s2);
+          });
+        });
+      </script>
   <div class="content">
-    <p>Scores</p>
+   <!--<div id="player1" class="player" style="left: 12%">  
+      <img src="images/chara01.svg">
+      <img id="basket1" class="basket" src="images/chara01_basket.svg">
+    </div>
+    <div id="player2" class="player" style="left: 24%">
+      <img src="images/chara02.svg">
+      <img id="basket2" class="basket" src="images/chara02_basket.svg">
+    </div>
+    <div id="player3" class="player" style="left: 36%"> 
+      <img src="images/chara03.svg">
+      <img id="basket3" class="basket" src="images/chara03_basket.svg">
+    </div>
+    <div id="player4" class="player" style="left: 48%">  
+      <img src="images/chara04.svg">
+      <img id="basket4" class="basket" src="images/chara04_basket.svg">
+    </div>
+    <div id="player5" class="player" style="left: 60%">  
+      <img src="images/chara05.svg">
+      <img id="basket5" class="basket" src="images/chara06_basket.svg">
+    </div>
+    <div id="player6" class="player" style="left: 72%"> 
+      <img src="images/chara06.svg">
+      <img id="basket6" class="basket" src="images/chara06_basket.svg">
+    </div>-->
   </div>
   </body>
 </html>

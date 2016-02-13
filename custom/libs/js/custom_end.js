@@ -7,7 +7,7 @@ Define your functions here.
  */
 
 (function() {
-  var Element, Player, basketTollerance, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, countDown, createNewElement, customLogger, customLoggerD, customLoggerT, custom_message_handler, destroyElement, directionAcceleration, directionJoystick, directionKey, directionOrientation, draggable_accelerationsensor_handler, draggable_keylistener_handler, draggable_orientationsensor_handler, draggable_touchpad_handler, elementDown, elementIDCount, elementList, elementRandomList, fadeLimit, fallCount, fallElements, fallRound, falls, fillElementList, fps, gameCountDown, gameOver, getClientID, getElementIDCount, getNewColumn, getPlayer, getValue, gravity, heaven, influencePlayer, initPlayer, jump, jumpHeight, lastColumn, leftrightDefault, mockupClientIDs, playerHeight, playerMap, playerStrings, playerWidth, players, powerSpeed, powerTime, readyAndGo, running, startCountDown, timeLimit, tollerance, update, updateElements, updateInfluence, updatePlayer, updatePlayers, updownDefault, upsideDownDevice, values, viewportHeight, viewportWidth,
+  var Element, Player, basketTollerance, bombSpeed, bombTime, bottom, calcSide, checkCollision, checkCollisions, clear, collect, columnWidth, columns, countDown, createNewElement, customLogger, customLoggerD, customLoggerT, custom_message_handler, destroyElement, directionAcceleration, directionJoystick, directionKey, directionOrientation, draggable_accelerationsensor_handler, draggable_keylistener_handler, draggable_orientationsensor_handler, draggable_touchpad_handler, elementDown, elementIDCount, elementList, elementRandomList, fadeLimit, fallCount, fallElements, fallRound, falls, fillElementList, fps, gameCountDown, gameOver, getClientID, getElementIDCount, getNewColumn, getPlayer, getValue, gravity, heaven, influencePlayer, initPlayer, jump, jumpHeight, lastColumn, leftrightDefault, mockupClientIDs, playerHeight, playerMap, playerStrings, playerWidth, players, powerSpeed, powerTime, readyAndGo, running, startCountDown, timeLimit, tollerance, update, updateElements, updateInfluence, updatePlayer, updatePlayers, updownDefault, values, viewportHeight, viewportWidth,
     indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   customLogger = function(s) {
@@ -81,12 +81,17 @@ Define your functions here.
 
   gameCountDown = 30;
 
+  gameOver = function() {
+    console.log("GameOver");
+    return location.href = "scores.html";
+  };
+
   countDown = function() {
     if (gameCountDown >= 0) {
       console.log(gameCountDown);
       return gameCountDown -= 1;
     } else {
-      return gameOver;
+      return gameOver();
     }
   };
 
@@ -95,11 +100,6 @@ Define your functions here.
   };
 
   stk.framework.delay(3000 * 60, startCountDown);
-
-  gameOver = function() {
-    console.log("GameOver");
-    return location.href = "scores.html";
-  };
 
 
   /* own code */
@@ -152,7 +152,6 @@ Define your functions here.
       this.score = 0;
       this.scoreDom = defaultParameters.scoreDom;
       this.time = 0;
-      this.isActive = true;
     }
 
     return Player;
@@ -237,7 +236,7 @@ Define your functions here.
   directionOrientation = function(msg) {
     var player;
     player = getPlayer(msg.envelop.clientid);
-    if (player !== void 0 && player.isActive) {
+    if (player !== void 0) {
       if (msg.b > 10) {
         player.right = true;
       }
@@ -246,46 +245,6 @@ Define your functions here.
       }
     }
     return true;
-  };
-
-  upsideDownDevice = function(msg) {
-    var countdown, id, now, player;
-    id = msg.envelop.clientid;
-    player = playerMap[id];
-    if (player !== void 0) {
-      if (player.waitForBasket) {
-        if (!player.isActive && !msg.isup) {
-          player.basketTurnedOver = new Date().getTime() / 1000 + 10;
-          player.waitForBasket = false;
-          return console.log("BASKET TURNED OVER @ ", player.basketTurnedOver);
-        }
-      } else {
-        now = new Date().getTime() / 1000;
-        if (!player.isActive && !msg.isup) {
-          console.log("BASKET TURNED OVER waiting ", player.basketTurnedOver, id, "wait", now, player.basketTurnedOver);
-          countdown = Math.max(Math.floor(player.basketTurnedOver - now), 0);
-          player.dom.css('opacity', 0.8);
-          if (countdown < 5) {
-            player.timeout.html(countdown + " Korb umdrehen !");
-          } else {
-            player.timeout.html(countdown);
-          }
-        }
-        if (!player.isActive && msg.isup && player.basketTurnedOver <= now) {
-          console.log("TURN ON PLAYER ", id);
-          player.timeout.html("###");
-          activatePlayer(player);
-        }
-        if (!player.isActive && msg.isup && player.basketTurnedOver > now) {
-          console.log("TURN ON PLAYER ", id, "wait", player.basketTurnedOver - now);
-          countdown = Math.max(Math.floor(player.basketTurnedOver - now), 0);
-          player.dom.css('opacity', 0.8);
-          return player.timeout.html(countdown);
-        }
-      }
-    } else {
-      return console.log("player " + id + "undefined", playerMap);
-    }
   };
 
   directionJoystick = function(msg) {
@@ -503,7 +462,7 @@ Define your functions here.
         player.falls = false;
       }
     }
-    player.dom.css('bottom', player.height + "px");
+    player.dom.css('bottom', player.height + "%");
     return true;
   };
 
@@ -560,7 +519,7 @@ Define your functions here.
     var basket, basketBottom, basketDomHeight, basketLeft, elem, elemBottom, elemLeft, i, len, lrtest, player, udtest;
     for (i = 0, len = players.length; i < len; i++) {
       player = players[i];
-      if (object !== void 0 && player.isActive && object.dom !== void 0) {
+      if (object !== void 0 && object.dom !== void 0) {
         basket = player.basketDom;
         elem = object.dom;
         basketLeft = parseInt(basket.css('left')) + parseInt(player.dom.css('left'));
@@ -591,7 +550,6 @@ Define your functions here.
 
   elementDown = function(object) {
     var index;
-    console.log("element down: " + object.id);
     index = elementList.indexOf(object);
     elementList.splice(index, 1);
     destroyElement(object);
