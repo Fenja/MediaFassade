@@ -5,9 +5,8 @@ fs = require('fs')
 port=3000
 hooks={}
 config=
-  gitlab:
-    api: 'http://virtualdev/api/v3'
-    privateToken: 'tdgQk8SfPXnLssJLyUrx'
+  protocol: 'http'
+  ip: '127.0.0.1'
   port: 3000
   hooks: './'
 
@@ -15,6 +14,8 @@ console.log "Arguments:"
 process.argv.forEach((val, index, array)->
   console.log(index + ': ' + val);
   switch val
+    when "ip"
+      ip=array[index+1]
     when "port"
       port=array[index+1]
     when "hooks"
@@ -26,18 +27,16 @@ process.argv.forEach((val, index, array)->
           console.log 'No custom hooks @ '+array[index+1]+' available'
         console.log 'hooks:',hooks
       )
-    when "gitlab"
-      try
-        config.gitlab = JSON.parse(array[index+1])
-      catch err
-        console.log 'There has been an error parsing '+array[index+1]
-        console.log err
     when "config"
       data = fs.readFileSync(array[index+1])
       config = undefined
       console.log "Reading config from "+array[index+1]
       try
         config = JSON.parse(data)
+        if config.protocol
+          ip=config.ip
+        if config.ip
+          ip=config.ip
         if config.port
           port=config.port
         if config.hooks
@@ -222,7 +221,41 @@ io.on('connection', (socket) ->
       ioEmit socket,'custommessage', msg  
     else
       console.log "ioEmitToClients"
-      ioEmitToClients msg.sendTo,'custommessage', msg 
+      ioEmitToClients msg.sendTo,'custommessage', msg
+      
+  socket.on 'storedata', (msg) ->
+    storage.setItem(getDataFileName(msg), msg.data)
+    console.log 'storedata ', msg.data
+    ioEmit socket,'storedata', {type:'storedata',data:msg.data} 
+  
+  socket.on 'getdata', (msg) ->
+    getdata_si=storage.getItem(getDataFileName(msg))
+    if getdata_si!=undefined      
+      console.log 'getdata', getdata_si
+      ioEmit socket,'getdata', {type:'getdata',data:getdata_si}
+  
+  socket.on 'injectdata', (msg) ->
+    dataFileName=getDataFileName(msg)
+    injectdata_si=storage.getItem(dataFileName)
+    if injectdata_si==undefined
+      injectdata_si={}
+    for k,v of msg.data
+      injectdata_si[''+k]=v
+    storage.setItem(dataFileName, injectdata_si)
+    console.log 'injectdata is ', injectdata_si
+    ioEmit socket,'injectdata', {type:'injectdata',data:msg.data}    
+
+  socket.on 'removedata', (msg) ->    
+    dataFileName=getDataFileName(msg)
+    removedata_si=storage.getItem(dataFileName)
+    console.log removedata_si
+    if removedata_si==undefined
+      removedata_si={}
+    for k in msg.datakeys
+      delete removedata_si[''+k]
+    storage.setItem(dataFileName, removedata_si)
+    console.log 'removedata is ', removedata_si
+    ioEmit socket,'removedata', {type:'removedata',datakeys:msg.datakeys} 
 
   if hooks['touchstart']==undefined
     hooks['touchstart']=(msg)->
@@ -292,7 +325,7 @@ io.on('connection', (socket) ->
     
   if hooks['state']==undefined
     hooks['state']=(msg)->
-#      console.log 'state', msg
+      console.log 'state', msg
   socket.on 'state', (msg) ->
     ioEmit socket,'state', msg
     hooks['state'](msg)
